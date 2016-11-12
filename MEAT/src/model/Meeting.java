@@ -1,17 +1,21 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 public class Meeting {
 	private String meetingId;
 	private String date;
 	private String startTime;
 	private String endTime;
 	private String roomId;
-	private String attendee;
+	private LinkedList<String> attendee;
 	private String description;
 	
 	
 	public Meeting() {
 		super();
+		this.attendee = new LinkedList<String>();
 	}
 	
 	public void readFromSql() {
@@ -55,10 +59,10 @@ public class Meeting {
 	public void setRoomId(String roomId) {
 		this.roomId = roomId;
 	}
-	public String getAttendee() {
+	public LinkedList<String> getAttendee() {
 		return attendee;
 	}
-	public void setAttendee(String attendee) {
+	public void setAttendee(LinkedList<String> attendee) {
 		this.attendee = attendee;
 	}
 	public String getDescription() {
@@ -67,6 +71,7 @@ public class Meeting {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 
 	
 }

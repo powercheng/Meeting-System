@@ -1,0 +1,23 @@
+[{
+    "events": [
+        {
+            "meeting-id": "1",
+            "date": "11232016",
+            "start-time": "12:45",
+            "end-time": "1:53",
+            "room-id": "3A66",
+            "description": "Status update",
+            "attendees": [
+                {
+                    "name": "gayxx067"
+                },
+                {
+                    "name": "bob099"
+                },
+                {
+                    "name": "Ezio Auditore da Firenze"
+                }
+            ]
+        }
+    ]
+}]

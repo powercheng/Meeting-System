@@ -20,8 +20,8 @@ public class TestRun {
 	public static void main(String[] args) {
 		
 		TestRun run = new TestRun();
-		//run.sqlSelectTest();
-		run.sqlInsertTest();
+		run.sqlSelectTest();
+		//run.sqlInsertTest();
 		//run.testUUID();	
 	}
 	

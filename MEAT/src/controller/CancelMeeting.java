@@ -9,7 +9,6 @@ public class CancelMeeting extends Command {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		this.checkValid();
 		Meeting meeting = new Meeting();
 
 		meeting.writeToSql();
@@ -18,13 +17,4 @@ public class CancelMeeting extends Command {
 		
 	}
 
-	@Override
-	public void checkValid() {
-		// TODO Auto-generated method stub
-		checkDateValid();
-		checkTimeValid();
-		checkRoomIdValid();
-		checkEmpolyeeIdValid();
-		checkStrLenValid();
-	}
 }
