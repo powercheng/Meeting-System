@@ -62,6 +62,9 @@ public class Meeting {
 	public LinkedList<String> getAttendee() {
 		return attendee;
 	}
+	public void addAttendee(String str) {
+		this.attendee.add(str);
+	} 
 	public void setAttendee(LinkedList<String> attendee) {
 		this.attendee = attendee;
 	}

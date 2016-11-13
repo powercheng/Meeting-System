@@ -73,7 +73,7 @@ public class AddMeeting extends Command {
 					}
 				case "attendee" :					
 					if(checkEmpolyeeIdValid(value)){
-						meeting.getAttendee().add(value);				
+						meeting.addAttendee(value);				
 						break;
 					} else {
 						System.out.println("invalid empolyee name for adding meeting command");
