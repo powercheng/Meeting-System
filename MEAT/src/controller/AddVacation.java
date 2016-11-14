@@ -28,19 +28,36 @@ public class AddVacation extends Command {
 			return;
 		}
 		for(int i = 0; i < command_array.size(); i++) {
+			
 			JSONObject command_json = (JSONObject) command_array.get(i);
 			String name = (String) command_json.get("name");
 			String value = (String) command_json.get("value");
+			
 			switch(name) {
 				case "employee-id" :
-					vacation.setEmpolyeeId(value);
-					break;	
+					if(checkEmpolyeeIdValid(value)){
+						vacation.setEmpolyeeId(value);
+						break;
+					} else {
+						System.out.println("invalid employee id("+value+") for adding vacation command");
+						return;
+					}
 				case "start-date" :
-					vacation.setStartDate(value);
-					break;	
+					if(checkDateValid(value)){
+						vacation.setStartDate(value);
+						break;
+					} else {
+						System.out.println("invalid start-date("+value+") for adding vacation command");
+						return;
+					}
 				case "end-date" :
-					vacation.setEndDate(value);
-					break;	
+					if(checkDateValid(value)){
+						vacation.setEndDate(value);
+						break;
+					} else {
+						System.out.println("invalid end-date("+value+") for adding vacation command");
+						return;
+					}
 				default :
 					System.out.println("invalid arguments : " + name + "for adding vaction");
 					break;

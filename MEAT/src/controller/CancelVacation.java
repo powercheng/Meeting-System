@@ -32,8 +32,13 @@ public class CancelVacation extends Command {
 			String value = (String) command_json.get("value");
 			switch(name) {
 				case "employee-id" :
-					vacation.setEmpolyeeId(value);
-					break;					
+					if(checkEmpolyeeIdValid(value)){
+						vacation.setEmpolyeeId(value);
+						break;
+					} else {
+						System.out.println("invalid empolyee id("+value+") for adding meeting command");
+						return;
+					}
 				default :
 					System.out.println("invalid arguments : " + name + "for cancel vaction");
 					break;

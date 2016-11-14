@@ -46,7 +46,7 @@ public class AddMeeting extends Command {
 						meeting.setStartTime(value);
 						break;
 					} else {
-						System.out.println("invalid time for adding meeting command");
+						System.out.println("invalid time("+value+") for adding meeting command");
 						return;
 					}
 				case "end-time" :
@@ -54,7 +54,7 @@ public class AddMeeting extends Command {
 						meeting.setEndTime(value);
 						break;
 					} else {
-						System.out.println("invalid time for adding meeting command");
+						System.out.println("invalid time ("+value+") for adding meeting command");
 						return;
 					}
 				case "room-id" :
@@ -62,7 +62,7 @@ public class AddMeeting extends Command {
 						meeting.setRoomId(value);					
 						break;
 					} else {
-						System.out.println("invalid room id for adding meeting command");
+						System.out.println("invalid room id ("+value+") for adding meeting command");
 						return;
 					}
 				case "description" :					
@@ -78,7 +78,7 @@ public class AddMeeting extends Command {
 						meeting.addAttendee(value);				
 						break;
 					} else {
-						System.out.println("invalid empolyee name for adding meeting command");
+						System.out.println("invalid empolyee id ("+value+") for adding meeting command");
 						return;
 					}
 				default :
