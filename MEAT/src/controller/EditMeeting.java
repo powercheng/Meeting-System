@@ -10,7 +10,7 @@ public class EditMeeting extends Command {
 	public void execute() {
 		// TODO Auto-generated method stub
 
-		meeting.writeToSql();
+		//meeting.writeToSql();
 		viewprint();
 		
 		

@@ -73,7 +73,11 @@ public class Sql {
 
 	public int write() {
 		int n = -1;
+		
 		try {
+			if (this.getQuery() == null) 
+				throw new SQLException("No DML Query is setted.");
+			
 			n = this.pstmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -88,11 +92,13 @@ public class Sql {
 	@SuppressWarnings("unchecked")
 	public JSONArray read() {
 		
-		JSONArray rsArray = new JSONArray();
-		
+		JSONArray rsArray = new JSONArray();		
 		ResultSet rs = null;
-		
-		try {
+				
+		try {			
+			if (this.getQuery() == null) 
+				throw new SQLException("No Select Query is setted.");
+			
 			rs = this.pstmt.executeQuery();
 			while (rs.next()) {		
 				//System.out.println(rs.getString(1));

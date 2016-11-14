@@ -5,7 +5,7 @@
             "arguments": [
                 {
                     "name": "date",
-                    "value": "11232016"
+                    "value": "11272016"
                 },
                 {
                     "name": "start-time",
@@ -89,7 +89,7 @@
             "arguments": [
                 {
                     "name": "meeting-id",
-                    "value": "1"
+                    "value": "3ae6970b8a3f4fc8"
                 }
             ]
         },
@@ -128,6 +128,15 @@
                 {
                     "name": "end-date",
                     "value": "02252017"
+                }
+            ]
+        },        
+        {
+            "name": "delete-vacation",
+            "arguments": [
+                {
+                    "name": "employee-id",
+                    "value": "gayxx067"
                 }
             ]
         },

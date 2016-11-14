@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import View.Messageout;
+import model.Employee;
+import model.Room;
 
 public class Command {
 	
@@ -64,11 +66,23 @@ public class Command {
 		}
 	}
 	
-	public boolean checkEmpolyeeIdValid(String str){
+	public boolean checkEmpolyeeIdValid(String employeeID){
+		Employee emp = new Employee();
+		emp.getPersonInfo(employeeID);  // get and setting database information
+		/* if employeeID (from DB) == null then no such employeeID*/
+		if (emp.getEmployeeID() == null) {
+			return false;
+		}
 		return true;
 	}
 	
-	public boolean checkRoomIdValid(String str) {
+	public boolean checkRoomIdValid(String roomID) {
+		Room rm = new Room();
+		rm.getRoomInfo(roomID); // GET AND SETTING DATABASE INFORMATION
+		/* if roomID (fromDB) is null then no such room */
+		if (rm.getRoomID() == null) {
+			return false;
+		}		
 		return true;
 	}
 	

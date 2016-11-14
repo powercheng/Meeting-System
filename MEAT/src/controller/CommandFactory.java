@@ -32,6 +32,16 @@ public class CommandFactory {
 						case "add-meeting" :
 							command = new AddMeeting(command_array);							
 							break;
+						case "delete-meeting" :
+							command = new CancelMeeting(command_array);							
+							break;
+							
+						case "add-vacation" :
+							command = new AddVacation(command_array);							
+							break;
+						case "delete-vacation" :
+							command = new CancelVacation(command_array);							
+							break;
 						default :
 							System.out.println("invalid command : " + name);
 					}

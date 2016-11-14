@@ -6,7 +6,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import View.Messageout;
+import common.CommonUtil;
 import model.Meeting;
+import model.Sql;
 
 
 public class AddMeeting extends Command {
@@ -35,8 +37,8 @@ public class AddMeeting extends Command {
 					if(checkDateValid(value)){
 						meeting.setDate(value);
 						break;
-					} else {
-						System.out.println("invalid date for adding meeting command");
+					} else {						
+						System.out.println("invalid date ("+value+") for adding meeting command");
 						return;
 					}
 				case "start-time" :					
@@ -85,8 +87,14 @@ public class AddMeeting extends Command {
 			}			
 		}
 		if(checkMeetingArgument()){
-			System.out.println(meeting.getDate());
-			//meeting.writeToSql();
+			
+			/* Databse writing */
+			/* meetingID generating and setting */
+			String meetingID = CommonUtil.createUUID(16);
+			meeting.setMeetingId(meetingID);
+			if (!insertMeetingInfo(this.meeting)) {
+				System.out.println("Add meeting is failed");
+			}
 			//viewprint();
 		} else {			
 			return;
@@ -111,9 +119,39 @@ public class AddMeeting extends Command {
 		}
 		
 	}
-
+	
+	public boolean insertMeetingInfo(Meeting minfo) {
 		
-	
-	
-	
+		boolean bSuccess = false;	
+		
+		String insMeetQuery = "INSERT INTO TB_MEETING(meetID, meetDATE, startTIME, endTIME, description, roomID) "
+							+ " VALUES (?, ?, ?, ?, ?, ?)";
+		
+		String insAttendeeQuery = "INSERT INTO TB_ATTENDEE(meetID, employeeID) "
+							+ " VALUES (?, ?)";
+		
+		Sql db = new Sql();		
+		db.setQuery(insMeetQuery);
+		db.setParameter(1, minfo.getMeetingId());
+		db.setParameter(2, minfo.getDate());
+		db.setParameter(3, minfo.getStartTime());
+		db.setParameter(4, minfo.getEndTime());
+		db.setParameter(5, minfo.getDescription());
+		db.setParameter(6, minfo.getRoomId());
+		int n = db.write();
+		/* if insMeetQuery is successful */
+		if (n > 0) {
+			LinkedList<String> lis = minfo.getAttendee();
+			for (int i=0;i<lis.size();i++) {
+				db.setQuery(insAttendeeQuery);
+				db.setParameter(1, minfo.getMeetingId());
+				db.setParameter(2, (String) lis.get(i));
+				db.write();
+			}
+			bSuccess = true;
+		}
+		db.close();
+		
+		return bSuccess;		
+	}
 }

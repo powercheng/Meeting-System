@@ -18,17 +18,6 @@ public class Meeting {
 		this.attendee = new LinkedList<String>();
 	}
 	
-	public void readFromSql() {
-		Sql server = new Sql();
-		server.read();
-		
-	}
-	
-	public void writeToSql(){
-		Sql server = new Sql();
-		server.write();
-	}
-	
 	public String getMeetingId() {
 		return meetingId;
 	}

@@ -35,11 +35,11 @@ public class TestRun {
 			String query = "SELECT * FROM TB_EMPLOYEE WHERE employeeID = ? ";
 			Sql db = new Sql();
 			db.setQuery(query);			
-			db.setParameter(1, "bob099");
+			db.setParameter(1, "smith0001");
 			JSONArray arr = db.read();
 			for (int i=0;i<arr.size();i++) {
 				JSONObject rsObj = (JSONObject) arr.get(i);
-				String firstName = (String) rsObj.get("firstNAME");
+				String firstName = (String) rsObj.get("totalVACATIONDAY");
 				System.out.println(firstName);
 			}
 			db.close();  // make sure to call this method			
