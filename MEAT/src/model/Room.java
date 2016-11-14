@@ -111,7 +111,8 @@ public class Room {
 								+ "  FROM TB_MEETING WHERE meetDATE = ? AND roomID = ? "
 								+ " )"
 								+ " WHERE time(startTIME) between time(?) and time(?) or "
-								+ " 	  time(endTIME)   between time(?) and time(?) ";
+								+ " 	  time(endTIME)   between time(?) and time(?) or "
+								+ " 	  time(?)  between time(startTIME) and time(endTIME) "; //endTIME
 								/* basically we face problem if we use 1-12 time system without AM or PM*/
 			db.setQuery(infoQuery);
 			// fromTIME 1:53 -> 01:53 transform
@@ -124,6 +125,7 @@ public class Room {
 			db.setParameter(4, endTime);
 			db.setParameter(5, fromTime);
 			db.setParameter(6, endTime);
+			db.setParameter(7, endTime);
 						
 			JSONArray checkArr = db.read();	
 			
