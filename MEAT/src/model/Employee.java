@@ -106,6 +106,9 @@ public class Employee {
 			if (recArr.size() == 0) {
 				System.out.println("No such employee");
 			}
+			
+			db.close();
+			
 		} else {
 			System.out.println("employeeID is not passed");
 		}

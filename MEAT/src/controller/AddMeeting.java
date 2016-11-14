@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 
 import View.Messageout;
 import common.CommonUtil;
+import common.SysConfig;
 import model.Meeting;
 import model.Sql;
 
@@ -22,11 +23,11 @@ public class AddMeeting extends Command {
 	}
 
 	@Override
-	public void execute() {
+	public String execute() {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
 			System.out.println("No argumets for adding meeting command");
-			return;
+			return "failed";
 		}
 		for(int i = 0; i < command_array.size(); i++) {
 			JSONObject command_json = (JSONObject) command_array.get(i);
@@ -39,7 +40,7 @@ public class AddMeeting extends Command {
 						break;
 					} else {						
 						System.out.println("invalid date ("+value+") for adding meeting command");
-						return;
+						return SysConfig.fail;
 					}
 				case "start-time" :					
 					if(checkTimeValid(value)){
@@ -47,7 +48,7 @@ public class AddMeeting extends Command {
 						break;
 					} else {
 						System.out.println("invalid time("+value+") for adding meeting command");
-						return;
+						return SysConfig.fail;
 					}
 				case "end-time" :
 					if(checkTimeValid(value)){
@@ -55,7 +56,7 @@ public class AddMeeting extends Command {
 						break;
 					} else {
 						System.out.println("invalid time ("+value+") for adding meeting command");
-						return;
+						return SysConfig.fail;
 					}
 				case "room-id" :
 					if(checkRoomIdValid(value)){
@@ -63,7 +64,7 @@ public class AddMeeting extends Command {
 						break;
 					} else {
 						System.out.println("invalid room id ("+value+") for adding meeting command");
-						return;
+						return SysConfig.fail;
 					}
 				case "description" :					
 					if(checkStrLenValid(value)){
@@ -71,7 +72,7 @@ public class AddMeeting extends Command {
 						break;
 					} else {
 						System.out.println("description is too long for adding meeting command");
-						return;
+						return SysConfig.fail;
 					}
 				case "attendee" :					
 					if(checkEmpolyeeIdValid(value)){
@@ -79,26 +80,29 @@ public class AddMeeting extends Command {
 						break;
 					} else {
 						System.out.println("invalid empolyee id ("+value+") for adding meeting command");
-						return;
+						return SysConfig.fail;
 					}
 				default :
 					System.out.println("invalid arguments : " + name + "for adding meeting");
-					return;
+					return SysConfig.fail;
 			}			
 		}
-		if(checkMeetingArgument()){
-			
-			/* Databse writing */
-			/* meetingID generating and setting */
-			String meetingID = CommonUtil.createUUID(16);
+		
+		if(checkMeetingArgument()){			
+			/* Databse writing */			
+			String meetingID = CommonUtil.getNextMeetID();
 			meeting.setMeetingId(meetingID);
 			if (!insertMeetingInfo(this.meeting)) {
-				System.out.println("Add meeting is failed");
+				//System.out.println("Add meeting is failed");
+				return SysConfig.fail;
+			} else {
+				return SysConfig.success;
 			}
 			//viewprint();
 		} else {			
-			return;
-		}					
+			return SysConfig.fail;
+		}		
+		
 	}
 
 	private boolean checkMeetingArgument() {

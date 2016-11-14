@@ -2,16 +2,17 @@ package controller;
 
 import model.Vacation;
 import View.Messageout;
+import common.SysConfig;
 
 public class AddHoliday extends Command {
 	private Vacation[] vacations;
 	
 	@Override
-	public void execute() {
+	public String execute() {
 		// TODO Auto-generated method stub
 		
-		viewprint();
-		
+		//viewprint();
+		return SysConfig.success;
 		
 	}
 

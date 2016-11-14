@@ -75,11 +75,12 @@ public class Room {
 				setBuilding((String) rsObj.get("building"));
 				setFloor((String) rsObj.get("floor"));
 				setOccupancy((String) rsObj.get("occupancy"));				
-			}	
-			
+			}				
 			if (recArr.size() == 0) {
 				System.out.println("No such room");
-			}
+			}			
+			db.close();
+			
 		} else {
 			System.out.println("roomID is not passed");
 		}

@@ -28,7 +28,7 @@ public class Main {
 	public static boolean processInput(){		
 		System.out.println("input the file name which exist in the data folder or press Q for quit");
 		String input = in.nextLine();
-		String filePath = SysConfig.runningDir+"\\data\\"+input+ ".json";
+		String filePath = SysConfig.runningDir+"\\resource\\"+input+ ".json";
 		file = new File(filePath);
 		if(input.toLowerCase().equals("q") || file.isFile() && file.exists()){			
 			return true;

@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import View.Messageout;
+import common.SysConfig;
 
 public class CancelVacation extends Command {
 	
@@ -20,11 +21,11 @@ public class CancelVacation extends Command {
 	}
 	
 	@Override
-	public void execute() {
+	public String execute() {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argumets for canceling vacation command");
-			return;
+			System.out.println("No argumets for delete-vacation command");
+			return SysConfig.fail;
 		}
 		for(int i = 0; i < command_array.size(); i++) {
 			JSONObject command_json = (JSONObject) command_array.get(i);
@@ -36,22 +37,24 @@ public class CancelVacation extends Command {
 						vacation.setEmpolyeeId(value);
 						break;
 					} else {
-						System.out.println("invalid empolyee id("+value+") for adding meeting command");
-						return;
+						System.out.println("invalid empolyee id("+value+") for delete-vacation command");
+						return SysConfig.fail;
 					}
 				default :
-					System.out.println("invalid arguments : " + name + "for cancel vaction");
-					break;
+					System.out.println("invalid arguments : " + name + "for delete-vacation");					
+					return SysConfig.fail;
 			}			
 		}
 		
 		if ( vacation.getEmpolyeeId() != null ) {
 			if (!cancelVactionInfo(this.vacation)) {
-				System.out.println("Cancel vacation (empID : "+vacation.getEmpolyeeId()+") failed");
+				//System.out.println("delete-vacation : (empID : "+vacation.getEmpolyeeId()+") failed");
+				return SysConfig.fail;
 			}
 		}
 		
-		//viewprint();		
+		//viewprint();	
+		return SysConfig.success;
 	}
 	
 	public boolean cancelVactionInfo(Vacation vinfo) {

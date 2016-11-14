@@ -7,12 +7,13 @@ import java.util.Date;
 
 import View.Messageout;
 import model.Employee;
+import model.Meeting;
 import model.Room;
 
 public class Command {
 	
-	public void execute(){
-		
+	public String execute(){
+		return "";		
 	}
 	
 	
@@ -66,13 +67,26 @@ public class Command {
 		}
 	}
 	
+	public boolean checkMeetingIdValid(String meetingID){
+		/* if meetID (from DB) == null then no such meeting ID*/
+		Meeting mt = new Meeting();
+		mt.getMeetingInfo(meetingID);  // get and setting database information		
+		if (mt.getMeetingId() == null) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 	public boolean checkEmpolyeeIdValid(String employeeID){
-		Employee emp = new Employee();
-		emp.getPersonInfo(employeeID);  // get and setting database information
 		/* if employeeID (from DB) == null then no such employeeID*/
+		/* Just external attendee having only name not employeeID
+		Employee emp = new Employee();
+		emp.getPersonInfo(employeeID);  // get and setting database information		
 		if (emp.getEmployeeID() == null) {
 			return false;
 		}
+		*/
 		return true;
 	}
 	

@@ -3,6 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 public class Meeting {
 	private String meetingId;
 	private String date;
@@ -62,6 +65,47 @@ public class Meeting {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public void getMeetingInfo(String meetID) {
+		
+		if (meetID != null && meetID.length() > 0) {
+			
+			Sql db = new Sql();
+			String infoMeetQuery = "SELECT meetID, meetDATE, startTIME, endTIME, description, roomID"
+					+ " FROM TB_MEETING WHERE meetID = ? ";
+			db.setQuery(infoMeetQuery);
+			db.setParameter(1, meetID);
+			JSONArray recArr = db.read();		
+			for (int i=0; i<recArr.size(); i++) {
+				// In reality, every time just one record
+				JSONObject rsObj = (JSONObject) recArr.get(i);
+				/* Set personal information */
+				setMeetingId((String) rsObj.get("meetID"));
+				setDate((String) rsObj.get("meetDATE"));
+				setStartTime((String) rsObj.get("startTIME"));
+				setEndTime((String) rsObj.get("endTIME"));
+				setDescription((String) rsObj.get("description"));
+				setRoomId((String) rsObj.get("roomID"));
+			}	
+			
+			if (recArr.size() == 0) {
+				System.out.println("No such meeting scheduled");
+			}
+			
+			/* Attendees getting */
+			String infoAttendeeQuery = "SELECT meetID, employeeID FROM TB_ATTENDEE WHERE meetID = ? ";
+			db.setQuery(infoAttendeeQuery);
+			db.setParameter(1, meetID);
+			JSONArray attArr = db.read();
+			for (int i=0;i<attArr.size();i++) {
+				JSONObject rsObj = (JSONObject) attArr.get(i);
+				this.attendee.add((String) rsObj.get("employeeID"));
+			}			
+			db.close();
+		} else {
+			System.out.println("meetingID is not passed");
+		}
 	}
 
 

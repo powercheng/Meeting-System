@@ -20,7 +20,8 @@ public class TestRun {
 	public static void main(String[] args) {
 		
 		TestRun run = new TestRun();
-		run.sqlSelectTest();
+		run.testMID();
+		//run.sqlSelectTest();
 		//run.sqlInsertTest();
 		//run.testUUID();	
 	}
@@ -78,6 +79,15 @@ public class TestRun {
 		
 		String uid = CommonUtil.createUUID(10);
 		System.out.println(uid);
+	}
+	
+	/**
+	 *  To make meeting ID
+	 */	
+	public void testMID() {
+		
+		String id = CommonUtil.getNextMeetID();
+		System.out.println(id);
 	}
 	
 	

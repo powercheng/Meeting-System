@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import View.Messageout;
+import common.SysConfig;
 
 public class CancelMeeting extends Command {
 	
@@ -20,11 +21,11 @@ public class CancelMeeting extends Command {
 	}
 	
 	@Override
-	public void execute() {
+	public String execute() {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argumets for cancel meeting command");
-			return;
+			System.out.println("No argumets for delete-meeting");
+			return SysConfig.fail;
 		}
 		for(int i = 0; i < command_array.size(); i++) {
 			JSONObject command_json = (JSONObject) command_array.get(i);
@@ -35,18 +36,22 @@ public class CancelMeeting extends Command {
 					meeting.setMeetingId(value);
 					break;							
 				default :
-					System.out.println("invalid arguments : " + name + "for adding meeting");
-					break;
+					System.out.println("invalid arguments : " + name + "for delete-meeting");
+					return SysConfig.fail;
 			}			
 		}
 		
 		if ( meeting.getMeetingId() != null ) {
 			if (!cancelMeetingInfo(this.meeting)) {
-				System.out.println("Cancel meeting (meetID : "+meeting.getMeetingId()+") failed");
+				//System.out.println("delete-meeting : (meetID - "+meeting.getMeetingId()+") failed");
+				return SysConfig.fail;
+			} else {
+				return SysConfig.success;
 			}
+		} else {
+			return SysConfig.fail;
 		}
-		
-		//viewprint();		
+		//viewprint();
 	}
 	
 	public boolean cancelMeetingInfo(Meeting minfo) {

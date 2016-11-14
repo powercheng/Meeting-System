@@ -32,6 +32,12 @@ public class CommandFactory {
 						case "add-meeting" :
 							command = new AddMeeting(command_array);							
 							break;
+						case "edit-meeting-details" :
+							command = new EditMeeting(command_array);							
+							break;
+						case "edit-meeting-remove-attendees" :
+							command = new EditMeeting(command_array, "REMOVE"); // Attendee option = remove							
+							break;
 						case "delete-meeting" :
 							command = new CancelMeeting(command_array);							
 							break;
@@ -42,11 +48,18 @@ public class CommandFactory {
 						case "delete-vacation" :
 							command = new CancelVacation(command_array);							
 							break;
+						
+						case "print-schedule-room" :
+							command = new PrintScheduleRoom(command_array);							
+							break;
+							
 						default :
-							System.out.println("invalid command : " + name);
+							System.out.println(name + " : invalid command");
 					}
+					/* execute */
 					if(command != null) {
-						command.execute();
+						String result = command.execute();
+						System.out.println(name + " : " + result);
 					}					
 				}
 			}
