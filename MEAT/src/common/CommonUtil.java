@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import org.json.simple.JSONArray;
@@ -22,6 +26,24 @@ public class CommonUtil {
 			return s.trim();
 	}
 		
+	public static String dateFormat(String dateStr, String fromFormat, String toFormat) {
+		
+		DateFormat fm_from = new SimpleDateFormat(fromFormat); 
+		SimpleDateFormat fm_to = new SimpleDateFormat(toFormat);
+		String formattedDate = null;		
+		Date srcDate;
+		
+		try {
+			srcDate = (Date) fm_from.parse(dateStr);
+			formattedDate = fm_to.format(srcDate);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		return formattedDate;		
+	}
+	
 	public static String createUUID(int cutindex)
 	{	
 		UUID uuid = UUID.randomUUID();
@@ -75,7 +97,7 @@ public class CommonUtil {
 		
 	}
 	
-	public void saveJsonFile(String fileName, JSONObject jsonObj) {
+	public static boolean saveFile(String fileName, JSONObject obj) {
 		
 		File file = new File(SysConfig.JsonOutDirectory + fileName);
 		
@@ -83,13 +105,16 @@ public class CommonUtil {
 			if (file.exists()) file.delete();  // previous one delete.
 			
 			FileWriter fw = new FileWriter(file);
-			fw.write(jsonObj.toJSONString());
+			fw.write(obj.toJSONString());
 			fw.flush();
 			fw.close();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
+		
+		return true;
 
 	}
 }

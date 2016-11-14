@@ -9,6 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import View.Messageout;
+import common.CommonUtil;
 import common.SysConfig;
 
 public class PrintScheduleRoom extends Command {
@@ -17,7 +18,6 @@ public class PrintScheduleRoom extends Command {
 	private String srchEndDay;
 	private String outfileName;
 	
-	
 	private JSONArray command_array;
 	
 	public PrintScheduleRoom(JSONArray command_array) {
@@ -25,7 +25,20 @@ public class PrintScheduleRoom extends Command {
 		this.command_array = command_array;		
 		this.room = new Room();
 	}
+/*	
+	public PrintScheduleRoom() {		
+		this.room = new Room();
+	}
 	
+	public static void main(String[] args) {
+		PrintScheduleRoom test = new PrintScheduleRoom();
+		test.room.getRoomInfo("3A66");
+		test.setSrchStartDay("01012016");
+		test.setSrchEndDay("01012017");
+		test.setOutfileName("test.txt");
+		test.printRoomSchedule();
+	}
+*/	
 	@Override
 	public String execute() {		
 		// TODO Auto-generated method stub	
@@ -69,23 +82,56 @@ public class PrintScheduleRoom extends Command {
 			return SysConfig.fail;
 		}
 		
+		if (!printRoomSchedule()) {
+			return SysConfig.fail;
+		}
 		
-		return SysConfig.success;
-		
+		return SysConfig.success;		
 	}
 	
-	public JSONObject getSearchResult() {
+	@SuppressWarnings("unchecked")
+	public boolean printRoomSchedule() {
+		
+		JSONObject rtnObj = new JSONObject();
 		Sql db = new Sql();
-		String meetDetailQuery = "SELECT meetID as meeting-id, meetDATE as date, startTIME as start-time, endTime as end-time, "
-				+ "roomID AS room-id, description FROM TB_MEETING WHERE roomID = ? ";
-	}
-	
-	public boolean printOutFile() {
+		String meetDetailQuery = "SELECT meetID as 'meeting-id', meetDATE as date, "
+				+ " startTIME as 'start-time', endTime as 'end-time', "
+				+ " roomID as 'room-id', description FROM TB_MEETING WHERE roomID = ? AND "
+				+ " substr(meetDATE,5,4)||substr(meetDATE,0,3)||substr(meetDATE,3,2) between ? and ? ";
+		db.setQuery(meetDetailQuery);
+		db.setParameter(1, this.room.getRoomID());
+		db.setParameter(2, CommonUtil.dateFormat(getSrchStartDay(),"MMddyyyy","yyyyMMdd"));
+		db.setParameter(3, CommonUtil.dateFormat(getSrchEndDay(),"MMddyyyy","yyyyMMdd"));
 		
-		
-		return true;
-	}
+		JSONArray meetArr = db.read();
+		JSONArray mergedArr = new JSONArray();
 	
+		for (int i=0; i<meetArr.size(); i++) {
+			
+			JSONObject rsetObj = (JSONObject) meetArr.get(i);		
+			String meetID = (String) rsetObj.get("meeting-id");
+			/*Attendees find*/
+			String meetAttendeeQuery = "SELECT TA.employeeID as 'employee-id', "
+					+ "ifnull(TB.firstNAME||' '||TB.lastNAME,'') as 'name' "
+					+ " FROM TB_ATTENDEE TA LEFT JOIN TB_EMPLOYEE TB ON TA.employeeID = TB.employeeID "
+					+ " WHERE TA.meetID = ? ";
+			db.setQuery(meetAttendeeQuery);
+			db.setParameter(1, meetID);
+			JSONArray attendeeArr = db.read();
+			
+			/* Put the meeting detail json object's tail */
+			rsetObj.put("attendees", attendeeArr);			
+			/* Put the merged one into new mergedArr*/
+			mergedArr.add(rsetObj);
+		}
+		rtnObj.put("events", mergedArr);
+		db.close();
+		
+		/* Save json object content into file */
+		return CommonUtil.saveFile(getOutfileName(), rtnObj);
+		
+	}
+		
 	public boolean checkCondition() {
 		
 		/* Necessary information check */
@@ -103,7 +149,7 @@ public class PrintScheduleRoom extends Command {
 		}
 		if (getOutfileName() == null) {
 			System.out.println("No output-file for print-schedule-room");
-			v
+			return false;
 		}		
 		
 		return true;

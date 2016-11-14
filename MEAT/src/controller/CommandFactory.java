@@ -18,10 +18,12 @@ public class CommandFactory {
 		// TODO Auto-generated method stub
 		if (CommonUtil.nullTrim(jsonData).length()> 0) {
 			JSONParser parser = new JSONParser();
+			
 			try {							
 				JSONArray jsonArray = (JSONArray) parser.parse(jsonData);					
 				JSONObject jsonObj = (JSONObject) jsonArray.get(0);
 				JSONArray commands_array = (JSONArray) jsonObj.get("commands");
+				
 				for(int i = 0; i < commands_array.size(); i++) {
 					JSONObject command_json = (JSONObject) commands_array.get(i);
 					String name = (String) command_json.get("name");
@@ -45,14 +47,23 @@ public class CommandFactory {
 						case "add-vacation" :
 							command = new AddVacation(command_array);							
 							break;
+							
 						case "delete-vacation" :
 							command = new CancelVacation(command_array);							
+							break;
+						
+						case "print-schedule-all" :
+							command = new PrintScheduleAll(command_array);							
 							break;
 						
 						case "print-schedule-room" :
 							command = new PrintScheduleRoom(command_array);							
 							break;
-							
+						
+						case "print-schedule-employee" :
+							command = new PrintScheduleEmployee(command_array);							
+							break;
+						
 						default :
 							System.out.println(name + " : invalid command");
 					}

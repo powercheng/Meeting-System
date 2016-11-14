@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 
 import common.CommonUtil;
 import common.SysConfig;
+import model.Room;
 import model.Sql;
 
 public class TestRun {
@@ -20,10 +21,11 @@ public class TestRun {
 	public static void main(String[] args) {
 		
 		TestRun run = new TestRun();
-		run.testMID();
+		//run.testMID();
 		//run.sqlSelectTest();
 		//run.sqlInsertTest();
-		//run.testUUID();	
+		//run.testUUID();
+		run.testRun();
 	}
 	
 	/**
@@ -36,13 +38,14 @@ public class TestRun {
 			String query = "SELECT * FROM TB_EMPLOYEE WHERE employeeID = ? ";
 			Sql db = new Sql();
 			db.setQuery(query);			
-			db.setParameter(1, "smith0001");
+			db.setParameter(1, "bob099");
 			JSONArray arr = db.read();
 			for (int i=0;i<arr.size();i++) {
 				JSONObject rsObj = (JSONObject) arr.get(i);
 				String firstName = (String) rsObj.get("totalVACATIONDAY");
 				System.out.println(firstName);
 			}
+			System.out.println(arr.toString());
 			db.close();  // make sure to call this method			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -88,6 +91,18 @@ public class TestRun {
 		
 		String id = CommonUtil.getNextMeetID();
 		System.out.println(id);
+	}
+	
+	public void testRun() {
+		
+		Room rm = new Room();
+		rm.setRoomID("3A66");
+		boolean chk = rm.checkRoomAvailablity("11242016", "1:33", "1:54");
+		if (chk)
+			System.out.println("ok");
+		else 
+			System.out.println("noko");
+		
 	}
 	
 	

@@ -13,45 +13,50 @@ import View.Messageout;
 import common.CommonUtil;
 import common.SysConfig;
 
-public class PrintScheduleAll extends Command {
+public class PrintScheduleEmployee extends Command {
 	
+	private Employee employee;
 	private String srchStartDay;
 	private String srchEndDay;
 	private String outfileName;
 	
 	private JSONArray command_array;
 	
-	public PrintScheduleAll(JSONArray command_array) {
+	public PrintScheduleEmployee(JSONArray command_array) {
 		super();
-		this.command_array = command_array;	
+		this.command_array = command_array;		
+		this.employee = new Employee();
 	}
 /*	
-	public PrintScheduleAll() {	
-		
+	public PrintScheduleEmployee() {		
+		this.employee = new Employee();
 	}
 	
 	public static void main(String[] args) {
-		PrintScheduleAll test = new PrintScheduleAll();	
+		PrintScheduleEmployee test = new PrintScheduleEmployee();
+		test.employee.getPersonInfo("bob099");
 		test.setSrchStartDay("01012016");
 		test.setSrchEndDay("01012017");
 		test.setOutfileName("test.txt");
-		test.printAllCompanySchedule();
+		test.printEmployeeSchedule();
 	}
-*/
+*/	
 	@Override
 	public String execute() {		
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argumets for print-schedule-all");
+			System.out.println("No argumets for print-schedule-employee");
 			return SysConfig.fail;
 		}
+		
 		for(int i = 0; i < command_array.size(); i++) {
-			
 			JSONObject command_json = (JSONObject) command_array.get(i);
 			String name = (String) command_json.get("name");
 			String value = (String) command_json.get("value");
-			
-			switch(name) {			
+			switch(name) {
+				case "employee-id" :
+					employee.getPersonInfo(value);
+					break;	
 				case "start-date" :
 					if(checkDateValid(value)){
 						setSrchStartDay(value);
@@ -68,9 +73,10 @@ public class PrintScheduleAll extends Command {
 					}
 				case "output-file" :
 					setOutfileName(value);
-					break;					
+					break;
+					
 				default :
-					System.out.println("invalid arguments : " + name + "for print-schedule-all");
+					System.out.println("invalid arguments : " + name + "for print-schedule-employee");
 					return SysConfig.fail;
 			}			
 		}
@@ -79,7 +85,7 @@ public class PrintScheduleAll extends Command {
 			return SysConfig.fail;
 		}
 		
-		if (!printAllCompanySchedule()) {
+		if (!printEmployeeSchedule()) {
 			return SysConfig.fail;
 		}
 		
@@ -87,21 +93,25 @@ public class PrintScheduleAll extends Command {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean printAllCompanySchedule() {
+	public boolean printEmployeeSchedule() {
 		
 		JSONObject rtnObj = new JSONObject();
 		Sql db = new Sql();
-		String meetDetailQuery = "SELECT meetID as 'meeting-id', meetDATE as date, "
-				+ " startTIME as 'start-time', endTime as 'end-time', "
-				+ " roomID as 'room-id', description FROM TB_MEETING WHERE  "
-				+ " substr(meetDATE,5,4)||substr(meetDATE,0,3)||substr(meetDATE,3,2) between ? and ? ";
-		db.setQuery(meetDetailQuery);		
-		db.setParameter(1, CommonUtil.dateFormat(getSrchStartDay(),"MMddyyyy","yyyyMMdd"));
-		db.setParameter(2, CommonUtil.dateFormat(getSrchEndDay(),"MMddyyyy","yyyyMMdd"));
+		String meetDetailQuery = "SELECT TA.meetID as 'meeting-id', TA.meetDATE as date, "
+				+ " TA.startTIME as 'start-time', TA.endTime as 'end-time', "
+				+ " TA.roomID as 'room-id', TA.description "
+				+ " FROM TB_MEETING TA INNER JOIN TB_ATTENDEE TB ON TA.meetID = TB.meetID "
+				+ " WHERE TB.employeeID = ? and "
+				+ " substr(TA.meetDATE,5,4)||substr(TA.meetDATE,0,3)||substr(TA.meetDATE,3,2) between ? and ? ";
+		
+		db.setQuery(meetDetailQuery);
+		db.setParameter(1, this.employee.getEmployeeID());
+		db.setParameter(2, CommonUtil.dateFormat(getSrchStartDay(),"MMddyyyy","yyyyMMdd"));
+		db.setParameter(3, CommonUtil.dateFormat(getSrchEndDay(),"MMddyyyy","yyyyMMdd"));
 		
 		JSONArray meetArr = db.read();
 		JSONArray mergedArr = new JSONArray();
-		
+	
 		for (int i=0; i<meetArr.size(); i++) {
 			
 			JSONObject rsetObj = (JSONObject) meetArr.get(i);		
@@ -130,14 +140,21 @@ public class PrintScheduleAll extends Command {
 		
 	public boolean checkCondition() {
 		
-		if (getSrchStartDay() == null) {  // NULL ALLOWED
-			setSrchStartDay(SysConfig.minDay);
+		/* Necessary information check */
+		if (employee.getEmployeeID() == null) {
+			System.out.println("No employeeID for print-schedule-employee");
+			return false;
 		}
-		if (getSrchEndDay() == null) { // NULL ALLOWD
-			setSrchStartDay(SysConfig.maxDay);
+		if (getSrchStartDay() == null) {
+			System.out.println("No start-date for print-schedule-employee");
+			return false;
+		}
+		if (getSrchEndDay() == null) {
+			System.out.println("No end-date for print-schedule-employee");
+			return false;
 		}
 		if (getOutfileName() == null) {
-			System.out.println("No output-file for print-schedule-all");
+			System.out.println("No output-file for print-schedule-employee");
 			return false;
 		}		
 		
@@ -152,6 +169,14 @@ public class PrintScheduleAll extends Command {
 		this.srchStartDay = srchStartDay;
 	}
 
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+	
 	public String getSrchEndDay() {
 		return srchEndDay;
 	}

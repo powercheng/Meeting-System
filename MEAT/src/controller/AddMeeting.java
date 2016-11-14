@@ -9,6 +9,7 @@ import View.Messageout;
 import common.CommonUtil;
 import common.SysConfig;
 import model.Meeting;
+import model.Room;
 import model.Sql;
 
 
@@ -89,6 +90,11 @@ public class AddMeeting extends Command {
 		}
 		
 		if(checkMeetingArgument()){			
+			/* check room and employee schedule */
+			if (!checkTimeConflict()) {
+				return SysConfig.fail;
+			}
+			
 			/* Databse writing */			
 			String meetingID = CommonUtil.getNextMeetID();
 			meeting.setMeetingId(meetingID);
@@ -112,7 +118,8 @@ public class AddMeeting extends Command {
 		   meeting.getDescription() == null && meeting.getDescription().isEmpty() ||
 		   meeting.getClass() == null && meeting.getDate().isEmpty() ||
 		   meeting.getStartTime() == null && meeting.getAttendee().isEmpty() ||
-		   meeting.getEndTime() == null && meeting.getEndTime().isEmpty()){
+		   meeting.getEndTime() == null && meeting.getEndTime().isEmpty())
+		{
 			System.out.println("Missing argumets for adding meeting command");
 			return false;
 		} else if(checkTimeConflict(meeting.getStartTime(),meeting.getEndTime())){
@@ -121,6 +128,22 @@ public class AddMeeting extends Command {
 		} else {
 			return true;
 		}
+		
+	}
+	
+	public boolean checkTimeConflict() {
+		
+		// 1. first check room availability
+		Room room = new Room();
+		room.setRoomID(meeting.getRoomId());
+		boolean check = room.checkRoomAvailablity(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
+		if (!check) System.out.println("room("+meeting.getRoomId()+") is not available");
+		
+		// 2. check attendee's meeting schedule
+		
+		// 3. check attendee's vacation schedule
+		
+		return check;
 		
 	}
 	

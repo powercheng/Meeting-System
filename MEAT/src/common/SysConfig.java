@@ -19,5 +19,8 @@ public class SysConfig {
 	
 	public static String fail = "failed";
 	public static String success = "success";
+	
+	public static String maxDay = "12319999";
+	public static String minDay = "01011900";
 
 }
