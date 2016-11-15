@@ -109,7 +109,8 @@ public class Command {
 		int hour2 = Integer.parseInt(str2.substring(0, str2.length()-3));
 		int min1 = Integer.parseInt(str1.substring(str1.length()-2, str1.length()));
 		int min2 = Integer.parseInt(str2.substring(str2.length()-2, str2.length()));
-		if(hour2 > hour1){
+		
+		if(hour2 > hour1){		
 			return true;
 		} else if(hour1 == hour2){
 			if(min2 > min1){

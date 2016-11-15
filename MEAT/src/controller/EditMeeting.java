@@ -1,6 +1,8 @@
 package controller;
 
+import model.Employee;
 import model.Meeting;
+import model.Room;
 import model.Sql;
 
 import java.util.LinkedList;
@@ -17,6 +19,11 @@ public class EditMeeting extends Command {
 	private Meeting meeting;
 	private JSONArray command_array;
 	private String atteedeeOption;  //ADD or REMOVE 
+	
+	/* Changing category tracking */
+	boolean timeChanged = false;
+	boolean roomChanged = false;
+	boolean attendeeChanged = false;
 	
 	public EditMeeting(JSONArray command_array) {
 		super();
@@ -56,6 +63,7 @@ public class EditMeeting extends Command {
 				case "date" :
 					if(checkDateValid(value)){
 						meeting.setDate(value);  // changing current date
+						timeChanged = true;
 						break;
 					} else {						
 						System.out.println("invalid date ("+value+") for edit-meeting command");
@@ -64,6 +72,7 @@ public class EditMeeting extends Command {
 				case "start-time" :					
 					if(checkTimeValid(value)){
 						meeting.setStartTime(value);  // changing start time
+						timeChanged = true;
 						break;
 					} else {
 						System.out.println("invalid time("+value+") for edit-meeting command");
@@ -72,6 +81,7 @@ public class EditMeeting extends Command {
 				case "end-time" :
 					if(checkTimeValid(value)){
 						meeting.setEndTime(value);   // changing end time
+						timeChanged = true;
 						break;
 					} else {
 						System.out.println("invalid time ("+value+") for edit-meeting command");
@@ -79,7 +89,8 @@ public class EditMeeting extends Command {
 					}
 				case "room-id" :
 					if(checkRoomIdValid(value)){
-						meeting.setRoomId(value);		// changing room id			
+						meeting.setRoomId(value);		// changing room id		
+						roomChanged = true;
 						break;
 					} else {
 						System.out.println("invalid room id ("+value+") for edit-meeting command");
@@ -94,8 +105,7 @@ public class EditMeeting extends Command {
 						return SysConfig.fail;
 					}
 				case "attendee" :					
-					if(checkEmpolyeeIdValid(value)){	
-						
+					if(checkEmpolyeeIdValid(value)) {
 						if (this.atteedeeOption != null) {
 							// Only attendee add option 
 							if (this.atteedeeOption.equals("ADD")){								
@@ -116,7 +126,8 @@ public class EditMeeting extends Command {
 						/* without attendee option, just add attendee*/	
 						} else {							
 							meeting.addAttendee(value);
-						}						
+						}		
+						attendeeChanged = true;
 						break;
 					} else {
 						System.out.println("invalid empolyee id ("+value+") for edit-meeting");
@@ -128,7 +139,13 @@ public class EditMeeting extends Command {
 			}			
 		}
 		
-		if(meeting.getMeetingId() != null){			
+		if(meeting.getMeetingId() != null){		
+			
+			/* check room and employee schedule */
+			if (!ableToAttendWithoutConflict()) {
+				return SysConfig.fail;
+			}
+			
 			/* Databse writing */		
 			if (!updateMeetingInfo(this.meeting)) {
 				//System.out.println("edit-meeting : meeting ID("+meeting.getMeetingId()+") is failed");
@@ -140,6 +157,46 @@ public class EditMeeting extends Command {
 		} else {			
 			return SysConfig.fail;
 		}					
+	}
+	
+	public boolean ableToAttendWithoutConflict() {
+		
+		boolean isAvailable = false;
+		
+		// 1. first check room available
+		if (timeChanged || roomChanged) {			
+			Room room = new Room();
+			room.setRoomID(meeting.getRoomId());
+			isAvailable = room.roomAvailable(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());		
+			if (!isAvailable) {
+				System.out.println("room("+meeting.getRoomId()+") conflicts scheduled meeting");
+				return false;
+			}
+		}		
+		// 2. check all attendees' meeting and vacation date
+		if (timeChanged || attendeeChanged) {
+			
+			LinkedList<String> attendList = meeting.getAttendee();
+			
+			for (int i=0;i<attendList.size();i++) {				
+				Employee emp = new Employee();
+				emp.setEmployeeID((String) attendList.get(i));	
+				/*check meeting*/
+				isAvailable = emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
+				if (!isAvailable) {
+					System.out.println("employeeID("+emp.getEmployeeID()+") conflicts with scheduled meeting");
+					return false;
+				}				
+				/*check vacation*/
+				isAvailable = emp.checkAvailableWithVacation(meeting.getDate());
+				if (!isAvailable) {
+					System.out.println("employeeID("+emp.getEmployeeID()+") conflicts with scheduled vacation");
+					return false;
+				}
+			}
+		}		
+		return true;
+		
 	}
 
 	public boolean updateMeetingInfo(Meeting minfo) {

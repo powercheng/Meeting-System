@@ -8,6 +8,7 @@ import org.json.simple.JSONObject;
 import View.Messageout;
 import common.CommonUtil;
 import common.SysConfig;
+import model.Employee;
 import model.Meeting;
 import model.Room;
 import model.Sql;
@@ -89,13 +90,12 @@ public class AddMeeting extends Command {
 			}			
 		}
 		
-		if(checkMeetingArgument()){			
+		if(checkMeetingArgument()) {			
 			/* check room and employee schedule */
-			if (!checkTimeConflict()) {
+			if (!ableToAttendWithoutConflict()) {
 				return SysConfig.fail;
-			}
-			
-			/* Databse writing */			
+			}			
+			/* Database saving */			
 			String meetingID = CommonUtil.getNextMeetID();
 			meeting.setMeetingId(meetingID);
 			if (!insertMeetingInfo(this.meeting)) {
@@ -122,7 +122,9 @@ public class AddMeeting extends Command {
 		{
 			System.out.println("Missing argumets for adding meeting command");
 			return false;
-		} else if(checkTimeConflict(meeting.getStartTime(),meeting.getEndTime())){
+		} else if(!checkTimeConflict(meeting.getStartTime(),meeting.getEndTime())){
+		//	System.out.println(meeting.getStartTime());
+		//	System.out.println(meeting.getEndTime());
 			System.out.println("end time before start time");
 			return false;
 		} else {
@@ -131,19 +133,43 @@ public class AddMeeting extends Command {
 		
 	}
 	
-	public boolean checkTimeConflict() {
+	public boolean ableToAttendWithoutConflict() {
 		
-		// 1. first check room availability
+		// 1. first check room available
 		Room room = new Room();
 		room.setRoomID(meeting.getRoomId());
-		boolean check = room.checkRoomAvailablity(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
-		if (!check) System.out.println("room("+meeting.getRoomId()+") is not available");
 		
-		// 2. check attendee's meeting schedule
+		boolean isAvailable = room.roomAvailable(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
 		
-		// 3. check attendee's vacation schedule
+		if (!isAvailable) {
+			System.out.println("room("+meeting.getRoomId()+") conflicts scheduled meeting");
+			return false;
+		}
 		
-		return check;
+		// 2. check all attendees' meeting and vacation date
+		LinkedList<String> attendList = meeting.getAttendee();
+		
+		for (int i=0;i<attendList.size();i++) {
+			
+			Employee emp = new Employee();
+			emp.setEmployeeID((String) attendList.get(i));			
+
+			/*check meeting*/
+			isAvailable = emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
+			if (!isAvailable) {
+				System.out.println("employeeID("+emp.getEmployeeID()+") conflicts with scheduled meeting");
+				return false;
+			}
+			
+			/*check vacation*/
+			isAvailable = emp.checkAvailableWithVacation(meeting.getDate());
+			if (!isAvailable) {
+				System.out.println("employeeID("+emp.getEmployeeID()+") conflicts with scheduled vacation");
+				return false;
+			}
+		}
+		
+		return true;
 		
 	}
 	
@@ -168,11 +194,11 @@ public class AddMeeting extends Command {
 		int n = db.write();
 		/* if insMeetQuery is successful */
 		if (n > 0) {
-			LinkedList<String> lis = minfo.getAttendee();
-			for (int i=0;i<lis.size();i++) {
+			LinkedList<String> attendList = minfo.getAttendee();
+			for (int i=0;i<attendList.size();i++) {
 				db.setQuery(insAttendeeQuery);
 				db.setParameter(1, minfo.getMeetingId());
-				db.setParameter(2, (String) lis.get(i));
+				db.setParameter(2, (String) attendList.get(i));
 				db.write();
 			}
 			bSuccess = true;

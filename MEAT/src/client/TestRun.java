@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 
 import common.CommonUtil;
 import common.SysConfig;
+import model.Employee;
 import model.Room;
 import model.Sql;
 
@@ -95,9 +96,9 @@ public class TestRun {
 	
 	public void testRun() {
 		
-		Room rm = new Room();
-		rm.setRoomID("3A66");
-		boolean chk = rm.checkRoomAvailablity("11242016", "1:33", "1:54");
+		Employee em = new Employee();
+		em.setEmployeeID("bob099");
+		boolean chk = em.checkAvailableWithVacation("11292016");
 		if (chk)
 			System.out.println("ok");
 		else 

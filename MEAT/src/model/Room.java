@@ -6,9 +6,7 @@ import org.json.simple.JSONObject;
 import controller.Command;
 
 public class Room {
-	
-	private Meeting[] meeting;
-	
+		
 	private String roomID;
 	private String building;
 	private String floor;
@@ -17,14 +15,6 @@ public class Room {
 	public Room() {
 		super();
 		// TODO Auto-generated constructor stub
-	}
-
-	public Meeting[] getMeeting() {
-		return meeting;
-	}
-
-	public void setMeeting(Meeting[] meeting) {
-		this.meeting = meeting;
 	}
 
 	public String getBuilding() {
@@ -95,9 +85,14 @@ public class Room {
 	 * @param endTime   (HH24:MI)
 	 * @return
 	 */
-	public boolean checkRoomAvailablity(String meetDate, String fromTime, String endTime) {
+	public boolean roomAvailable(String meetDate, String fromTime, String endTime) {
 		
 		Command cmd = new Command();
+		
+		if (getRoomID() == null) {
+			System.out.println("Room ID is not set");
+			return false;
+		}
 		
 		if (cmd.checkDateValid(meetDate) && fromTime != null && endTime != null) 
 		{			
@@ -134,7 +129,8 @@ public class Room {
 			if (checkArr.size() > 0) return false;  // already scheduled
 				
 		} else {
-			System.out.println("Date and Time are not valid");			
+			System.out.println("Date and Time are not valid");	
+			return false;
 		}
 		
 		return true;

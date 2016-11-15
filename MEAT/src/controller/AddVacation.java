@@ -1,8 +1,12 @@
 package controller;
 
+import model.Employee;
 import model.Meeting;
+import model.Room;
 import model.Sql;
 import model.Vacation;
+
+import java.util.LinkedList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -65,13 +69,19 @@ public class AddVacation extends Command {
 			}			
 		}
 		
-		if ( vacation.getEmpolyeeId() != null ) {
+		if ( vacation.getEmpolyeeId() != null ) {			
+			/* check employee meeting schedule */
+			if (!ableVacationWithoutConflict()) {
+				return SysConfig.fail;
+			}
+					
 			if (!addVactionInfo(this.vacation)) {
 				//System.out.println("add-vacation (empID : "+vacation.getEmpolyeeId()+") failed");
 				return SysConfig.fail;
 			} else {
 				return SysConfig.success;
 			}
+			
 		} else {
 			return SysConfig.fail;
 		}
@@ -80,6 +90,23 @@ public class AddVacation extends Command {
 		
 	}
 	
+	public boolean ableVacationWithoutConflict() {
+		
+		// Check if conflict with meeting schedules
+		Employee emp = new Employee();
+		emp.setEmployeeID(vacation.getEmpolyeeId());
+		
+		boolean isAvailable = emp.checkAvailableWithMeeting(vacation.getStartDate(), vacation.getEndDate());
+		
+		if (!isAvailable) {
+			System.out.println("employee("+vacation.getEmpolyeeId()+")'s vacation conflicts scheduled meeting");
+			return false;
+		}		
+		
+		return true;
+		
+	}
+
 	public boolean addVactionInfo(Vacation vinfo) {
 		
 		boolean bSuccess = false;
