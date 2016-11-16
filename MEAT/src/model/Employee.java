@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 
 import common.CommonUtil;
 import common.SysConfig;
+import common.TimeConflictException;
 import controller.Command;
 
 public class Employee {
@@ -104,21 +105,20 @@ public class Employee {
 			System.out.println("employeeID is not passed");
 		}
 	}
-	
+		
 	/**
 	 * Check if employee conflicts with scheduled meeting for another meeting time 
-	 * @param meetDate  (MMDDYYYY)
+	  * @param meetDate  (MMDDYYYY)
 	 * @param fromTime  (HH24:MI)
 	 * @param endTime   (HH24:MI)
-	 * @return
-	 */	
-	public boolean checkAvailableWithMeeting(String meetDate, String fromTime, String endTime)  {
+	 * @throws TimeConflictException
+	 */
+	public void checkAvailableWithMeeting(String meetDate, String fromTime, String endTime) throws TimeConflictException  {
 		
 		Command cmd = new Command();
 		
 		if (getEmployeeID() == null) {
-			System.out.println("Employee ID is not set");
-			return false;
+			throw new TimeConflictException("Employee ID is not set");
 		}
 		
 		if (cmd.checkDateValid(meetDate) && fromTime != null && endTime != null) 
@@ -154,29 +154,29 @@ public class Employee {
 			
 			db.close();
 		//	System.out.println(checkArr.size());
-			if (checkArr.size() > 0) return false;  // already scheduled (conflicted)
+			if (checkArr.size() > 0) {
+				// already scheduled (conflicted)
+				throw new TimeConflictException("Employee ID("+getEmployeeID()+") already has a meeting at the same time");  
+			}
 				
 		} else {
-			System.out.println("Date and Time are not valid");	
-			return false;
+			throw new TimeConflictException("Date and Time are not valid");				
 		}
 		
-		return true;
 	}
 	
 	/**
 	 * Check if employee conflicts with scheduled meeting for new vacation time
 	 * @param vacationStartDate  (MMDDYYYY)
 	 * @param vacationEndDate    (MMDDYYYY)
-	 * @return 
+	 * @throws TimeConflictException
 	 */	
-	public boolean checkAvailableWithMeeting(String vacationStartDate, String vacationEndDate)  {
+	public void checkAvailableWithMeeting(String vacationStartDate, String vacationEndDate) throws TimeConflictException  {
 		
 		Command cmd = new Command();
 		
 		if (getEmployeeID() == null) {
-			System.out.println("Employee ID is not set");
-			return false;
+			throw new TimeConflictException("Employee ID is not set");
 		}
 		
 		if (cmd.checkDateValid(vacationStartDate) && cmd.checkDateValid(vacationEndDate)) 
@@ -203,28 +203,26 @@ public class Employee {
 			
 			db.close();
 		//	System.out.println(checkArr.size());
-			if (checkArr.size() > 0) return false;  // already scheduled (conflicted)
+			if (checkArr.size() > 0) {
+				throw new TimeConflictException("Employee ID("+getEmployeeID()+") has a meeting at the same day for a vacation."); 
+			}
 				
 		} else {
-			System.out.println("Date and Time are not valid");	
-			return false;
-		}
-		
-		return true;
+			throw new TimeConflictException("Date and Time are not valid");	
+		}		
 	}
 	
 	/**
 	 * Check if employee conflicts with scheduled vacation for new meeting date 
 	 * @param meetDate  (MMDDYYYY)
-	 * @return
+	 * @throws TimeConflictException
 	 */	
-	public boolean checkAvailableWithVacation(String meetDate)  {
+	public void checkAvailableWithVacation(String meetDate) throws TimeConflictException {
 		
 		Command cmd = new Command();
 		
 		if (getEmployeeID() == null) {
-			System.out.println("Employee ID is not set");
-			return false;
+			throw new TimeConflictException("Employee ID is not set");
 		}
 		
 		if (cmd.checkDateValid(meetDate)) 
@@ -244,13 +242,13 @@ public class Employee {
 			
 			db.close();
 		//	System.out.println(checkArr.size());
-			if (checkArr.size() > 0) return false;  // already scheduled (conflicted)
-				
+			if (checkArr.size() > 0) {
+				throw new TimeConflictException("Employee ID("+getEmployeeID()+") has a vacation at the same day."); 
+			}
+			
 		} else {
-			System.out.println("Date is not valid");	
-			return false;
-		}		
-		return true;
+			throw new TimeConflictException("Date is not valid");
+		}			
 	}
 	
 }

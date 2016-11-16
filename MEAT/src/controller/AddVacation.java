@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
 
 import View.Messageout;
 import common.SysConfig;
+import common.TimeConflictException;
 
 public class AddVacation extends Command {
 	
@@ -96,13 +97,13 @@ public class AddVacation extends Command {
 		Employee emp = new Employee();
 		emp.setEmployeeID(vacation.getEmpolyeeId());
 		
-		boolean isAvailable = emp.checkAvailableWithMeeting(vacation.getStartDate(), vacation.getEndDate());
-		
-		if (!isAvailable) {
-			System.out.println("employee("+vacation.getEmpolyeeId()+")'s vacation conflicts scheduled meeting");
+		try { 
+			emp.checkAvailableWithMeeting(vacation.getStartDate(), vacation.getEndDate());
+		} catch (TimeConflictException tce) {
+			tce.printStackTrace();
 			return false;
-		}		
-		
+		}
+		// no conflict
 		return true;
 		
 	}

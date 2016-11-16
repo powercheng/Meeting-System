@@ -5,9 +5,9 @@ import java.util.LinkedList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import View.Messageout;
 import common.CommonUtil;
 import common.SysConfig;
+import common.TimeConflictException;
 import model.Employee;
 import model.Meeting;
 import model.Room;
@@ -139,11 +139,11 @@ public class AddMeeting extends Command {
 		Room room = new Room();
 		room.setRoomID(meeting.getRoomId());
 		
-		boolean isAvailable = room.roomAvailable(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
-		
-		if (!isAvailable) {
-			System.out.println("room("+meeting.getRoomId()+") conflicts scheduled meeting");
-			return false;
+		try {
+			room.roomAvailable(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
+		} catch (TimeConflictException tce) {
+			tce.printStackTrace();
+			return false;			
 		}
 		
 		// 2. check all attendees' meeting and vacation date
@@ -154,21 +154,23 @@ public class AddMeeting extends Command {
 			Employee emp = new Employee();
 			emp.setEmployeeID((String) attendList.get(i));			
 
-			/*check meeting*/
-			isAvailable = emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
-			if (!isAvailable) {
-				System.out.println("employeeID("+emp.getEmployeeID()+") conflicts with scheduled meeting");
+			/*check meeting*/			
+			try {
+				emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
+			} catch (TimeConflictException tce) {
+				tce.printStackTrace();
 				return false;
-			}
+			}			
 			
 			/*check vacation*/
-			isAvailable = emp.checkAvailableWithVacation(meeting.getDate());
-			if (!isAvailable) {
-				System.out.println("employeeID("+emp.getEmployeeID()+") conflicts with scheduled vacation");
+			try { 
+				emp.checkAvailableWithVacation(meeting.getDate());
+			} catch (TimeConflictException tce) {
+				tce.printStackTrace();
 				return false;
-			}
+			}			
 		}
-		
+		// No error !
 		return true;
 		
 	}

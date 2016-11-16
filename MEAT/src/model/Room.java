@@ -3,6 +3,7 @@ package model;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import common.TimeConflictException;
 import controller.Command;
 
 public class Room {
@@ -83,15 +84,14 @@ public class Room {
 	 * @param meetDate  (MMDDYYYY)
 	 * @param fromTime  (HH24:MI)
 	 * @param endTime   (HH24:MI)
-	 * @return
+	 * @throws TimeConflictException
 	 */
-	public boolean roomAvailable(String meetDate, String fromTime, String endTime) {
+	public void roomAvailable(String meetDate, String fromTime, String endTime) throws TimeConflictException {
 		
 		Command cmd = new Command();
 		
 		if (getRoomID() == null) {
-			System.out.println("Room ID is not set");
-			return false;
+			throw new TimeConflictException("Room ID is not set");
 		}
 		
 		if (cmd.checkDateValid(meetDate) && fromTime != null && endTime != null) 
@@ -126,14 +126,13 @@ public class Room {
 			
 			db.close();
 			
-			if (checkArr.size() > 0) return false;  // already scheduled
+			if (checkArr.size() > 0) {
+				// already scheduled
+				throw new TimeConflictException("Room ID("+getRoomID()+") already has a meeting at the same time."); 
+			}
 				
 		} else {
-			System.out.println("Date and Time are not valid");	
-			return false;
-		}
-		
-		return true;
-	}
-	
+			throw new TimeConflictException("Date and Time are not valid");	
+		}		
+	}	
 }

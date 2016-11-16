@@ -79,14 +79,13 @@ public class Command {
 	
 	
 	public boolean checkEmpolyeeIdValid(String employeeID){
-		/* if employeeID (from DB) == null then no such employeeID*/
-		/* Just external attendee having only name not employeeID
+		/* if employeeID (from DB) == null then no such employeeID*/		
 		Employee emp = new Employee();
 		emp.getPersonInfo(employeeID);  // get and setting database information		
 		if (emp.getEmployeeID() == null) {
 			return false;
 		}
-		*/
+		
 		return true;
 	}
 	

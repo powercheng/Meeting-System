@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 
 import common.CommonUtil;
 import common.SysConfig;
+import common.TimeConflictException;
 import model.Employee;
 import model.Room;
 import model.Sql;
@@ -98,7 +99,13 @@ public class TestRun {
 		
 		Employee em = new Employee();
 		em.setEmployeeID("bob099");
-		boolean chk = em.checkAvailableWithVacation("11292016");
+		boolean chk = false;
+		try {
+			em.checkAvailableWithVacation("11292016");
+			chk = true;
+		} catch (TimeConflictException te) {
+			te.printStackTrace();
+		}
 		if (chk)
 			System.out.println("ok");
 		else 

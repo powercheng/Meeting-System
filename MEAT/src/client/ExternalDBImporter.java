@@ -3,26 +3,26 @@ package client;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import java.sql.PreparedStatement;
+
 import common.CommonUtil;
 import common.SysConfig;
 import model.Sql;
 
-public class ExternalExecutor {
+public class ExternalDBImporter {
 	
-	public static void main(String[] args) {
-		
-		ExternalExecutor ee = new ExternalExecutor();
+	public static void main(String[] args) {		
+		ExternalDBImporter ee = new ExternalDBImporter();
 		// 1. Sync employeeTable with jsonFile
 		ee.updateEmployeeTable();		
 		// 2. Sync roomTable with jsonFile
 		ee.updateRoomTable();
 	}
-
+	
 	/**
-	 *  To run this method, 
-	 *  we must include json library (/lib/json-simple...jar) into this project.
-	 */	
+	 *  External DB file(json) import into MEAT DB
+	 *  json file (\\resource\\employees.json)
+	 *  MEAT table : TB_EMPLOYEE
+	 */
 	public void updateEmployeeTable()
 	{
 		String jsonData = CommonUtil.loadJsonFile(SysConfig.employeeJsonFile);		
@@ -58,7 +58,7 @@ public class ExternalExecutor {
 					db.setParameter(6, totalVacationDays);
 					db.write();					
 				}						
-				System.out.println("EmployeeDB Sync Success");
+				System.out.println("## EmployeeDB Sync Success");
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -69,9 +69,10 @@ public class ExternalExecutor {
 	}
 	
 	/**
-	 *  To run this method, 
-	 *  we must include json library (/lib/json-simple...jar) into this project.
-	 */	
+	 *  External DB file(json) import into MEAT DB
+	 *  json file (\\resource\\room.json)
+	 *  MEAT table : TB_ROOM
+	 */
 	public void updateRoomTable()
 	{
 		String jsonData = CommonUtil.loadJsonFile(SysConfig.roomJsonFile);		
@@ -104,7 +105,7 @@ public class ExternalExecutor {
 					db.write();		
 				}	
 				
-				System.out.println("RoomDB Sync Success");
+				System.out.println("## RoomDB Sync Success");
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -113,4 +114,5 @@ public class ExternalExecutor {
 			}
 		}		
 	}
+
 }
