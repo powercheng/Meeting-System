@@ -4,13 +4,19 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import common.CommonUtil;
-
+/**
+ * Vacation model class
+ * @author group7
+ *
+ */
 public class Vacation {
 	
 	private String empolyeeId;
 	private String startDate;
 	private String endDate;
-	
+	/**
+	 * default constructor
+	 */
 	public Vacation() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -40,8 +46,8 @@ public class Vacation {
 		this.endDate = endDate;
 	}
 	/**
-	 * get an employee's vacation list 
-	 * @param employeeID
+	 * get an employee's vacation list
+	 * @param empID
 	 * @return
 	 */
 	public JSONArray getVacationList(String empID) {

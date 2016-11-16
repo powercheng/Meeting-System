@@ -6,7 +6,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import common.CommonUtil;
 import common.SysConfig;
-
+/**
+ * Print employee's scheduled meeting within specific range of date or save it into file 
+ * @author group7
+ *
+ */
 public class PrintScheduleEmployee extends Command {
 	
 	private Employee employee;
@@ -15,13 +19,18 @@ public class PrintScheduleEmployee extends Command {
 	private String outfileName;
 	
 	private JSONArray command_array;
-	
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
 	public PrintScheduleEmployee(JSONArray command_array) {
 		super();
 		this.command_array = command_array;		
 		this.employee = new Employee();
 	}
-	
+	/**
+	 * default constructor for interactive mode
+	 */
 	public PrintScheduleEmployee() {		
 		this.employee = new Employee();
 	}
@@ -35,11 +44,14 @@ public class PrintScheduleEmployee extends Command {
 		test.printEmployeeSchedule();
 	}
 */	
+	/**
+	 * Gethering an employee's meeting schedules and print the result into file typed json
+	 */
 	@Override
 	public String execute() {		
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argumets for print-schedule-employee");
+			System.out.println("No arguments for print-schedule-employee");
 			return SysConfig.fail;
 		}
 		
@@ -85,7 +97,10 @@ public class PrintScheduleEmployee extends Command {
 		
 		return SysConfig.success;		
 	}
-	
+	/**
+	 * Fetching employee's meeting schedules in specific range of time	 * 
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject getEmployeeScheduleList() {
 		
@@ -99,7 +114,7 @@ public class PrintScheduleEmployee extends Command {
 				+ " substr(TA.meetDATE,5,4)||substr(TA.meetDATE,0,3)||substr(TA.meetDATE,3,2) between ? and ? ";
 		
 		db.setQuery(meetDetailQuery);
-		db.setParameter(1, this.employee.getEmployeeID());
+		db.setParameter(1, this.getEmployee().getEmployeeID());
 		db.setParameter(2, CommonUtil.dateFormat(getSrchStartDay(),"MMddyyyy","yyyyMMdd"));
 		db.setParameter(3, CommonUtil.dateFormat(getSrchEndDay(),"MMddyyyy","yyyyMMdd"));
 		
@@ -130,7 +145,56 @@ public class PrintScheduleEmployee extends Command {
 		return rtnObj;
 		
 	}
+	/**
+	 * Print fetched employee's schedules onto screen 
+	 */
+	public void printScreenEmployeeSchedule() {
 		
+		if (getSrchStartDay() == null || getSrchEndDay() == null) {
+			System.out.println("Not set search time interval");
+			return;
+		}
+		
+		JSONObject rTobObj = getEmployeeScheduleList();
+    	JSONArray  rMeetList = (JSONArray) rTobObj.get("events");
+    	
+    	System.out.println("#Current scheduled meetings for the employee("+getEmployee().getEmployeeID()+") between "+getSrchStartDay()+" and "+getSrchEndDay()+" #");
+    	System.out.println("#MeetID   #Meeting Time             #RoomID    #Description           #AttendeeID(NAME)");
+    	System.out.println("------------------------------------------------------------------------------------------------");
+    	
+    	for (int i=0; i<rMeetList.size();i++) {
+    		
+    		JSONObject rSubObj = (JSONObject) rMeetList.get(i);
+    		String saveMID = (String) rSubObj.get("meeting-id");
+    		String saveDate = (String) rSubObj.get("date");
+    		String saveSTime = (String) rSubObj.get("start-time");
+    		String saveETime = (String) rSubObj.get("end-time");
+    		String saveRID   = (String) rSubObj.get("room-id");
+    		String saveDESC   = (String) rSubObj.get("description");
+    		JSONArray attList = (JSONArray) rSubObj.get("attendees");
+    		String attendString = "";
+    		for (int k=0;k<attList.size();k++) {
+    			JSONObject attObj = (JSONObject) attList.get(k);
+    			attendString += (String) attObj.get("employee-id") +"("+(String) attObj.get("name")+")";
+    			if (k != attList.size()-1) {  // last list
+    				attendString += ",";
+    			}
+    		}
+    		   			
+    		System.out.println("# " + saveMID + "       " + CommonUtil.dateFormat(saveDate,"MMddyyyy","MM.dd.yyyy") 
+    								+ " " + saveSTime + "-" + saveETime + "     " + saveRID 
+    								+ "       " + CommonUtil.blankPadding(saveDESC, 18) + "    " + attendString);
+    	}
+    	
+    	if (rMeetList.size() == 0) System.out.println(" No scheduled meeting for "+this.getEmployee().getEmployeeID()+"");
+        	
+    	System.out.println("------------------------------------------------------------------------------------------------");
+		
+	}
+	
+	/**
+	 * save fetched employee's schedules into json file 
+	 */
 	public boolean printFileEmployeeSchedule() {
 		
 		JSONObject jsonObj = getEmployeeScheduleList();
@@ -139,7 +203,10 @@ public class PrintScheduleEmployee extends Command {
 		return CommonUtil.saveFile(getOutfileName(), jsonObj);
 		
 	}
-		
+	/**
+	 * check passing variables validity	
+	 * @return
+	 */
 	public boolean checkCondition() {
 		
 		/* Necessary information check */

@@ -6,7 +6,11 @@ import common.CommonUtil;
 import common.TimeConflictException;
 import model.Employee;
 import model.Sql;
-
+/**
+ * To check single functionality, test run 
+ * @author group7
+ *
+ */
 public class TestRun {
 
 	public static void main(String[] args) {
@@ -42,7 +46,9 @@ public class TestRun {
 			ex.printStackTrace();
 		}		
 	}
-	
+	/**
+	 * SQLite Insert test 
+	 */
 	public void sqlInsertTest() {
 		
 		try {
@@ -65,7 +71,9 @@ public class TestRun {
 			ex.printStackTrace();
 		}		
 	}
-	
+	/**
+	 * Test input data clear
+	 */
 	public void initDB() {
 		
 		try {
@@ -79,6 +87,9 @@ public class TestRun {
 			query = "DELETE FROM TB_VACATION ";
 			db.setQuery(query);			
 			db.write();
+			query = "DELETE FROM TB_HOLIDAY ";
+			db.setQuery(query);			
+			db.write();
 			// close connection
 			db.close();  // make sure to call this method			
 		} catch (Exception ex) {
@@ -87,7 +98,7 @@ public class TestRun {
 	}
 		
 	/**
-	 *  To make unique universal ID
+	 *  To test making unique universal ID
 	 */	
 	public void testUUID() {
 		
@@ -103,24 +114,5 @@ public class TestRun {
 		String id = CommonUtil.getNextMeetID();
 		System.out.println(id);
 	}
-	
-	public void testRun() {
-		
-		Employee em = new Employee();
-		em.setEmployeeID("bob099");
-		boolean chk = false;
-		try {
-			em.checkAvailableWithVacation("11292016");
-			chk = true;
-		} catch (TimeConflictException te) {
-			te.printStackTrace();
-		}
-		if (chk)
-			System.out.println("ok");
-		else 
-			System.out.println("noko");
-		
-	}
-	
 	
 }

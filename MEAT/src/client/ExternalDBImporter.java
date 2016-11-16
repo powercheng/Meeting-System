@@ -7,7 +7,10 @@ import org.json.simple.parser.JSONParser;
 import common.CommonUtil;
 import common.SysConfig;
 import model.Sql;
-
+/**
+ * This class is used for loading external db file(json) into MEAT local database 
+ * @author group7
+ */
 public class ExternalDBImporter {
 /*	
 	public static void main(String[] args) {		

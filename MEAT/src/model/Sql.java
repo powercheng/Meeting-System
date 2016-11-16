@@ -11,14 +11,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import common.SysConfig;
-
+/**
+ * Database connection and handling class (wrapper)
+ * @author group7
+ *
+ */
 public class Sql {
 	
 	private String     dbfilePath = null;
 	private Connection conn = null;
 	private PreparedStatement pstmt = null;
 	private String  Query = null;
-	
+	/**
+	 * default constructor
+	 */
 	public Sql() {
 		try {
 			this.dbfilePath = SysConfig.dbFile;
@@ -28,7 +34,9 @@ public class Sql {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * close connection 
+	 */
 	public void close() {
 		try {
 			if (pstmt != null) try { pstmt.close(); } catch (Exception ex) {} ;
@@ -37,7 +45,10 @@ public class Sql {
 			ex.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Set query into statement
+	 * @param query
+	 */
 	public void setQuery(String query) {
 		this.Query = query;
 		try {
@@ -51,7 +62,11 @@ public class Sql {
 	public String getQuery() {
 		return this.Query;
 	}
-	
+	/**
+	 * Set parameter(string) into preparedstatement 
+	 * @param idx
+	 * @param param
+	 */
 	public void setParameter(int idx, String param) {
 		try {
 			this.pstmt.setString(idx, param);
@@ -60,8 +75,11 @@ public class Sql {
 			e.printStackTrace();
 		}		
 	}
-	
-	
+	/**
+	 * Set parameter(long) into preparedstatement 
+	 * @param idx
+	 * @param param
+	 */	
 	public void setParameter(int idx, long param) {
 		try {
 			this.pstmt.setLong(idx, param);
@@ -70,7 +88,10 @@ public class Sql {
 			e.printStackTrace();
 		}		
 	}
-
+	/**
+	 * Execute insert, update, delete query
+	 * @return
+	 */
 	public int write() {
 		int n = -1;
 		
@@ -88,7 +109,10 @@ public class Sql {
 		}
 		return n;		
 	}
-
+	/**
+	 * Fetch recordset and transform it into JSONArray format and return
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public JSONArray read() {
 		

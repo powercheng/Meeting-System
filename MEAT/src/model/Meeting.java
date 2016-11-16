@@ -5,7 +5,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import common.CommonUtil;
-
+/**
+ * Meeting model class
+ * @author group7
+ *
+ */
 public class Meeting {
 	private String meetingId;
 	private String date;
@@ -15,7 +19,9 @@ public class Meeting {
 	private LinkedList<String> attendee;
 	private String description;
 	
-	
+	/**
+	 * Default constructor 
+	 */
 	public Meeting() {
 		super();
 		this.attendee = new LinkedList<String>();
@@ -66,7 +72,10 @@ public class Meeting {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+	/**
+	 * Get the stored meeting information and set the fetched information into this class
+	 * @param meetID
+	 */
 	public void getMeetingInfo(String meetID) {
 		
 		if (meetID != null && meetID.length() > 0) {
@@ -108,6 +117,9 @@ public class Meeting {
 		}
 	}
 	
+	/**
+	 * Print this meeting information onto the screen
+	 */
 	public void printCurrentMeetingInfo() {
 		
 		System.out.println("#MeetID   #Meeting Time             #RoomID    #Description           #AttendeeID ");

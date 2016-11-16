@@ -16,7 +16,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import model.Sql;
-
+/**
+ * Common utility
+ * @author group7
+ *
+ */
 public class CommonUtil {
 	
 	/**
@@ -52,7 +56,6 @@ public class CommonUtil {
 		
 		return rtn_buffer.toString();			
 	}
-
 	/**
 	 * Date format converter
 	 * @param dateStr

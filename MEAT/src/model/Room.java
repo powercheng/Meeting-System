@@ -5,14 +5,20 @@ import org.json.simple.JSONObject;
 
 import common.TimeConflictException;
 import controller.Command;
-
+/**
+ * Room model class
+ * @author group7
+ *
+ */
 public class Room {
 		
 	private String roomID;
 	private String building;
 	private String floor;
 	private String occupancy;
-
+	/**
+	 * default constructor
+	 */
 	public Room() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -49,7 +55,10 @@ public class Room {
 	public void setOccupancy(String occupancy) {
 		this.occupancy = occupancy;
 	}
-	
+	/**
+	 * Get room information from database and set the fetched data into this class
+	 * @param id
+	 */
 	public void getRoomInfo(String id) {
 		
 		if (id != null && id.length() > 0) {

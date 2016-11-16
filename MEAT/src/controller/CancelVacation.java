@@ -7,23 +7,32 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import common.SysConfig;
-
+/**
+ * Cancel employee's scheduled vacation
+ * @author group7
+ *
+ */
 public class CancelVacation extends Command {
 	
 	private Vacation vacation;	
 	private JSONArray command_array;
-	
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
 	public CancelVacation(JSONArray command_array) {
 		super();
 		this.command_array = command_array;
 		this.vacation = new Vacation();
 	}
-	
+	/**
+	 * check parameters validity and deleting passing vacation information 
+	 */
 	@Override
 	public String execute() {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argumets for delete-vacation command");
+			System.out.println("No arguments for delete-vacation command");
 			return SysConfig.fail;
 		}
 		for(int i = 0; i < command_array.size(); i++) {
@@ -55,7 +64,11 @@ public class CancelVacation extends Command {
 		//viewprint();	
 		return SysConfig.success;
 	}
-	
+	/**
+	 * Delete the passing vacation information from database
+	 * @param vinfo
+	 * @return
+	 */
 	public boolean cancelVactionInfo(Vacation vinfo) {
 		
 		boolean bSuccess = false;

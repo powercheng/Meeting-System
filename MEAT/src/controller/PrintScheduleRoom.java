@@ -6,7 +6,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import common.CommonUtil;
 import common.SysConfig;
-
+/**
+ * Print room's schedules onto screen or save it to the file 
+ * @author group7
+ *
+ */
 public class PrintScheduleRoom extends Command {
 	private Room room;
 	private String srchStartDay;
@@ -14,13 +18,18 @@ public class PrintScheduleRoom extends Command {
 	private String outfileName;
 	
 	private JSONArray command_array;
-	
+	/**
+	 * Constructor for scripting running mode
+	 * @param command_array
+	 */
 	public PrintScheduleRoom(JSONArray command_array) {
 		super();
 		this.command_array = command_array;		
 		this.room = new Room();
 	}
-
+	/**
+	 * default constructor for interactive mode
+	 */
 	public PrintScheduleRoom() {		
 		this.room = new Room();
 	}
@@ -34,11 +43,14 @@ public class PrintScheduleRoom extends Command {
 		test.printRoomSchedule();
 	}
 */
+	/**
+	 * Handling passing commands parameter and print out the saved room schedules
+	 */
 	@Override
 	public String execute() {		
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argumets for print-schedule-room");
+			System.out.println("No arguments for print-schedule-room");
 			return SysConfig.fail;
 		}
 		for(int i = 0; i < command_array.size(); i++) {
@@ -83,7 +95,10 @@ public class PrintScheduleRoom extends Command {
 		
 		return SysConfig.success;		
 	}
-	
+	/**
+	 * Fetching room schedules from the database with specific range of time
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject getRoomScheduleList() {
 		
@@ -125,7 +140,57 @@ public class PrintScheduleRoom extends Command {
 		return rtnObj;
 		
 	}
+	/**
+	 * Print fectched result onto screen
+	 */
+	public void printScreenRoomSchedule() {
 		
+		if (getSrchStartDay() == null || getSrchEndDay() == null) {
+			System.out.println("Not set search time interval");
+			return;
+		}
+		
+		JSONObject rTobObj = getRoomScheduleList();
+    	JSONArray  rMeetList = (JSONArray) rTobObj.get("events");
+    	
+    	System.out.println("#Current scheduled meetings for the room("+room.getRoomID()+") between "+getSrchStartDay()+" and "+getSrchEndDay()+" #");
+    	System.out.println("#MeetID   #Meeting Time             #RoomID    #Description           #AttendeeID(NAME)");
+    	System.out.println("------------------------------------------------------------------------------------------------");
+    	
+    	for (int i=0; i<rMeetList.size();i++) {
+    		
+    		JSONObject rSubObj = (JSONObject) rMeetList.get(i);
+    		String saveMID = (String) rSubObj.get("meeting-id");
+    		String saveDate = (String) rSubObj.get("date");
+    		String saveSTime = (String) rSubObj.get("start-time");
+    		String saveETime = (String) rSubObj.get("end-time");
+    		String saveRID   = (String) rSubObj.get("room-id");
+    		String saveDESC   = (String) rSubObj.get("description");
+    		JSONArray attList = (JSONArray) rSubObj.get("attendees");
+    		String attendString = "";
+    		for (int k=0;k<attList.size();k++) {
+    			JSONObject attObj = (JSONObject) attList.get(k);
+    			attendString += (String) attObj.get("employee-id") +"("+(String) attObj.get("name")+")";
+    			if (k != attList.size()-1) {  // last list
+    				attendString += ",";
+    			}
+    		}
+    		   			
+    		System.out.println("# " + saveMID + "       " + CommonUtil.dateFormat(saveDate,"MMddyyyy","MM.dd.yyyy") 
+    								+ " " + saveSTime + "-" + saveETime + "     " + saveRID 
+    								+ "       " + CommonUtil.blankPadding(saveDESC, 18) + "    " + attendString);
+    	}
+    	
+    	if (rMeetList.size() == 0) System.out.println(" No scheduled meeting for "+room.getRoomID()+"");
+    	
+    	System.out.println("------------------------------------------------------------------------------------------------");
+		
+	}
+
+	/**
+	 * Save the fetched result into file (json)
+	 * @return
+	 */
 	public boolean printFileRoomSchedule() {
 		
 		JSONObject rtnObj = getRoomScheduleList();
@@ -133,7 +198,10 @@ public class PrintScheduleRoom extends Command {
 		return CommonUtil.saveFile(getOutfileName(), rtnObj);
 		
 	}
-		
+	/**
+	 * check validity of variables 	
+	 * @return
+	 */
 	public boolean checkCondition() {
 		
 		/* Necessary information check */

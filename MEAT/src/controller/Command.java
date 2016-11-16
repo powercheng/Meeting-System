@@ -3,14 +3,26 @@ package controller;
 import model.Employee;
 import model.Meeting;
 import model.Room;
-
+/**
+ * super class for respective action handling class
+ * @author group7
+ *
+ */
 public class Command {
 	
+	/**
+	 * To allow override method of child classes to handle actions
+	 * @return
+	 */
 	public String execute(){
 		return "";		
 	}
 	
-	
+	/**
+	 * Check if time-format is valid (HH24:MI) 
+	 * @param str
+	 * @return
+	 */
 	public boolean checkTimeValid(String str){
 		str = str.trim();
 		
@@ -26,11 +38,19 @@ public class Command {
 			return false;
 		}
 	}		
-      
+    /**
+     * To check whether leap year or not 
+     * @param y
+     * @return
+     */
 	private static boolean isLeapYear(int y) {
 		return y % 4 == 0 && (y % 400 == 0 || y % 100 != 0);  
 	}	
-	
+	/**
+	 * Check date format validity (MMDDYYYY)
+	 * @param str
+	 * @return
+	 */
 	public boolean checkDateValid(String str){
 		str = str.trim();
 		if(str.length() == 8) {
@@ -60,7 +80,11 @@ public class Command {
 			return false;
 		}
 	}
-	
+	/**
+	 * Verify passing meeting ID is in the database.
+	 * @param meetingID
+	 * @return
+	 */
 	public boolean checkMeetingIdValid(String meetingID){
 		/* if meetID (from DB) == null then no such meeting ID*/
 		Meeting mt = new Meeting();
@@ -71,7 +95,11 @@ public class Command {
 		return true;
 	}
 	
-	
+	/**
+	 * Check if employeeID is in the database.
+	 * @param employeeID
+	 * @return
+	 */
 	public boolean checkEmpolyeeIdValid(String employeeID){
 		/* if employeeID (from DB) == null then no such employeeID*/		
 		Employee emp = new Employee();
@@ -82,7 +110,11 @@ public class Command {
 		
 		return true;
 	}
-	
+	/**
+	 * Check if roomID is in the database
+	 * @param roomID
+	 * @return
+	 */
 	public boolean checkRoomIdValid(String roomID) {
 		Room rm = new Room();
 		rm.getRoomInfo(roomID); // GET AND SETTING DATABASE INFORMATION
@@ -92,7 +124,11 @@ public class Command {
 		}		
 		return true;
 	}
-	
+	/**
+	 * Check if meetID is in the database.
+	 * @param meetID
+	 * @return
+	 */
 	public boolean checkMeetIdValid(String meetID) {
 		Meeting meet = new Meeting();
 		meet.getMeetingInfo(meetID);; // GET AND SETTING DATABASE INFORMATION
@@ -102,11 +138,20 @@ public class Command {
 		}		
 		return true;
 	}
-	
+	/**
+	 * Check passing string is less than 1024 bytes
+	 * @param str
+	 * @return
+	 */
 	public boolean checkStrLenValid(String str) {
 		return str.length() < 1024;
 	}
-	
+	/**
+	 * Check if time1 (str1) precedes time2 (str2)
+	 * @param str1
+	 * @param str2
+	 * @return
+	 */
 	public boolean checkTimeConflict(String str1,String str2) {
 		int hour1 = Integer.parseInt(str1.substring(0, str1.length()-3));
 		int hour2 = Integer.parseInt(str2.substring(0, str2.length()-3));

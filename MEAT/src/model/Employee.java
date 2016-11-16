@@ -5,7 +5,11 @@ import org.json.simple.JSONObject;
 import common.CommonUtil;
 import common.TimeConflictException;
 import controller.Command;
-
+/**
+ * Employee model class
+ * @author group7
+ *
+ */
 public class Employee {
 	
 	private String employeeID;
@@ -14,7 +18,9 @@ public class Employee {
 	private String email;
 	private String title;
 	private int totalVACATIONDAY;
-	
+	/**
+	 * Default constructor
+	 */
 	public Employee() {
 		super();
 		// TODO Auto-generated constructor stub

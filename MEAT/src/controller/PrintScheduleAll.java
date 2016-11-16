@@ -5,7 +5,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import common.CommonUtil;
 import common.SysConfig;
-
+/**
+ * Print screen or into file about all company's meeting schedules in specific period
+ * @author group7
+ *
+ */
 public class PrintScheduleAll extends Command {
 	
 	private String srchStartDay;
@@ -13,14 +17,19 @@ public class PrintScheduleAll extends Command {
 	private String outfileName;
 	
 	private JSONArray command_array;
-	
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
 	public PrintScheduleAll(JSONArray command_array) {
 		super();
 		this.command_array = command_array;	
 	}
-	
+	/**
+	 * default constructor for interactive mode 
+	 */
 	public PrintScheduleAll() {	
-		
+		super();
 	}
 /*	
 	public static void main(String[] args) {
@@ -31,11 +40,14 @@ public class PrintScheduleAll extends Command {
 		test.printAllCompanySchedule();
 	}
 */
+	/**
+	 * Gethering meeting schedules and print the result into file typed json
+	 */
 	@Override
 	public String execute() {		
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argumets for print-schedule-all");
+			System.out.println("No arguments for print-schedule-all");
 			return SysConfig.fail;
 		}
 		for(int i = 0; i < command_array.size(); i++) {
@@ -78,7 +90,10 @@ public class PrintScheduleAll extends Command {
 		
 		return SysConfig.success;		
 	}
-	
+	/**
+	 * Fetch the result from database with time span condition
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject getAllCompanyScheduleList() {
 		
@@ -119,7 +134,9 @@ public class PrintScheduleAll extends Command {
 		
 		return rtnObj;
 	}
-	
+	/**
+	 * Print fetching data onto current command-line screen
+	 */
 	public void printScreenAllCompanySchedule() {
 		
 		if (getSrchStartDay() == null || getSrchEndDay() == null) {
@@ -130,7 +147,7 @@ public class PrintScheduleAll extends Command {
 		JSONObject rTobObj = getAllCompanyScheduleList();
     	JSONArray  rMeetList = (JSONArray) rTobObj.get("events");
     	
-    	System.out.println("#Current scheduled meeting list between "+getSrchStartDay()+" and "+getSrchEndDay()+" #");
+    	System.out.println("#Current scheduled meetings for the company between "+getSrchStartDay()+" and "+getSrchEndDay()+" #");
     	System.out.println("#MeetID   #Meeting Time             #RoomID    #Description           #AttendeeID(NAME)");
     	System.out.println("------------------------------------------------------------------------------------------------");
     	
@@ -160,7 +177,10 @@ public class PrintScheduleAll extends Command {
     	System.out.println("------------------------------------------------------------------------------------------------");
 		
 	}
-
+	/**
+	 * Save fetched result into the json file
+	 * @return
+	 */
 	public boolean printFileAllCompanySchedule() {
 		
 		JSONObject jsonObj = getAllCompanyScheduleList();		
@@ -168,7 +188,10 @@ public class PrintScheduleAll extends Command {
 		return CommonUtil.saveFile(getOutfileName(), jsonObj);
 		
 	}
-		
+	/**
+	 * Check validity of all variables condition	
+	 * @return
+	 */
 	public boolean checkCondition() {
 		
 		if (getSrchStartDay() == null) {  // NULL ALLOWED

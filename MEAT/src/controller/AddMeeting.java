@@ -12,23 +12,30 @@ import model.Employee;
 import model.Meeting;
 import model.Room;
 import model.Sql;
-
-
+/**
+ * Gethering and analyzing passing add-meeting information and save into database
+ * @author group7
+ */
 public class AddMeeting extends Command {
 	private Meeting meeting;
 	private JSONArray command_array;
-	
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
 	public AddMeeting(JSONArray command_array) {
 		super();
 		this.command_array = command_array;
 		this.meeting = new Meeting();
 	}
-
+	/**
+	 * analyze incoming commands and check validity, finally save meeting information into database
+	 */
 	@Override
 	public String execute() {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argumets for adding meeting command");
+			System.out.println("No arguments for adding meeting command");
 			return "failed";
 		}
 		for(int i = 0; i < command_array.size(); i++) {
@@ -110,7 +117,10 @@ public class AddMeeting extends Command {
 		}		
 		
 	}
-
+	/**
+	 * check if necessary variables are valid for adding a meeting
+	 * @return
+	 */
 	private boolean checkMeetingArgument() {
 		// TODO Auto-generated method stub
 		if(meeting.getAttendee() == null && meeting.getAttendee().isEmpty() ||
@@ -132,7 +142,10 @@ public class AddMeeting extends Command {
 		}
 		
 	}
-	
+	/**
+	 * check if meeting date has a conflict with room schedules, holiday, and attendee's schedules
+	 * @return
+	 */
 	public boolean ableToAttendWithoutConflict() {
 		
 		// 1. first check room available
@@ -145,8 +158,15 @@ public class AddMeeting extends Command {
 			tce.printStackTrace();
 			return false;			
 		}
-		
-		// 2. check all attendees' meeting and vacation date
+		// 2. check holiday
+		AddHoliday holi = new AddHoliday();		
+		try {
+			holi.checkAvailableWithHoliday(meeting.getDate());			
+		} catch (TimeConflictException tce) {
+			tce.printStackTrace();
+			return false;			
+		}		
+		// 3. check all attendees' meeting and vacation date
 		LinkedList<String> attendList = meeting.getAttendee();
 		
 		for (int i=0;i<attendList.size();i++) {
@@ -174,7 +194,11 @@ public class AddMeeting extends Command {
 		return true;
 		
 	}
-	
+	/**
+	 * Insert final checked meeting information into database
+	 * @param minfo
+	 * @return
+	 */
 	public boolean insertMeetingInfo(Meeting minfo) {
 		
 		boolean bSuccess = false;	

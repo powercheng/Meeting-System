@@ -6,14 +6,24 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import common.CommonUtil;
-
+import common.SysConfig;
+/**
+ * This class is used for various script commands using factory pattern
+ * @author group7
+ */
 public class CommandFactory {
-
+	/**
+	 * default constructor
+	 */
 	public CommandFactory() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
+	/**
+	 * analyzing passing commands and initialize the suitable class for the commands
+	 * and finally execute the command
+	 * @param jsonData
+	 */
 	public void run(String jsonData) {
 		// TODO Auto-generated method stub
 		if (CommonUtil.nullTrim(jsonData).length()> 0) {
@@ -37,8 +47,11 @@ public class CommandFactory {
 						case "edit-meeting-details" :
 							command = new EditMeeting(command_array);							
 							break;
+						case "edit-meeting-add-attendees":
+							command = new EditMeeting(command_array, SysConfig.addTag); // Attendee option = add	
+							break;
 						case "edit-meeting-remove-attendees" :
-							command = new EditMeeting(command_array, "REMOVE"); // Attendee option = remove							
+							command = new EditMeeting(command_array, SysConfig.removeTag); // Attendee option = remove							
 							break;
 						case "delete-meeting" :
 							command = new CancelMeeting(command_array);							
@@ -50,6 +63,10 @@ public class CommandFactory {
 							
 						case "delete-vacation" :
 							command = new CancelVacation(command_array);							
+							break;
+							
+						case "add-holiday" :
+							command = new AddHoliday(command_array);							
 							break;
 						
 						case "print-schedule-all" :

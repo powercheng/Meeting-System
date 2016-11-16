@@ -1,5 +1,9 @@
 package common;
-
+/**
+ * if meeting date conflicts with another meeting time, attendees' vacation time, and company's holiday,
+ * then this exception occurs
+ * @author group7
+ */
 public class TimeConflictException extends Exception {
 	/**
 	 * This Exception occurs when room availability or attendees time are in conflict 

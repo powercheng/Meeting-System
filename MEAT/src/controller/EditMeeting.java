@@ -9,7 +9,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import common.SysConfig;
 import common.TimeConflictException;
-
+/**
+ * Edit and change the scheduled meeting information
+ * @author zoasw
+  */
 public class EditMeeting extends Command {
 	
 	private Meeting meeting;
@@ -21,25 +24,34 @@ public class EditMeeting extends Command {
 	boolean timeChanged = false;
 	boolean roomChanged = false;
 	boolean attendeeChanged = false;
-	
+	/**
+	 * Constructor for script running mode, particularly meeting detail  
+	 * @param command_array
+	 */
 	public EditMeeting(JSONArray command_array) {
 		super();
 		this.command_array = command_array;
 		this.meeting = new Meeting();
 	}
-	
+	/**
+	 * Constructor for script running mode, particularly attendee adding and removing 
+	 * @param command_array
+	 * @param attendeeOption
+	 */
 	public EditMeeting(JSONArray command_array, String attendeeOption) {
 		super();
 		this.command_array = command_array;
 		this.meeting = new Meeting();
 		this.atteedeeOption = attendeeOption;
 	}
-	
+	/**
+	 * Check and verify passing commands data, and update old one into new information
+	 */
 	@Override
 	public String execute() {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argumets for edit-meeting command");
+			System.out.println("No arguments for edit-meeting command");
 			return SysConfig.fail;
 		}
 		for(int i = 0; i < command_array.size(); i++) {
@@ -105,7 +117,7 @@ public class EditMeeting extends Command {
 					if(checkEmpolyeeIdValid(value)) {
 						if (this.atteedeeOption != null) {
 							// Only attendee add option 
-							if (this.atteedeeOption.equals("ADD")){		
+							if (this.atteedeeOption.equals(SysConfig.addTag)){		
 								LinkedList<String> lis = meeting.getAttendee();
 								for (int k=0;k<lis.size();k++) {
 									String attendeeID = (String) lis.get(k);
@@ -116,7 +128,7 @@ public class EditMeeting extends Command {
 								}
 								meeting.addAttendee(value);
 							// Only attendee remove option
-							} else if (this.atteedeeOption.equals("REMOVE")){
+							} else if (this.atteedeeOption.equals(SysConfig.removeTag)){
 								LinkedList<String> lis = meeting.getAttendee();
 								LinkedList<String> modified_lis = new LinkedList<String>();
 								for (int k=0;k<lis.size();k++) {
@@ -155,15 +167,17 @@ public class EditMeeting extends Command {
 			if (!updateMeetingInfo(this.meeting)) {
 				//System.out.println("edit-meeting : meeting ID("+meeting.getMeetingId()+") is failed");
 				return SysConfig.fail;
-			}
-			//viewprint();
+			}			
 			return SysConfig.success;
 			
 		} else {			
 			return SysConfig.fail;
 		}					
 	}
-	
+	/**
+	 * Check if new meeting date is available for another meeting date, company's holiday, and ateendee's schedules.
+	 * @return
+	 */
 	public boolean ableToAttendWithoutConflict() {
 		
 		// 1. first check room available
@@ -176,8 +190,16 @@ public class EditMeeting extends Command {
 				tce.printStackTrace();
 				return false;
 			}			
-		}		
-		// 2. check all attendees' meeting and vacation date
+		}				
+		// 2. check holiday
+		AddHoliday holi = new AddHoliday();		
+		try {
+			holi.checkAvailableWithHoliday(meeting.getDate());			
+		} catch (TimeConflictException tce) {
+			tce.printStackTrace();
+			return false;			
+		}				
+		// 3. check all attendees' meeting and vacation date
 		if (timeChanged || attendeeChanged) {
 			
 			LinkedList<String> attendList = meeting.getAttendee();
@@ -195,8 +217,7 @@ public class EditMeeting extends Command {
 				} catch (TimeConflictException tce) {
 					tce.printStackTrace();
 					return false;
-				}
-								
+				}								
 				/*check vacation*/
 				try {
 					// only new attendees check
@@ -206,14 +227,17 @@ public class EditMeeting extends Command {
 				} catch (TimeConflictException tce) {
 					tce.printStackTrace();
 					return false;
-				}
-				
+				}				
 			}
 		}		
 		return true;
 		
 	}
-
+	/**
+	 * Update the gathering new meeting information into the database
+	 * @param minfo
+	 * @return
+	 */
 	public boolean updateMeetingInfo(Meeting minfo) {
 		
 		boolean bSuccess = false;	

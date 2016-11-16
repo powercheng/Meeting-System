@@ -1,5 +1,4 @@
 package common;
-
 /**
  * This class is used for system configuration such as db file path, common properties.
  * @author group7
@@ -17,10 +16,15 @@ public class SysConfig {
 	
 	public static String JsonOutDirectory = runningDir + "\\resource\\";
 	
+	public static String ScriptFilePath = JsonOutDirectory;
+	
 	public static String fail = "failed";
 	public static String success = "success";
-	
+	/*max min time range */
 	public static String maxDay = "12319999";
 	public static String minDay = "01011900";
+	/* function division tag */
+	public static String addTag = "ADD";
+	public static String removeTag = "REMOVE";
 
 }

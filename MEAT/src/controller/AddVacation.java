@@ -1,5 +1,4 @@
 package controller;
-
 import model.Employee;
 import model.Sql;
 import model.Vacation;
@@ -7,23 +6,32 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import common.SysConfig;
 import common.TimeConflictException;
-
+/**
+ * Scheduling class for employee's vacation
+ * @author group7
+ *
+ */
 public class AddVacation extends Command {
 	
 	private Vacation vacation;	
 	private JSONArray command_array;
-	
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
 	public AddVacation(JSONArray command_array) {
 		super();
 		this.command_array = command_array;
 		this.vacation = new Vacation();
 	}
-	
+	/**
+	 * analyzing passing data array and check validity, insert commands data into database
+	 */
 	@Override
 	public String execute() {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argumets for add-vacation command");
+			System.out.println("No arguments for add-vacation command");
 			return SysConfig.fail;
 		}
 		for(int i = 0; i < command_array.size(); i++) {
@@ -83,7 +91,10 @@ public class AddVacation extends Command {
 		//viewprint();	
 		
 	}
-	
+	/**
+	 * Check if employee's vacation dates conflict with scheduled meeting date
+	 * @return
+	 */
 	public boolean ableVacationWithoutConflict() {
 		
 		// Check if conflict with meeting schedules
@@ -100,7 +111,11 @@ public class AddVacation extends Command {
 		return true;
 		
 	}
-
+	/**
+	 * add employee's vacation information
+	 * @param vinfo
+	 * @return
+	 */
 	public boolean addVactionInfo(Vacation vinfo) {
 		
 		boolean bSuccess = false;

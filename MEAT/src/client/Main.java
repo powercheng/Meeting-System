@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import common.CommonUtil;
 import common.SysConfig;
+import controller.AddHoliday;
 import controller.AddMeeting;
 import controller.AddVacation;
 import controller.CancelMeeting;
@@ -14,9 +15,17 @@ import controller.CancelVacation;
 import controller.Command;
 import controller.CommandFactory;
 import controller.EditMeeting;
+import controller.PrintScheduleAll;
+import controller.PrintScheduleEmployee;
+import controller.PrintScheduleRoom;
+import model.Employee;
 import model.Meeting;
+import model.Room;
 import model.Vacation;
-
+/**
+ * Main controller in our MEAT system
+ * @author group7
+ */
 public class Main {	
 	/**
      * MEAT System begins !
@@ -27,20 +36,22 @@ public class Main {
      */
     public static void main(String[] args) {
     	
-	    System.out.println("*** Welcome to the MEAT ! ***");
+	    System.out.println("************* Welcome to the MEAT ! ****************");
 	        
 	    Main m = new Main();
 	    if (args.length == 0) {
 	    	// no passing parameter means interactive mode
 	    	m.printMainMenu();
 	    } else {
-	    	switch (args[0]) {
+	    	switch (args[0].toUpperCase()) {
 	    		// External DB (employee.json and room.json in resource dir) loaded into local database
-		    	case "DataSynchronize":   
+		    	case "DBSYNC":   
 					/* TO DO */
+		    		System.out.println("\n----- External DB syncronization is starting..-----\n");
 		    		ExternalDBImporter dImp = new ExternalDBImporter();
 		    		dImp.updateEmployeeTable(); // TB_EMPLOYEE update
-		    		dImp.updateEmployeeTable(); // TB_ROOM update
+		    		dImp.updateRoomTable(); // TB_ROOM update
+		    		System.out.println("\n----- External DB syncronization ended..-----");
 		    		break;	
 		    	// All other arguments are taken as command script file. args = filename 	
 				default: 
@@ -48,23 +59,30 @@ public class Main {
 					break;
 			}
 	    }
-	}    
-    
+	}      
    /**
     * Run all commands in the script file (json format) at once 
+    * Script file should be exists in our resource directory
+    * SysConfig.ScriptFilePath = workingDir//resource//
     * @param fileName  (such as command.json)
     */
-   private void runScriptCommand(String fileName) {		
-		String filePath = SysConfig.runningDir + "\\" + fileName;
+   private void runScriptCommand(String fileName) {	
+	    System.out.println("\n----- ScriptFile execution mode is starting..-----\n");
+		String filePath = SysConfig.ScriptFilePath + fileName;
 		String jsonData = CommonUtil.loadJsonFile(filePath);
-		CommandFactory factory = new CommandFactory();
-		factory.run(jsonData);
+		if (!jsonData.equals("")) {
+			CommandFactory factory = new CommandFactory();
+			factory.run(jsonData);
+		} else {
+			System.out.println("Error: The file("+fileName+") should be in the resource directory.");
+		}
+		System.out.println("\n----- ScriptFile execution mode ended..-----");
 	}
    /**
     * Terminate this program with exit message
     */
    private void exitMEAT() {
-	   System.out.println("System is exited");
+	   System.out.println("System stopped....");
 	   System.exit(0);
    }
     /**
@@ -83,13 +101,14 @@ public class Main {
         System.out.println("7. Print employee's schedule");
         System.out.println("8. Print company's schedule");
         System.out.println("---------------------");
+        System.out.println("9. Add company holiday");
         System.out.println("0. Exit\n");
         
         //Get user input
         try {
         	int userInput = Integer.parseInt(inputOutput("Please press the task number : "));
         	
-        	if (userInput >= 0 && userInput <= 8) {        		
+        	if (userInput >= 0 && userInput <= 9) {        		
         		switch (userInput) {        		
 					case 1:
 						addMeetingCommand();
@@ -107,13 +126,16 @@ public class Main {
 						cancelVacationCommand();
 						break;
 					case 6:
-						// to do 
+						printRoomScheduleCommand(); 
 						break;
 					case 7:
-						// to do 
+						printEmployeeScheduleCommand();
 						break;
 					case 8:
-						// to do 
+						printCompanyScheduleCommand();
+						break;
+					case 9:
+						addCompanyHolidayCommand();
 						break;
 					case 0:
 						exitMEAT(); 
@@ -469,8 +491,7 @@ public class Main {
     		System.exit(0);
     	}    
     	
-    }
-    
+    }    
     /**
      * To allow employees to schedule their vacation 
      * also checking previous meeting schedules
@@ -555,13 +576,13 @@ public class Main {
     	
     	String employeeID = inputOutput("\nPlease enter the employeeID to cancel vacations or [ enter Q for mainManu ] : ");
     	
-    	if ( employeeID.equalsIgnoreCase("q")) {
+    	if ( employeeID.equalsIgnoreCase("Q")) {
     		printMainMenu();
     		return;
     	}
     	if (!cmd.checkEmpolyeeIdValid(employeeID)) {
     		System.out.println("No such employeeID in the database");
-    		addVacationCommand();
+    		cancelVacationCommand();
     		return;
     	}
     	JSONObject jEmployee = new JSONObject();
@@ -572,7 +593,11 @@ public class Main {
     	Vacation vac = new Vacation();
     	vac.printScreenVacationList(employeeID);
     	String goAhead = inputOutput("\nAre you sure to cancel this vacation ? Y or [ enter Q for mainManu ] : ");
-    	    	
+    	if ( !goAhead.equalsIgnoreCase("Y") ) {
+    		printMainMenu();
+    		return;
+    	}  
+    	 
     	/* finally input database */
     	CancelVacation cancelVac = new CancelVacation(command_array);
     	String result = cancelVac.execute();
@@ -587,7 +612,306 @@ public class Main {
     	}    
     	
     }
+    /*
+     * print a room meeting schedule for specific date range
+     * allow option for print screen or save file
+     */    
+	private void printRoomScheduleCommand() {    	
+    	
+    	Command cmd = new Command();
+    	
+    	String roomID = inputOutput("\nPlease enter the roomID for printing schedules or [ enter Q for mainManu ] : ");
+    	
+    	if ( roomID.equalsIgnoreCase("Q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkRoomIdValid(roomID)) {
+    		System.out.println("No such roomID in the database");
+    		printRoomScheduleCommand();
+    		return;
+    	}
+    	
+    	// Search START DATE
+    	String srchStartDate = inputOutput("\nPlease enter the search start date (MMDDYYYY) or [ enter Q for mainManu ] : ");
+    	if ( srchStartDate.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkDateValid(srchStartDate)) {
+    		System.out.println("Invalid date foramt");
+    		printRoomScheduleCommand();
+    		return;
+    	}
+    	
+    	// Search End DATE
+    	String srchEndDate = inputOutput("\nPlease enter the search end date (MMDDYYYY) or [ enter Q for mainManu ] : ");
+    	if ( srchEndDate.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkDateValid(srchEndDate)) {
+    		System.out.println("Invalid date foramt");
+    		printRoomScheduleCommand();
+    		return;
+    	}
+    	
+    	String printMode = inputOutput("\nPrint screen (Press S) or Save File (Press F)  or [ enter Q for mainManu ] : ");
+    	
+    	switch (printMode.toUpperCase()) {
+			case "S":
+				PrintScheduleRoom psrs = new PrintScheduleRoom();
+				psrs.setSrchStartDay(srchStartDate);
+				psrs.setSrchEndDay(srchEndDate);
+				Room roomS = psrs.getRoom();
+				roomS.getRoomInfo(roomID);
+				psrs.setRoom(roomS);
+				psrs.printScreenRoomSchedule();
+				break;
+			case "F":
+				String fileName = inputOutput("\nPlease enter file name : ");
+				PrintScheduleRoom psrf = new PrintScheduleRoom();
+				psrf.setSrchStartDay(srchStartDate);
+				psrf.setSrchEndDay(srchEndDate);
+				Room roomF = psrf.getRoom();
+				roomF.getRoomInfo(roomID);
+				psrf.setRoom(roomF);
+				psrf.setOutfileName(fileName);
+				psrf.printFileRoomSchedule();
+				break;
+			case "Q":
+				printMainMenu();
+				break;
+			default:
+				System.out.println("Unknown command key");
+				printMainMenu();
+				break;
+		}   
+    	
+    	String goMain = inputOutput("\nTo go mainMenu perss Y or N to Exit ");
+    	
+    	if (goMain.equalsIgnoreCase("Y")) {
+    		printMainMenu();
+    	} else {
+    		System.exit(0);
+    	} 
+    }
     
+    /**
+     * print a employee schedule for specific date range
+     * allow option for print screen or save file
+     */
+    private void printEmployeeScheduleCommand() {
+    	
+    	Command cmd = new Command();
+    	
+    	String empID = inputOutput("\nPlease enter the employeeID for printing schedules or [ enter Q for mainManu ] : ");
+    	
+    	if ( empID.equalsIgnoreCase("Q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkEmpolyeeIdValid(empID)) {
+    		System.out.println("No such Employee ID in the database");
+    		printEmployeeScheduleCommand();
+    		return;
+    	}
+    	
+    	// Search START DATE
+    	String srchStartDate = inputOutput("\nPlease enter the search start date (MMDDYYYY) or [ enter Q for mainManu ] : ");
+    	if ( srchStartDate.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkDateValid(srchStartDate)) {
+    		System.out.println("Invalid date foramt");
+    		printEmployeeScheduleCommand();
+    		return;
+    	}
+    	
+    	// Search End DATE
+    	String srchEndDate = inputOutput("\nPlease enter the search end date (MMDDYYYY) or [ enter Q for mainManu ] : ");
+    	if ( srchEndDate.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkDateValid(srchEndDate)) {
+    		System.out.println("Invalid date foramt");
+    		printEmployeeScheduleCommand();
+    		return;
+    	}
+    	
+    	String printMode = inputOutput("\nPrint screen (Press S) or Save File (Press F)  or [ enter Q for mainManu ] : ");
+    	
+    	switch (printMode.toUpperCase()) {
+			case "S":
+				PrintScheduleEmployee pses = new PrintScheduleEmployee();
+				pses.setSrchStartDay(srchStartDate);
+				pses.setSrchEndDay(srchEndDate);
+				Employee empS = pses.getEmployee();
+				empS.getPersonInfo(empID);  // information setting
+				pses.setEmployee(empS);
+				pses.printScreenEmployeeSchedule();
+				break;
+			case "F":
+				String fileName = inputOutput("\nPlease enter file name : ");
+				PrintScheduleEmployee psef = new PrintScheduleEmployee();
+				psef.setSrchStartDay(srchStartDate);
+				psef.setSrchEndDay(srchEndDate);
+				Employee empF = psef.getEmployee();
+				empF.getPersonInfo(empID);  // information setting
+				psef.setEmployee(empF);
+				psef.setOutfileName(fileName);
+				psef.printFileEmployeeSchedule();
+				break;
+			case "Q":
+				printMainMenu();
+				break;
+			default:
+				System.out.println("Unknown command key");
+				printMainMenu();
+				break;
+		}   
+    	
+    	String goMain = inputOutput("\nTo go mainMenu perss Y or N to Exit ");
+    	
+    	if (goMain.equalsIgnoreCase("Y")) {
+    		printMainMenu();
+    	} else {
+    		System.exit(0);
+    	} 
+    	
+    }
+    /**
+     * Print all company's meeting schedules
+     */
+    private void printCompanyScheduleCommand() {
+    	
+    	Command cmd = new Command();
+    	
+    	// Search START DATE
+    	String srchStartDate = inputOutput("\nPlease enter the search start date (MMDDYYYY) or [ enter Q for mainManu ] : ");
+    	if ( srchStartDate.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkDateValid(srchStartDate)) {
+    		System.out.println("Invalid date foramt");
+    		printEmployeeScheduleCommand();
+    		return;
+    	}
+    	
+    	// Search End DATE
+    	String srchEndDate = inputOutput("\nPlease enter the search end date (MMDDYYYY) or [ enter Q for mainManu ] : ");
+    	if ( srchEndDate.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkDateValid(srchEndDate)) {
+    		System.out.println("Invalid date foramt");
+    		printEmployeeScheduleCommand();
+    		return;
+    	}
+    	
+    	String printMode = inputOutput("\nPrint screen (Press S) or Save File (Press F)  or [ enter Q for mainManu ] : ");
+    	
+    	switch (printMode.toUpperCase()) {
+			case "S":
+				PrintScheduleAll psea = new PrintScheduleAll();
+				psea.setSrchStartDay(srchStartDate);
+				psea.setSrchEndDay(srchEndDate);
+				psea.printScreenAllCompanySchedule();
+				break;
+			case "F":
+				String fileName = inputOutput("\nPlease enter file name : ");
+				PrintScheduleAll psaf = new PrintScheduleAll();
+				psaf.setSrchStartDay(srchStartDate);
+				psaf.setSrchEndDay(srchEndDate);				
+				psaf.setOutfileName(fileName);
+				psaf.printFileAllCompanySchedule();
+				break;
+			case "Q":
+				printMainMenu();
+				break;
+			default:
+				System.out.println("Unknown command key");
+				printMainMenu();
+				break;
+		}   
+    	
+    	String goMain = inputOutput("\nTo go mainMenu perss Y or N to Exit ");
+    	
+    	if (goMain.equalsIgnoreCase("Y")) {
+    		printMainMenu();
+    	} else {
+    		System.exit(0);
+    	} 
+    	
+    }
+    
+    /**
+     * Add company's holiday
+     */
+    private void addCompanyHolidayCommand() {
+    	
+    	Command cmd = new Command();
+    	
+    	// holiday START DATE
+    	String startDate = inputOutput("\nPlease enter the holiday start date (MMDDYYYY) or [ enter Q for mainManu ] : ");
+    	if ( startDate.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkDateValid(startDate)) {
+    		System.out.println("Invalid date foramt");
+    		addCompanyHolidayCommand();
+    		return;
+    	}
+    	
+    	// holiday End DATE
+    	String endDate = inputOutput("\nPlease enter the holiday end date (MMDDYYYY) or [ enter Q for mainManu ] : ");
+    	if ( endDate.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkDateValid(endDate)) {
+    		System.out.println("Invalid date foramt");
+    		addCompanyHolidayCommand();
+    		return;
+    	}
+    	
+    	// Description 
+    	String description = inputOutput("\nPlease enter the description or [ enter Q for mainManu ] : ");
+    	if ( description.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkStrLenValid(description)) {
+    		System.out.println("Max length limit in 1024 characters");
+    		addCompanyHolidayCommand();
+    		return;
+    	}
+    	
+    	/* finally input database */
+    	AddHoliday addHday = new AddHoliday();
+    	addHday.setStartDate(startDate);
+    	addHday.setEndDate(endDate);
+    	addHday.setDescription(description);
+    	String result = SysConfig.fail;
+    	if (addHday.insertHolidayInfo()) {
+    		result = SysConfig.success;
+    	}
+    	System.out.println("### addHoliday : " + result);       	
+    	
+    	String goMain = inputOutput("\nTo go mainMenu perss Y or N to Exit ");
+    	
+    	if (goMain.equalsIgnoreCase("Y")) {
+    		printMainMenu();
+    	} else {
+    		System.exit(0);
+    	} 
+    	
+    }
 		
 }
 	
