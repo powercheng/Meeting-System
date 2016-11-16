@@ -3,18 +3,19 @@ package client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
 import common.CommonUtil;
 import common.SysConfig;
 import controller.AddMeeting;
+import controller.AddVacation;
 import controller.CancelMeeting;
+import controller.CancelVacation;
 import controller.Command;
 import controller.CommandFactory;
-import controller.PrintScheduleAll;
-import controller.PrintScheduleRoom;
+import controller.EditMeeting;
+import model.Meeting;
+import model.Vacation;
 
 public class Main {	
 	/**
@@ -59,7 +60,13 @@ public class Main {
 		CommandFactory factory = new CommandFactory();
 		factory.run(jsonData);
 	}
-   
+   /**
+    * Terminate this program with exit message
+    */
+   private void exitMEAT() {
+	   System.out.println("System is exited");
+	   System.exit(0);
+   }
     /**
      * Prints the main menu and deals with user input     
      */    
@@ -88,16 +95,16 @@ public class Main {
 						addMeetingCommand();
 						break;
 					case 2:
-						System.out.println("edit a meeting");
+						EditMeetingCommand();
 						break;
 					case 3:
 						cancelMeetingCommand();
 						break;
 					case 4:
-						System.out.println("book a vacation");
+						addVacationCommand();
 						break;
 					case 5:
-						System.out.println("cancel a vacation");
+						cancelVacationCommand();
 						break;
 					case 6:
 						// to do 
@@ -109,7 +116,7 @@ public class Main {
 						// to do 
 						break;
 					case 0:
-						System.exit(0); 
+						exitMEAT(); 
 						break;				
 				}		       
         	} else {
@@ -143,14 +150,14 @@ public class Main {
     /**
      * To conform with script command handling rule, 
      * we make the same data structure (command array) and pass it to its class
-     * @return JSONArray
+     * @return void
      */
     @SuppressWarnings("unchecked")
 	private void addMeetingCommand() {    	
     	JSONArray command_array = new JSONArray();    	
     	Command cmd = new Command();    	
     	// MEET DATE
-    	String meetDate = inputOutput("\nPlease enter the meeting date (MMDDYYYY) or [ enter q for mainManu ] : ");
+    	String meetDate = inputOutput("\nPlease enter the meeting date (MMDDYYYY) or [ enter Q for mainManu ] : ");
     	if ( meetDate.equalsIgnoreCase("q")) {
     		printMainMenu();
     		return;
@@ -166,8 +173,8 @@ public class Main {
     	command_array.add(jDate);
     	
     	// MEET START TIME
-    	String startTime = inputOutput("\nPlease enter the meeting startTIME (HH24:MI) or [ enter q for mainManu ] : ");
-    	if ( meetDate.equalsIgnoreCase("q")) {
+    	String startTime = inputOutput("\nPlease enter the meeting startTIME (HH24:MI) or [ enter Q for mainManu ] : ");
+    	if ( startTime.equalsIgnoreCase("q")) {
     		printMainMenu();
     		return;
     	}
@@ -182,8 +189,8 @@ public class Main {
     	command_array.add(jSTime);
     	
     	// MEET END TIME
-    	String endTime = inputOutput("\nPlease enter the meeting endTIME (HH24:MI) or [ enter q for mainManu ] : ");
-    	if ( meetDate.equalsIgnoreCase("q")) {
+    	String endTime = inputOutput("\nPlease enter the meeting endTIME (HH24:MI) or [ enter Q for mainManu ] : ");
+    	if ( endTime.equalsIgnoreCase("q")) {
     		printMainMenu();
     		return;
     	}
@@ -198,8 +205,8 @@ public class Main {
     	command_array.add(jETime);
     	
     	// ROOM ID
-    	String roomID = inputOutput("\nPlease enter the meeting RoomID or [ enter q for mainManu ] : ");
-    	if ( meetDate.equalsIgnoreCase("q")) {
+    	String roomID = inputOutput("\nPlease enter the meeting RoomID or [ enter Q for mainManu ] : ");
+    	if ( roomID.equalsIgnoreCase("q")) {
     		printMainMenu();
     		return;
     	}
@@ -214,8 +221,8 @@ public class Main {
     	command_array.add(jRoomID);
     	
     	// Description 
-    	String description = inputOutput("\nPlease enter the description or [ enter q for mainManu ] : ");
-    	if ( meetDate.equalsIgnoreCase("q")) {
+    	String description = inputOutput("\nPlease enter the description or [ enter Q for mainManu ] : ");
+    	if ( description.equalsIgnoreCase("q")) {
     		printMainMenu();
     		return;
     	}
@@ -257,7 +264,7 @@ public class Main {
 	private boolean addAttendeeCommand(JSONArray command_array) {
     	
     	Command cmd = new Command();    	
-    	String attendeeID = inputOutput("\nPlease enter the employeeID to attend or [ enter q for mainManu ] : ");
+    	String attendeeID = inputOutput("\nPlease enter the employeeID to attend (delete) or [ enter Q for mainManu ] : ");
     	
     	if ( attendeeID.equalsIgnoreCase("q")) {
     		printMainMenu();
@@ -280,6 +287,149 @@ public class Main {
     	return true;
     }
 	
+	/**
+     * Edit meeting command array as same as command line script   
+     * @return void
+     */
+    @SuppressWarnings("unchecked")
+	private void EditMeetingCommand() {   
+    	
+    	JSONArray command_array = new JSONArray();       
+    	
+    	Command cmd = new Command();    	
+    	// MEET ID
+    	String meetID = inputOutput("\nPlease enter the meeting ID to edit or [ enter Q for mainManu ] : ");
+    	if ( meetID.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkMeetingIdValid(meetID)) {
+    		System.out.println("The meetID not in database");
+    		EditMeetingCommand();
+    		return;
+    	}
+    	/*Current meeting information screen print */
+    	Meeting mt = new Meeting();
+    	mt.getMeetingInfo(meetID);
+    	mt.printCurrentMeetingInfo();
+    	
+    	JSONObject jEditID = new JSONObject();
+    	jEditID.put("name", "meeting-id");
+    	jEditID.put("value", meetID);
+    	command_array.add(jEditID);
+    	// Attendee edit ? 
+    	String editMode = inputOutput("\nAdd a attendee (Press A), Delete a attendee(Press D) or Edit meeting detail (Press E) : ");
+    
+    	switch (editMode.toUpperCase()) {
+		case "A":
+			// Attendee 
+	    	if (!addAttendeeCommand(command_array)) {
+	    		EditMeetingCommand();
+	    		return;
+	    	}
+	    	/* finally input database */
+	    	EditMeeting editAddAteendee = new EditMeeting(command_array, "ADD");
+	    	//System.out.println(command_array.toJSONString());
+	    	String result = editAddAteendee.execute();
+	    	System.out.println("### editMeeting(addAttendee) : " + result); 	
+			break;
+		case "D":
+			// Attendee 
+	    	if (!addAttendeeCommand(command_array)) {
+	    		EditMeetingCommand();
+	    		return;
+	    	}
+	    	/* finally input database */
+	    	EditMeeting editRmAteendee = new EditMeeting(command_array, "REMOVE");
+	    	result = editRmAteendee.execute();
+	    	System.out.println("### editMeeting(removeAttendee) : " + result); 			
+			break;
+		case "E":			
+			// MEET DATE
+	    	String meetDate = inputOutput("\nPlease enter the meeting date (MMDDYYYY) or [ enter S to skip ] : ");
+	    	if ( !meetDate.equalsIgnoreCase("S") ) {	    		
+		    	if (!cmd.checkDateValid(meetDate)) {
+		    		System.out.println("Invalid date foramt");
+		    		addMeetingCommand();
+		    		return;
+		    	}
+		    	JSONObject jDate = new JSONObject();
+		    	jDate.put("name", "date");
+		    	jDate.put("value", meetDate);
+		    	command_array.add(jDate);
+	    	}	    	
+	    	// MEET START TIME
+	    	String startTime = inputOutput("\nPlease enter the meeting startTIME (HH24:MI) or [ enter S to skip ] : ");
+	    	if ( !startTime.equalsIgnoreCase("S")) {
+		    	if (!cmd.checkTimeValid(startTime)) {
+		    		System.out.println("Invalid time foramt");
+		    		addMeetingCommand();
+		    		return;
+		    	}    
+		    	JSONObject jSTime = new JSONObject();
+		    	jSTime.put("name", "start-time");
+		    	jSTime.put("value", startTime);
+		    	command_array.add(jSTime);
+	    	}
+	    	
+	    	// MEET END TIME
+	    	String endTime = inputOutput("\nPlease enter the meeting endTIME (HH24:MI) or [ enter S to skip ] : ");
+	    	if ( !endTime.equalsIgnoreCase("S") ) {	    	
+		    	if (!cmd.checkTimeValid(endTime)) {
+		    		System.out.println("Invalid time foramt");
+		    		addMeetingCommand();
+		    		return;
+		    	}    	
+		    	JSONObject jETime = new JSONObject();
+		    	jETime.put("name", "end-time");
+		    	jETime.put("value", endTime);
+		    	command_array.add(jETime);
+	    	}	
+	    	// ROOM ID
+	    	String roomID = inputOutput("\nPlease enter the meeting RoomID or [ enter S to skip ] : ");
+	    	if ( !roomID.equalsIgnoreCase("S") ) {		    	
+		    	if (!cmd.checkRoomIdValid(roomID)) {
+		    		System.out.println("No such roomID in the database");
+		    		addMeetingCommand();
+		    		return;
+		    	}
+		    	JSONObject jRoomID = new JSONObject();
+		    	jRoomID.put("name", "room-id");
+		    	jRoomID.put("value", roomID);
+		    	command_array.add(jRoomID);
+	    	}
+	    	// Description 
+	    	String description = inputOutput("\nPlease enter the description or [ enter S to skip ] : ");
+	    	if ( !description.equalsIgnoreCase("S")) {	    		
+		    	if (!cmd.checkStrLenValid(description)) {
+		    		System.out.println("Max length limit in 1024 characters");
+		    		addMeetingCommand();
+		    		return;
+		    	}
+		    	JSONObject jDesc = new JSONObject();
+		    	jDesc.put("name", "description");
+		    	jDesc.put("value", description);
+		    	command_array.add(jDesc);
+	    	}	    	
+	    	/* finally input database */
+	    	EditMeeting editDetail = new EditMeeting(command_array);
+	    	result = editDetail.execute();
+	    	System.out.println("### editMeeting(meetingDetail) : " + result); 			
+			break;
+		default:
+			System.out.println("Unknown key pressed");
+    		EditMeetingCommand();
+			break;
+		}
+    	    
+    	String goMain = inputOutput("\nTo go mainMenu perss Y or N to Exit ");
+    	
+    	if (goMain.equalsIgnoreCase("Y")) {
+    		printMainMenu();
+    	} else {
+    		System.exit(0);
+    	}       	
+    }	
 	 /**
      * Cancel meeting command array as same as command line script   
      * @return JSONArray
@@ -289,33 +439,9 @@ public class Main {
     	
     	JSONArray command_array = new JSONArray();   
     	
-    	/*Current schedule list on user interface */
-    	PrintScheduleAll pSchedule = new PrintScheduleAll();
-    	/* scheduled meeting listing */
-    	String srchStartDay = CommonUtil.getAddDayStringFromNow("MMddyyyy", 0); // today
-    	String srchEndDay   = CommonUtil.getAddDayStringFromNow("MMddyyyy", 30);  // today + 30 days
-    	pSchedule.setSrchStartDay(srchStartDay);    	
-    	pSchedule.setSrchEndDay(srchEndDay);
-    	JSONObject rTobObj = pSchedule.getAllCompanyScheduleList();
-    	JSONArray  rMeetList = (JSONArray) rTobObj.get("events");
-    	System.out.println("--Current scheduled meeting within 30 days -- ");
-    	System.out.println("#MeetID   #Meeting Time           #RoomID ");
-    	System.out.println("---------------------------------------------");
-    	for (int i=0; i<rMeetList.size();i++) {
-    		JSONObject rSubObj = (JSONObject) rMeetList.get(i);
-    		String saveMID = (String) rSubObj.get("meeting-id");
-    		String saveDate = (String) rSubObj.get("date");
-    		String saveSTime = (String) rSubObj.get("start-time");
-    		String saveETime = (String) rSubObj.get("end-time");
-    		String saveRID = (String) rSubObj.get("room-id");
-    		System.out.println("# " + saveMID + "       " + CommonUtil.dateFormat(saveDate,"MMddyyyy","MM-dd-yy") 
-    								+ " " + saveSTime + "-" + saveETime + "     " + saveRID);
-    	}
-    	System.out.println("---------------------------------------------");
-    	
     	Command cmd = new Command();    	
     	// MEET ID
-    	String meetID = inputOutput("\nPlease enter the meeting ID to cancel or [ enter q for mainManu ] : ");
+    	String meetID = inputOutput("\nPlease enter the meeting ID to cancel or [ enter Q for mainManu ] : ");
     	if ( meetID.equalsIgnoreCase("q")) {
     		printMainMenu();
     		return;
@@ -344,6 +470,124 @@ public class Main {
     	}    
     	
     }
+    
+    /**
+     * To allow employees to schedule their vacation 
+     * also checking previous meeting schedules
+     * @return void
+     */
+    @SuppressWarnings("unchecked")
+	private void addVacationCommand() {    	
+    	JSONArray command_array = new JSONArray();    	
+    	Command cmd = new Command();    	
+    	
+    	String employeeID = inputOutput("\nPlease enter the employeeID to book a vacation or [ enter Q for mainManu ] : ");
+    	
+    	if ( employeeID.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkEmpolyeeIdValid(employeeID)) {
+    		System.out.println("No such employeeID in the database");
+    		addVacationCommand();
+    		return;
+    	}
+    	JSONObject jEmployee = new JSONObject();
+    	jEmployee.put("name", "employee-id");
+    	jEmployee.put("value", employeeID);
+    	command_array.add(jEmployee);
+    	
+    	// VACATION START DATE
+    	String vacSDate = inputOutput("\nPlease enter the start date (MMDDYYYY) or [ enter Q for mainManu ] : ");
+    	if ( vacSDate.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkDateValid(vacSDate)) {
+    		System.out.println("Invalid date foramt");
+    		addVacationCommand();
+    		return;
+    	}
+    	JSONObject jSDate = new JSONObject();
+    	jSDate.put("name", "start-date");
+    	jSDate.put("value", vacSDate);
+    	command_array.add(jSDate);
+    	
+    	// VACATION END DATE
+    	String vacEDate = inputOutput("\nPlease enter the end date (MMDDYYYY) or [ enter Q for mainManu ] : ");
+    	if ( vacEDate.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkDateValid(vacSDate)) {
+    		System.out.println("Invalid date foramt");
+    		addVacationCommand();
+    		return;
+    	}
+    	JSONObject jEDate = new JSONObject();
+    	jEDate.put("name", "end-date");
+    	jEDate.put("value", vacEDate);
+    	command_array.add(jEDate);
+    	
+    	/* finally input database */
+    	AddVacation addVac = new AddVacation(command_array);
+    	String result = addVac.execute();
+    	System.out.println("### addVacation : " + result);   
+    
+    	String goMain = inputOutput("\nTo go mainMenu perss Y or N to Exit ");
+    	
+    	if (goMain.equalsIgnoreCase("Y")) {
+    		printMainMenu();
+    	} else {
+    		System.exit(0);
+    	}    	
+    }
+    
+    /**
+     * Cancel vacation of an employee   
+     * @return JSONArray
+     */
+    @SuppressWarnings("unchecked")
+	private void cancelVacationCommand() {   
+    	
+    	JSONArray command_array = new JSONArray();
+    	Command cmd = new Command();    	
+    	
+    	String employeeID = inputOutput("\nPlease enter the employeeID to cancel vacations or [ enter Q for mainManu ] : ");
+    	
+    	if ( employeeID.equalsIgnoreCase("q")) {
+    		printMainMenu();
+    		return;
+    	}
+    	if (!cmd.checkEmpolyeeIdValid(employeeID)) {
+    		System.out.println("No such employeeID in the database");
+    		addVacationCommand();
+    		return;
+    	}
+    	JSONObject jEmployee = new JSONObject();
+    	jEmployee.put("name", "employee-id");
+    	jEmployee.put("value", employeeID);
+    	command_array.add(jEmployee);
+    	
+    	Vacation vac = new Vacation();
+    	vac.printScreenVacationList(employeeID);
+    	String goAhead = inputOutput("\nAre you sure to cancel this vacation ? Y or [ enter Q for mainManu ] : ");
+    	    	
+    	/* finally input database */
+    	CancelVacation cancelVac = new CancelVacation(command_array);
+    	String result = cancelVac.execute();
+    	System.out.println("### cancelVacation : " + result);   
+    
+    	String goMain = inputOutput("\nTo go mainMenu perss Y or N to Exit ");
+    	
+    	if (goMain.equalsIgnoreCase("Y")) {
+    		printMainMenu();
+    	} else {
+    		System.exit(0);
+    	}    
+    	
+    }
+    
 		
 }
 	

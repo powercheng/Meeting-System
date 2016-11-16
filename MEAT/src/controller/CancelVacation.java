@@ -6,7 +6,6 @@ import model.Vacation;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import View.Messageout;
 import common.SysConfig;
 
 public class CancelVacation extends Command {

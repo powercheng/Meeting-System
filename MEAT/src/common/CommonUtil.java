@@ -32,6 +32,28 @@ public class CommonUtil {
 			return s.trim();
 	}
 	/**
+	 * To print a column value with fixed size in the screen
+	 * @param str
+	 * @param paddingSize
+	 * @return
+	 */
+	public static String blankPadding(String str, int paddingSize) {
+		
+		StringBuffer rtn_buffer = new StringBuffer();
+		if (str.length() >= paddingSize) {
+			rtn_buffer.append(str);
+		} else {
+			rtn_buffer.append(str);
+			int fixSize = paddingSize - str.length();
+			for (int i=0;i<fixSize;i++) {
+				rtn_buffer.append(" ");
+			}
+		}
+		
+		return rtn_buffer.toString();			
+	}
+
+	/**
 	 * Date format converter
 	 * @param dateStr
 	 * @param fromFormat

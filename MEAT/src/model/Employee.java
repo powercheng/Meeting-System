@@ -2,9 +2,7 @@ package model;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
 import common.CommonUtil;
-import common.SysConfig;
 import common.TimeConflictException;
 import controller.Command;
 
@@ -204,7 +202,7 @@ public class Employee {
 			db.close();
 		//	System.out.println(checkArr.size());
 			if (checkArr.size() > 0) {
-				throw new TimeConflictException("Employee ID("+getEmployeeID()+") has a meeting at the same day for a vacation."); 
+				throw new TimeConflictException("Employee ID("+getEmployeeID()+") has a meeting during such vacation."); 
 			}
 				
 		} else {

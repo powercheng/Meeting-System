@@ -4,14 +4,9 @@ import model.Employee;
 import model.Meeting;
 import model.Room;
 import model.Sql;
-
 import java.util.LinkedList;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import View.Messageout;
-import common.CommonUtil;
 import common.SysConfig;
 import common.TimeConflictException;
 
@@ -20,6 +15,7 @@ public class EditMeeting extends Command {
 	private Meeting meeting;
 	private JSONArray command_array;
 	private String atteedeeOption;  //ADD or REMOVE 
+	private LinkedList<String> checkSkipedAttendeeList;  // unchanged attendees no need to check schedules 
 	
 	/* Changing category tracking */
 	boolean timeChanged = false;
@@ -55,7 +51,7 @@ public class EditMeeting extends Command {
 					if(checkMeetingIdValid(value)){
 						/*current db information setting */
 						meeting.getMeetingInfo(value);
-						//meeting.setMeetingId(value);
+						checkSkipedAttendeeList = meeting.getAttendee(); // current list no need to check schedule;
 						break;
 					} else {						
 						System.out.println("edit-meeting : meeting-id ("+value+") not in db");
@@ -109,7 +105,15 @@ public class EditMeeting extends Command {
 					if(checkEmpolyeeIdValid(value)) {
 						if (this.atteedeeOption != null) {
 							// Only attendee add option 
-							if (this.atteedeeOption.equals("ADD")){								
+							if (this.atteedeeOption.equals("ADD")){		
+								LinkedList<String> lis = meeting.getAttendee();
+								for (int k=0;k<lis.size();k++) {
+									String attendeeID = (String) lis.get(k);
+									if (attendeeID.equalsIgnoreCase(value)) {  // same person already exsits 
+										System.out.println("empolyee id ("+value+") already exists in the meeting attendees");
+										return SysConfig.fail;									
+									}									
+								}
 								meeting.addAttendee(value);
 							// Only attendee remove option
 							} else if (this.atteedeeOption.equals("REMOVE")){
@@ -184,7 +188,10 @@ public class EditMeeting extends Command {
 				
 				/*check meeting*/
 				try {
-					emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
+					// only new attendees check
+					if (!checkSkipedAttendeeList.contains((String) attendList.get(i))) {
+						emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
+					}
 				} catch (TimeConflictException tce) {
 					tce.printStackTrace();
 					return false;
@@ -192,7 +199,10 @@ public class EditMeeting extends Command {
 								
 				/*check vacation*/
 				try {
-					emp.checkAvailableWithVacation(meeting.getDate());
+					// only new attendees check
+					if (!checkSkipedAttendeeList.contains((String) attendList.get(i))) {
+						emp.checkAvailableWithVacation(meeting.getDate());
+					}
 				} catch (TimeConflictException tce) {
 					tce.printStackTrace();
 					return false;

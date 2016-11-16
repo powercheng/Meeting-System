@@ -1,21 +1,10 @@
 package client;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-import java.sql.PreparedStatement;
-
 import common.CommonUtil;
-import common.SysConfig;
 import common.TimeConflictException;
 import model.Employee;
-import model.Room;
 import model.Sql;
 
 public class TestRun {

@@ -1,15 +1,9 @@
 package controller;
 
 import model.Employee;
-import model.Meeting;
-import model.Room;
 import model.Sql;
-import model.Vacation;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import View.Messageout;
 import common.CommonUtil;
 import common.SysConfig;
 
@@ -85,7 +79,7 @@ public class PrintScheduleEmployee extends Command {
 			return SysConfig.fail;
 		}
 		
-		if (!printEmployeeSchedule()) {
+		if (!printFileEmployeeSchedule()) {
 			return SysConfig.fail;
 		}
 		
@@ -136,9 +130,8 @@ public class PrintScheduleEmployee extends Command {
 		return rtnObj;
 		
 	}
-	
-	@SuppressWarnings("unchecked")
-	public boolean printEmployeeSchedule() {
+		
+	public boolean printFileEmployeeSchedule() {
 		
 		JSONObject jsonObj = getEmployeeScheduleList();
 		

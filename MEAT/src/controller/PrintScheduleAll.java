@@ -1,15 +1,8 @@
 package controller;
 
-import model.Employee;
-import model.Meeting;
-import model.Room;
 import model.Sql;
-import model.Vacation;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import View.Messageout;
 import common.CommonUtil;
 import common.SysConfig;
 
@@ -79,7 +72,7 @@ public class PrintScheduleAll extends Command {
 			return SysConfig.fail;
 		}
 		
-		if (!printAllCompanySchedule()) {
+		if (!printFileAllCompanySchedule()) {
 			return SysConfig.fail;
 		}
 		
@@ -127,8 +120,48 @@ public class PrintScheduleAll extends Command {
 		return rtnObj;
 	}
 	
+	public void printScreenAllCompanySchedule() {
+		
+		if (getSrchStartDay() == null || getSrchEndDay() == null) {
+			System.out.println("Not set search time interval");
+			return;
+		}
+		
+		JSONObject rTobObj = getAllCompanyScheduleList();
+    	JSONArray  rMeetList = (JSONArray) rTobObj.get("events");
+    	
+    	System.out.println("#Current scheduled meeting list between "+getSrchStartDay()+" and "+getSrchEndDay()+" #");
+    	System.out.println("#MeetID   #Meeting Time             #RoomID    #Description           #AttendeeID(NAME)");
+    	System.out.println("------------------------------------------------------------------------------------------------");
+    	
+    	for (int i=0; i<rMeetList.size();i++) {
+    		
+    		JSONObject rSubObj = (JSONObject) rMeetList.get(i);
+    		String saveMID = (String) rSubObj.get("meeting-id");
+    		String saveDate = (String) rSubObj.get("date");
+    		String saveSTime = (String) rSubObj.get("start-time");
+    		String saveETime = (String) rSubObj.get("end-time");
+    		String saveRID   = (String) rSubObj.get("room-id");
+    		String saveDESC   = (String) rSubObj.get("description");
+    		JSONArray attList = (JSONArray) rSubObj.get("attendees");
+    		String attendString = "";
+    		for (int k=0;k<attList.size();k++) {
+    			JSONObject attObj = (JSONObject) attList.get(k);
+    			attendString += (String) attObj.get("employee-id") +"("+(String) attObj.get("name")+")";
+    			if (k != attList.size()-1) {  // last list
+    				attendString += ",";
+    			}
+    		}
+    		System.out.println("# " + saveMID + "       " + CommonUtil.dateFormat(saveDate,"MMddyyyy","MM.dd.yyyy") 
+    								+ " " + saveSTime + "-" + saveETime + "     " + saveRID 
+    								+ "       " + CommonUtil.blankPadding(saveDESC, 18) + "    " + attendString);
+    	}
+    	
+    	System.out.println("------------------------------------------------------------------------------------------------");
+		
+	}
 
-	public boolean printAllCompanySchedule() {
+	public boolean printFileAllCompanySchedule() {
 		
 		JSONObject jsonObj = getAllCompanyScheduleList();		
 		/* Save json object content into file */

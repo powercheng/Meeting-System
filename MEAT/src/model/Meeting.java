@@ -1,10 +1,10 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import common.CommonUtil;
 
 public class Meeting {
 	private String meetingId;
@@ -107,7 +107,24 @@ public class Meeting {
 			System.out.println("meetingID is not passed");
 		}
 	}
-
-
+	
+	public void printCurrentMeetingInfo() {
+		
+		System.out.println("#MeetID   #Meeting Time             #RoomID    #Description           #AttendeeID ");
+    	System.out.println("------------------------------------------------------------------------------------------------");
+    	
+		String attendString = "";
+		for (int k=0;k<attendee.size();k++) {			
+			attendString += (String) attendee.get(k);
+			if (k != attendee.size()-1) {  // last list
+				attendString += ",";
+			}
+		}
+		
+		System.out.println("# " + getMeetingId() + "       " + CommonUtil.dateFormat(getDate(),"MMddyyyy","MM.dd.yyyy") 
+		+ " " + getStartTime() + "-" + getEndTime() + "     " + getRoomId() 
+		+ "       " + CommonUtil.blankPadding(getDescription(), 18) + "    " + attendString);
+    	
+	}
 	
 }

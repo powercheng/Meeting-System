@@ -1,11 +1,5 @@
 package controller;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import View.Messageout;
 import model.Employee;
 import model.Meeting;
 import model.Room;
@@ -130,10 +124,6 @@ public class Command {
 		} else {
 			return false;
 		}
-	}
+	}	
 	
-	public void viewprint() {
-		Messageout msg = new Messageout();
-		msg.run();
-	}
 }
