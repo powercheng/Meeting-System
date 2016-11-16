@@ -27,7 +27,7 @@ public class TestRun {
 		//run.sqlSelectTest();
 		//run.sqlInsertTest();
 		//run.testUUID();
-		run.testRun();
+		run.initDB();
 	}
 	
 	/**
@@ -69,6 +69,26 @@ public class TestRun {
 			db.setParameter(5, "supervisor");
 			db.setParameter(6, 5);
 			// store data
+			db.write();
+			// close connection
+			db.close();  // make sure to call this method			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}		
+	}
+	
+	public void initDB() {
+		
+		try {
+			String query = "DELETE FROM TB_ATTENDEE ";
+			Sql db = new Sql();		
+			db.setQuery(query);			
+			db.write();
+			query = "DELETE FROM TB_MEETING ";
+			db.setQuery(query);			
+			db.write();
+			query = "DELETE FROM TB_VACATION ";
+			db.setQuery(query);			
 			db.write();
 			// close connection
 			db.close();  // make sure to call this method			

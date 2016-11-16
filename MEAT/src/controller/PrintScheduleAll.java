@@ -25,11 +25,11 @@ public class PrintScheduleAll extends Command {
 		super();
 		this.command_array = command_array;	
 	}
-/*	
+	
 	public PrintScheduleAll() {	
 		
 	}
-	
+/*	
 	public static void main(String[] args) {
 		PrintScheduleAll test = new PrintScheduleAll();	
 		test.setSrchStartDay("01012016");
@@ -87,9 +87,10 @@ public class PrintScheduleAll extends Command {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean printAllCompanySchedule() {
+	public JSONObject getAllCompanyScheduleList() {
 		
 		JSONObject rtnObj = new JSONObject();
+		
 		Sql db = new Sql();
 		String meetDetailQuery = "SELECT meetID as 'meeting-id', meetDATE as date, "
 				+ " startTIME as 'start-time', endTime as 'end-time', "
@@ -123,8 +124,15 @@ public class PrintScheduleAll extends Command {
 		rtnObj.put("events", mergedArr);
 		db.close();
 		
+		return rtnObj;
+	}
+	
+
+	public boolean printAllCompanySchedule() {
+		
+		JSONObject jsonObj = getAllCompanyScheduleList();		
 		/* Save json object content into file */
-		return CommonUtil.saveFile(getOutfileName(), rtnObj);
+		return CommonUtil.saveFile(getOutfileName(), jsonObj);
 		
 	}
 		

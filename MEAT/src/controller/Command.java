@@ -99,6 +99,16 @@ public class Command {
 		return true;
 	}
 	
+	public boolean checkMeetIdValid(String meetID) {
+		Meeting meet = new Meeting();
+		meet.getMeetingInfo(meetID);; // GET AND SETTING DATABASE INFORMATION
+		/* if meetID (fromDB) is null then no such MEETING */
+		if (meet.getMeetingId() == null) {
+			return false;
+		}		
+		return true;
+	}
+	
 	public boolean checkStrLenValid(String str) {
 		return str.length() < 1024;
 	}

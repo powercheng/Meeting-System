@@ -25,11 +25,11 @@ public class PrintScheduleRoom extends Command {
 		this.command_array = command_array;		
 		this.room = new Room();
 	}
-/*	
+
 	public PrintScheduleRoom() {		
 		this.room = new Room();
 	}
-	
+/*	
 	public static void main(String[] args) {
 		PrintScheduleRoom test = new PrintScheduleRoom();
 		test.room.getRoomInfo("3A66");
@@ -38,7 +38,7 @@ public class PrintScheduleRoom extends Command {
 		test.setOutfileName("test.txt");
 		test.printRoomSchedule();
 	}
-*/	
+*/
 	@Override
 	public String execute() {		
 		// TODO Auto-generated method stub	
@@ -90,7 +90,7 @@ public class PrintScheduleRoom extends Command {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean printRoomSchedule() {
+	public JSONObject getRoomScheduleList() {
 		
 		JSONObject rtnObj = new JSONObject();
 		Sql db = new Sql();
@@ -126,6 +126,15 @@ public class PrintScheduleRoom extends Command {
 		}
 		rtnObj.put("events", mergedArr);
 		db.close();
+		
+		return rtnObj;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean printRoomSchedule() {
+		
+		JSONObject rtnObj = getRoomScheduleList();
 		
 		/* Save json object content into file */
 		return CommonUtil.saveFile(getOutfileName(), rtnObj);

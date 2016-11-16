@@ -27,11 +27,11 @@ public class PrintScheduleEmployee extends Command {
 		this.command_array = command_array;		
 		this.employee = new Employee();
 	}
-/*	
+	
 	public PrintScheduleEmployee() {		
 		this.employee = new Employee();
 	}
-	
+/*
 	public static void main(String[] args) {
 		PrintScheduleEmployee test = new PrintScheduleEmployee();
 		test.employee.getPersonInfo("bob099");
@@ -93,7 +93,7 @@ public class PrintScheduleEmployee extends Command {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean printEmployeeSchedule() {
+	public JSONObject getEmployeeScheduleList() {
 		
 		JSONObject rtnObj = new JSONObject();
 		Sql db = new Sql();
@@ -133,8 +133,17 @@ public class PrintScheduleEmployee extends Command {
 		rtnObj.put("events", mergedArr);
 		db.close();
 		
+		return rtnObj;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean printEmployeeSchedule() {
+		
+		JSONObject jsonObj = getEmployeeScheduleList();
+		
 		/* Save json object content into file */
-		return CommonUtil.saveFile(getOutfileName(), rtnObj);
+		return CommonUtil.saveFile(getOutfileName(), jsonObj);
 		
 	}
 		

@@ -9,7 +9,7 @@ import common.SysConfig;
 import model.Sql;
 
 public class ExternalDBImporter {
-	
+/*	
 	public static void main(String[] args) {		
 		ExternalDBImporter ee = new ExternalDBImporter();
 		// 1. Sync employeeTable with jsonFile
@@ -17,7 +17,7 @@ public class ExternalDBImporter {
 		// 2. Sync roomTable with jsonFile
 		ee.updateRoomTable();
 	}
-	
+*/	
 	/**
 	 *  External DB file(json) import into MEAT DB
 	 *  json file (\\resource\\employees.json)

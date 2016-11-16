@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,6 +19,11 @@ import model.Sql;
 
 public class CommonUtil {
 	
+	/**
+	 * null string eliminate function 
+	 * @param s
+	 * @return
+	 */
 	public static String nullTrim(String s) 
 	{
 		if (s == null)
@@ -25,25 +31,59 @@ public class CommonUtil {
 		else 
 			return s.trim();
 	}
-		
+	/**
+	 * Date format converter
+	 * @param dateStr
+	 * @param fromFormat
+	 * @param toFormat
+	 * @return
+	 */
 	public static String dateFormat(String dateStr, String fromFormat, String toFormat) {
 		
 		DateFormat fm_from = new SimpleDateFormat(fromFormat); 
 		SimpleDateFormat fm_to = new SimpleDateFormat(toFormat);
 		String formattedDate = null;		
-		Date srcDate;
-		
+		Date srcDate;		
 		try {
 			srcDate = (Date) fm_from.parse(dateStr);
 			formattedDate = fm_to.format(srcDate);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		
+		} 		
 		return formattedDate;		
 	}
+	/**
+	 * get date string of adding days from current day with specific time string format 
+	 * @param format
+	 * @return
+	 */
+	public static String getAddDayStringFromNow(String format, int days) {
+		
+		SimpleDateFormat sdfDate = new SimpleDateFormat(format);
+	    Date now = new Date();
+	    Date futureDay = addDays(now, days);
+	    String strDate = sdfDate.format(futureDay);
+	    return strDate;
+	}
 	
+	/**
+	 * add days and return new day 
+	 * @param format
+	 * @return
+	 */
+	public static Date addDays(Date date, int days)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, days); //minus number would decrement the days
+        return cal.getTime();
+    }
+	/**
+	 * Create globally unique string 
+	 * @param cutindex
+	 * @return
+	 */
 	public static String createUUID(int cutindex)
 	{	
 		UUID uuid = UUID.randomUUID();
@@ -53,7 +93,10 @@ public class CommonUtil {
 		else 
 			return uuidString;			
 	}
-	
+	/**
+	 * Get a next meeting ID (Sequential number)
+	 * @return
+	 */
 	public static String getNextMeetID()
 	{
 		Sql db = new Sql();
@@ -70,7 +113,11 @@ public class CommonUtil {
 			else return meetID;
 		}
 	}
-	
+	/**
+	 * Load jsonfile contents in string data  
+	 * @param jsonPath
+	 * @return
+	 */
 	public static String loadJsonFile(String jsonPath) {
 		
 		StringBuffer rtn_buffer = new StringBuffer();
@@ -96,25 +143,26 @@ public class CommonUtil {
 		return rtn_buffer.toString();
 		
 	}
-	
-	public static boolean saveFile(String fileName, JSONObject obj) {
-		
-		File file = new File(SysConfig.JsonOutDirectory + fileName);
-		
+	/**
+	 * Save JSONObject into file 
+	 * @param fileName
+	 * @param obj
+	 * @return
+	 */
+	public static boolean saveFile(String fileName, JSONObject obj) {		
+		File file = new File(SysConfig.JsonOutDirectory + fileName);		
 		try {
-			if (file.exists()) file.delete();  // previous one delete.
-			
+			if (file.exists()) file.delete();  // previous one delete.			
 			FileWriter fw = new FileWriter(file);
 			fw.write(obj.toJSONString());
 			fw.flush();
-			fw.close();
-			
+			fw.close();			
+			System.out.println(SysConfig.JsonOutDirectory + fileName + " is succssfully saved.");			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
-		}
-		
+		}		
 		return true;
-
 	}
+	 
 }

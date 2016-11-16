@@ -70,7 +70,7 @@ public class CommandFactory {
 					/* execute */
 					if(command != null) {
 						String result = command.execute();
-						System.out.println(name + " : " + result);
+						System.out.println("### " + name + " : " + result);
 					}					
 				}
 			}
