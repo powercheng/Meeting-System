@@ -16,7 +16,7 @@ public class SysConfig {
 	
 	public static String JsonOutDirectory = runningDir + "\\resource\\";
 	
-	public static String ScriptFilePath = JsonOutDirectory;
+	public static String ScriptFilePath = runningDir + "\\";
 	
 	public static String fail = "failed";
 	public static String success = "success";

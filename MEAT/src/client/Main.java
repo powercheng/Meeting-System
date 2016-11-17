@@ -23,22 +23,35 @@ import model.Meeting;
 import model.Room;
 import model.Vacation;
 /**
- * Main controller in our MEAT system
+ * Main controller in our MEAT system <br>
+ * How to run this program. <br>
+ * 1. Interactive     mode : java -jar MEAT.jar  <br>
+ * 2. ScriptCommdnRun mode : java -jar MEAT.jar filename.json <br>
+ * 3. Load externalDB mode : java -jar MEAT.jar DBSYNC <br>
  * @author group7
  */
 public class Main {	
 	/**
-     * MEAT System begins !
-     * 1. "No args" is interactive mode
-     * 2. "args = scriptname" is script running mode
-     * 3. "args = jsonDBfile" is to load external db into local db
-     * @param args 
+     * MEAT System begins !    
+     * @param args 1. nothing or 2. filename or 3. DBSYNC (only input DBSYNC)
      */
     public static void main(String[] args) {
     	
-	    System.out.println("************* Welcome to the MEAT ! ****************");
-	        
+	    System.out.println("************* How to run the MEAT ! ****************");	   
+	    System.out.println("1. Interactive     mode : java -jar MEAT.jar ");
+	    System.out.println("2. ScriptCommdnRun mode : java -jar MEAT.jar filename.json ");
+	    System.out.println("3. Load externalDB mode : java -jar MEAT.jar DBSYNC ");
+	    System.out.println("\nYour commands will be running in 3second................\n");
+	       
+	    try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
 	    Main m = new Main();
+	    
 	    if (args.length == 0) {
 	    	// no passing parameter means interactive mode
 	    	m.printMainMenu();
@@ -62,21 +75,21 @@ public class Main {
 	}      
    /**
     * Run all commands in the script file (json format) at once 
-    * Script file should be exists in our resource directory
-    * SysConfig.ScriptFilePath = workingDir//resource//
+    * Script file should be exists in our current working directory
+    * SysConfig.ScriptFilePath = workingDir//
     * @param fileName  (such as command.json)
     */
    private void runScriptCommand(String fileName) {	
-	    System.out.println("\n----- ScriptFile execution mode is starting..-----\n");
+	    System.out.println("\n----- ScriptFile running mode is starting..-----\n");
 		String filePath = SysConfig.ScriptFilePath + fileName;
 		String jsonData = CommonUtil.loadJsonFile(filePath);
 		if (!jsonData.equals("")) {
 			CommandFactory factory = new CommandFactory();
 			factory.run(jsonData);
 		} else {
-			System.out.println("Error: The file("+fileName+") should be in the resource directory.");
+			System.out.println("Error: The file("+fileName+") should be in the current directory.");
 		}
-		System.out.println("\n----- ScriptFile execution mode ended..-----");
+		System.out.println("\n----- ScriptFile running mode ended..-----");
 	}
    /**
     * Terminate this program with exit message
@@ -89,7 +102,7 @@ public class Main {
      * Prints the main menu and deals with user input     
      */    
     private void printMainMenu() {    	
-    	System.out.println("");
+    	System.out.println("# Interactive mode is running (Menu Below)#\n");
         System.out.println("1. Book a meeting");
         System.out.println("2. Edit a meeting");
         System.out.println("3. Cancel a meeting");
@@ -102,6 +115,7 @@ public class Main {
         System.out.println("8. Print company's schedule");
         System.out.println("---------------------");
         System.out.println("9. Add company holiday");
+        System.out.println("---------------------");
         System.out.println("0. Exit\n");
         
         //Get user input
@@ -154,7 +168,7 @@ public class Main {
    
     /**
      * Passes a prompt to the user and returns the user input string.
-     * @param msg
+     * @param msg system messsage for user input 
      * @return String
      */
     private String inputOutput(String msg) {
@@ -172,7 +186,6 @@ public class Main {
     /**
      * To conform with script command handling rule, 
      * we make the same data structure (command array) and pass it to its class
-     * @return void
      */
     @SuppressWarnings("unchecked")
 	private void addMeetingCommand() {    	
@@ -279,8 +292,8 @@ public class Main {
     }
     /**
      * To take multiple attendees, call this function recursively
-     * @param command_array
-     * @return
+     * @param command_array json array with "name":"value"
+     * @return boolean
      */    
 	@SuppressWarnings("unchecked")
 	private boolean addAttendeeCommand(JSONArray command_array) {
@@ -311,7 +324,6 @@ public class Main {
 	
 	/**
      * Edit meeting command array as same as command line script   
-     * @return void
      */
     @SuppressWarnings("unchecked")
 	private void EditMeetingCommand() {   
@@ -453,8 +465,7 @@ public class Main {
     	}       	
     }	
 	 /**
-     * Cancel meeting command array as same as command line script   
-     * @return JSONArray
+     * Cancel meeting command array as same as command line script do   
      */
     @SuppressWarnings("unchecked")
 	private void cancelMeetingCommand() {   
@@ -495,7 +506,6 @@ public class Main {
     /**
      * To allow employees to schedule their vacation 
      * also checking previous meeting schedules
-     * @return void
      */
     @SuppressWarnings("unchecked")
 	private void addVacationCommand() {    	
@@ -566,7 +576,6 @@ public class Main {
     
     /**
      * Cancel vacation of an employee   
-     * @return JSONArray
      */
     @SuppressWarnings("unchecked")
 	private void cancelVacationCommand() {   
