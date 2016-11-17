@@ -42,16 +42,22 @@ public class Main {
 	    System.out.println("2. ScriptCommdnRun mode : java -jar MEAT.jar filename.json ");
 	    System.out.println("3. Load externalDB mode : java -jar MEAT.jar DBSYNC ");
 	    System.out.println("\nYour commands will be running in 3second................\n");
-	       
+	    
+	    Main m = new Main();
+	    
 	    try {
 			Thread.sleep(3000);
+			System.out.println("Checking Resources.....");	
+			/*db file check */
+			if (!SysConfig.checkResource()) {
+				m.exitMEAT();
+			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    
-	    Main m = new Main();
-	    
+	    /* running mode checking */
 	    if (args.length == 0) {
 	    	// no passing parameter means interactive mode
 	    	m.printMainMenu();
@@ -66,7 +72,13 @@ public class Main {
 		    		dImp.updateRoomTable(); // TB_ROOM update
 		    		System.out.println("\n----- External DB syncronization ended..-----");
 		    		break;	
-		    	// All other arguments are taken as command script file. args = filename 	
+		    	// All other arguments are taken as command script file. args = filename
+		    	case "INITDB":
+		    		System.out.println("\n----- DB init is starting..-----\n");
+		    		TestRun tr = new TestRun();
+		    		tr.initDB();
+		    		System.out.println("\n----- DB init is ended..-----");
+		    		break;
 				default: 
 					m.runScriptCommand(args[0]);
 					break;

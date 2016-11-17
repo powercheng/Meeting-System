@@ -1,4 +1,7 @@
 package common;
+
+import java.io.File;
+
 /**
  * This class is used for system configuration such as db file path, common properties.
  * @author group7
@@ -26,5 +29,25 @@ public class SysConfig {
 	/* function division tag */
 	public static String addTag = "ADD";
 	public static String removeTag = "REMOVE";
+	
+	/**
+	 * If resource dir doesn't exit, then make the directory and check sqlite db file
+	 */
+	public static boolean checkResource() {
+		
+		File resourceDir = new File(JsonOutDirectory);
+		if (!resourceDir.exists()) {
+			resourceDir.mkdir();
+		}
+		
+		File db = new File(dbFile);
+		if (!db.exists()) {
+			System.out.println(dbFile + " not in the resource directory");
+			System.out.println("Check : "+fail+" \n");
+			return false;
+		}		
+		System.out.println("Check : "+success+" \n");		
+		return true;
+	}
 
 }

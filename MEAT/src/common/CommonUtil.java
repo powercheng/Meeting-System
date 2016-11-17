@@ -94,7 +94,8 @@ public class CommonUtil {
 	
 	/**
 	 * add days and return new day 
-	 * @param format
+	 * @param date
+	 * @param days
 	 * @return
 	 */
 	public static Date addDays(Date date, int days)
