@@ -66,7 +66,7 @@ public class AddVacation extends Command {
 						return SysConfig.fail;
 					}
 				default :
-					System.out.println("invalid arguments : " + name + "for add-vacation");
+					System.out.println("invalid arguments : " + name + " for add-vacation");
 					return SysConfig.fail;
 			}			
 		}

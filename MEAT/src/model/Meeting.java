@@ -1,6 +1,7 @@
 package model;
 
 import java.util.LinkedList;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -61,7 +62,12 @@ public class Meeting {
 		return attendee;
 	}
 	public void addAttendee(String str) {
-		this.attendee.add(str);
+		String regex = ",|，|\\s+";
+        String[] attendees = str.split(regex);
+        for(String attend : attendees){
+        	this.attendee.add(attend);
+        }
+		
 	} 
 	public void setAttendee(LinkedList<String> attendee) {
 		this.attendee = attendee;

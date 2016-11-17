@@ -88,7 +88,6 @@ public class AddMeeting extends Command {
 						meeting.addAttendee(value);				
 						break;
 					} else {
-						System.out.println("invalid empolyee id ("+value+") for adding meeting command");
 						return SysConfig.fail;
 					}
 				default :

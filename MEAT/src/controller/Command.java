@@ -33,7 +33,7 @@ public class Command {
 		} else if(str.length() == 5) {
 			int hour = Integer.parseInt(str.substring(0, 2));
 			int min = Integer.parseInt(str.substring(3, 5));
-			return hour >= 0 && hour <= 24 && min >=0 && min <=60;
+			return hour >= 0 && hour < 24 && min >=0 && min <=60;
 		} else {
 			return false;
 		}
@@ -101,13 +101,17 @@ public class Command {
 	 * @return
 	 */
 	public boolean checkEmpolyeeIdValid(String employeeID){
-		/* if employeeID (from DB) == null then no such employeeID*/		
-		Employee emp = new Employee();
-		emp.getPersonInfo(employeeID);  // get and setting database information		
-		if (emp.getEmployeeID() == null) {
-			return false;
+		/* if employeeID (from DB) == null then no such employeeID*/	
+    	String regex = ",|，|\\s+";
+        String[] attendees = employeeID.split(regex);	
+		for(String attendee : attendees){
+			Employee emp = new Employee();
+			emp.getPersonInfo(attendee);  // get and setting database information		
+			if (emp.getEmployeeID() == null) {
+				System.out.println("invalid empolyee id ("+attendee+") for adding meeting command");
+				return false;
+			}
 		}
-		
 		return true;
 	}
 	/**

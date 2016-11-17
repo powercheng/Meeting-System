@@ -4,9 +4,12 @@ import model.Employee;
 import model.Meeting;
 import model.Room;
 import model.Sql;
+
 import java.util.LinkedList;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 import common.SysConfig;
 import common.TimeConflictException;
 /**
@@ -115,38 +118,53 @@ public class EditMeeting extends Command {
 					}
 				case "attendee" :					
 					if(checkEmpolyeeIdValid(value)) {
-						if (this.atteedeeOption != null) {
-							// Only attendee add option 
-							if (this.atteedeeOption.equals(SysConfig.addTag)){		
-								LinkedList<String> lis = meeting.getAttendee();
-								for (int k=0;k<lis.size();k++) {
-									String attendeeID = (String) lis.get(k);
-									if (attendeeID.equalsIgnoreCase(value)) {  // same person already exsits 
-										System.out.println("empolyee id ("+value+") already exists in the meeting attendees");
-										return SysConfig.fail;									
-									}									
+						String regex = ",|，|\\s+";
+				        String[] attendees = value.split(regex);
+				        for (String attendee : attendees) {
+
+							if (this.atteedeeOption != null) {
+								// Only attendee add option
+								if (this.atteedeeOption.equals(SysConfig.addTag)) {
+									LinkedList<String> lis = meeting.getAttendee();
+									for (int k = 0; k < lis.size(); k++) {
+										String attendeeID = (String) lis.get(k);
+										if (attendeeID.equalsIgnoreCase(attendee)) { // same
+																					// person
+																					// already
+																					// exsits
+											System.out
+													.println("empolyee id ("
+															+ value
+															+ ") already exists in the meeting attendees");
+											return SysConfig.fail;
+										}
+									}
+									meeting.addAttendee(attendee);
+									// Only attendee remove option
+								} else if (this.atteedeeOption
+										.equals(SysConfig.removeTag)) {
+									LinkedList<String> lis = meeting.getAttendee();
+									LinkedList<String> modified_lis = new LinkedList<String>();
+									for (int k = 0; k < lis.size(); k++) {
+										String attendeeID = (String) lis.get(k);
+										if (!attendeeID.equalsIgnoreCase(attendee)) { // if
+																					// different
+											modified_lis.add(attendeeID);
+										}
+									}
+									/* again modified list mapping to meeting */
+									meeting.setAttendee(modified_lis);
 								}
-								meeting.addAttendee(value);
-							// Only attendee remove option
-							} else if (this.atteedeeOption.equals(SysConfig.removeTag)){
-								LinkedList<String> lis = meeting.getAttendee();
-								LinkedList<String> modified_lis = new LinkedList<String>();
-								for (int k=0;k<lis.size();k++) {
-									String attendeeID = (String) lis.get(k);
-									if (!attendeeID.equalsIgnoreCase(value)) {  // if different 
-										modified_lis.add(attendeeID);										
-									}									
-								}
-								/*again modified list mapping to meeting*/
-								meeting.setAttendee(modified_lis);
 							}
-						/* without attendee option, just add attendee*/	
-						} else {							
-							meeting.addAttendee(value);
-						}		
+							/* without attendee option, just add attendee */
+							else {
+								meeting.addAttendee(attendee);
+							}
+				        }
 						attendeeChanged = true;
 						break;
-					} else {
+					}
+					else {
 						System.out.println("invalid empolyee id ("+value+") for edit-meeting");
 						return SysConfig.fail;
 					}
