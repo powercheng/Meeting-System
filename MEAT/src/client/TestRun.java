@@ -3,8 +3,6 @@ package client;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import common.CommonUtil;
-import common.TimeConflictException;
-import model.Employee;
 import model.Sql;
 /**
  * To check single functionality, test run 
@@ -20,7 +18,8 @@ public class TestRun {
 		//run.sqlSelectTest();
 		//run.sqlInsertTest();
 		//run.testUUID();
-		run.initDB();
+		//run.initDB();
+		run.test();
 	}
 	
 	/**
@@ -113,6 +112,18 @@ public class TestRun {
 		
 		String id = CommonUtil.getNextMeetID();
 		System.out.println(id);
+	}
+	
+	public void test() {
+		
+		String id = "bob099,  smith0001";
+		String regex = ",|\\s+";
+		String[] tttttt = id.split(regex);	
+		for(String dii : tttttt){
+			if (CommonUtil.nullTrim(dii).equals("")) 
+				continue;
+			System.out.println(dii);
+		}
 	}
 	
 }

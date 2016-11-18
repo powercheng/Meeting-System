@@ -1,5 +1,6 @@
 package controller;
 
+import common.CommonUtil;
 import model.Employee;
 import model.Meeting;
 import model.Room;
@@ -90,11 +91,11 @@ public class Command {
 		Meeting mt = new Meeting();
 		mt.getMeetingInfo(meetingID);  // get and setting database information		
 		if (mt.getMeetingId() == null) {
+			System.out.println("No such meeting ID ("+meetingID+") in database");
 			return false;
 		}
 		return true;
-	}
-	
+	}	
 	/**
 	 * Check if employeeID is in the database.
 	 * @param employeeID
@@ -102,9 +103,13 @@ public class Command {
 	 */
 	public boolean checkEmpolyeeIdValid(String employeeID){
 		/* if employeeID (from DB) == null then no such employeeID*/	
-    	String regex = ",|，|\\s+";
-        String[] attendees = employeeID.split(regex);	
-		for(String attendee : attendees){
+		String regex = ",|\\s+";
+        String[] attendees = employeeID.split(regex);
+        for(String attendee : attendees){
+			/* if blank or null attendee contains, continues */
+			if (CommonUtil.nullTrim(attendee).equals("")) 
+				continue;
+			
 			Employee emp = new Employee();
 			emp.getPersonInfo(attendee);  // get and setting database information		
 			if (emp.getEmployeeID() == null) {
@@ -124,20 +129,7 @@ public class Command {
 		rm.getRoomInfo(roomID); // GET AND SETTING DATABASE INFORMATION
 		/* if roomID (fromDB) is null then no such room */
 		if (rm.getRoomID() == null) {
-			return false;
-		}		
-		return true;
-	}
-	/**
-	 * Check if meetID is in the database.
-	 * @param meetID
-	 * @return
-	 */
-	public boolean checkMeetIdValid(String meetID) {
-		Meeting meet = new Meeting();
-		meet.getMeetingInfo(meetID);; // GET AND SETTING DATABASE INFORMATION
-		/* if meetID (fromDB) is null then no such MEETING */
-		if (meet.getMeetingId() == null) {
+			System.out.println("No such roomID ("+roomID+") in database");
 			return false;
 		}		
 		return true;

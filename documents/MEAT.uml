@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="20110701" xmlns:xmi="http://www.omg.org/spec/XMI/20110701" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:UMLLabProfile="http:///schemas/UMLLabProfile/NS/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xsi:schemaLocation="http:///schemas/UMLLabProfile/NS/0 pathmap://UMLLAB_PROFILES/UMLLab.profile.uml#UMLLabProfile-Annotation_2-UMLLabProfile">
+  <uml:Model xmi:id="_T8r34J7lEea7tMxyX9EakQ" name="MEAT">
+    <eAnnotations xmi:id="_UBxMMJ7lEea7tMxyX9EakQ" source="http://ns.yatta.de/umllab">
+      <contents xmi:type="ecore:EAnnotation" xmi:id="_UBxzQJ7lEea7tMxyX9EakQ" source="codegen">
+        <details xmi:id="_UBxzQZ7lEea7tMxyX9EakQ" key="codegenDirectory" value="/MEAT/src"/>
+        <details xmi:id="_VEi30J7lEea7tMxyX9EakQ" key="AssociatedSourceCode" value="/MEAT/src/View/Messageout.java;1965040861/1;/MEAT/src/client/Main.java;856208663/1;/MEAT/src/controller/AddHoliday.java;2765104127/1;/MEAT/src/controller/AddMeeting.java;2106198403/1;/MEAT/src/controller/AddVacation.java;3117104015/1;/MEAT/src/controller/CancelMeeting.java;4265348901/1;/MEAT/src/controller/CancelVacation.java;1024427778/1;/MEAT/src/controller/Command.java;558175015/1;/MEAT/src/controller/CommandFactory.java;688923977/1;/MEAT/src/controller/EditMeeting.java;594523462/1;/MEAT/src/controller/PrintScheduleAll.java;4278963490/1;/MEAT/src/controller/PrintScheduleEmpolyee.java;1723181680/1;/MEAT/src/controller/PrintScheduleRoom.java;2508172356/1;/MEAT/src/model/Employee.java;1656371420/1;/MEAT/src/model/Meeting.java;628533936/1;/MEAT/src/model/Room.java;1770833297/1;/MEAT/src/model/Sql.java;2312051773/1;/MEAT/src/model/Vacation.java;2960700434/1;"/>
+      </contents>
+    </eAnnotations>
+    <elementImport xmi:id="_UoWEAJ7lEea7tMxyX9EakQ">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#boolean"/>
+    </elementImport>
+    <elementImport xmi:id="_UoWrEJ7lEea7tMxyX9EakQ">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#byte"/>
+    </elementImport>
+    <elementImport xmi:id="_UoWrEZ7lEea7tMxyX9EakQ">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#char"/>
+    </elementImport>
+    <elementImport xmi:id="_UoWrEp7lEea7tMxyX9EakQ">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#double"/>
+    </elementImport>
+    <elementImport xmi:id="_UoWrE57lEea7tMxyX9EakQ">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#float"/>
+    </elementImport>
+    <elementImport xmi:id="_UoWrFJ7lEea7tMxyX9EakQ">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#int"/>
+    </elementImport>
+    <elementImport xmi:id="_UoXSIJ7lEea7tMxyX9EakQ">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#long"/>
+    </elementImport>
+    <elementImport xmi:id="_UoXSIZ7lEea7tMxyX9EakQ">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#short"/>
+    </elementImport>
+    <elementImport xmi:id="_UoX5MJ7lEea7tMxyX9EakQ">
+      <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </elementImport>
+    <packagedElement xmi:type="uml:Package" xmi:id="_Uoem4J7lEea7tMxyX9EakQ" name="View">
+      <packagedElement xmi:type="uml:Class" xmi:id="_UqcVwJ7lEea7tMxyX9EakQ" name="Messageout">
+        <ownedOperation xmi:id="_Uqh1UJ7lEea7tMxyX9EakQ" name="run"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_UohqMJ7lEea7tMxyX9EakQ" name="controller">
+      <packagedElement xmi:type="uml:Class" xmi:id="_Uqmt0J7lEea7tMxyX9EakQ" name="AddHoliday">
+        <generalization xmi:id="_UudTEJ7lEea7tMxyX9EakQ" general="_UrI5UJ7lEea7tMxyX9EakQ"/>
+        <ownedAttribute xmi:id="_Uu9CUJ7lEea7tMxyX9EakQ" name="vacations" visibility="private" type="_UsEGYJ7lEea7tMxyX9EakQ" association="_Uv0lAJ7lEea7tMxyX9EakQ">
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Uu9pYJ7lEea7tMxyX9EakQ" value="*"/>
+        </ownedAttribute>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvd_sJ7lEea7tMxyX9EakQ" name="execute" specification="_Uqn78J7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>this.checkValid();&#xD;
+		&#xD;
+		viewprint();&#xD;
+		&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvd_sZ7lEea7tMxyX9EakQ" name="checkValid" specification="_UquCkJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>checkDateValid();&#xD;
+		checkTimeValid();&#xD;
+		checkRoomIdValid();&#xD;
+		checkEmpolyeeIdValid();&#xD;
+		checkStrLenValid();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_Uqn78J7lEea7tMxyX9EakQ" name="execute" method="_Uvd_sJ7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_UquCkJ7lEea7tMxyX9EakQ" name="checkValid" method="_Uvd_sZ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_Uqxs8J7lEea7tMxyX9EakQ" name="AddMeeting">
+        <generalization xmi:id="_UuoSMJ7lEea7tMxyX9EakQ" general="_UrI5UJ7lEea7tMxyX9EakQ"/>
+        <ownedAttribute xmi:id="_Uu_ekJ7lEea7tMxyX9EakQ" name="meeting" visibility="private" type="_Ur1c4J7lEea7tMxyX9EakQ" association="_Uv2aMZ7lEea7tMxyX9EakQ"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvemwJ7lEea7tMxyX9EakQ" name="execute" specification="_Uqy7EJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>this.checkValid();&#xD;
+		&#xD;
+&#xD;
+		meeting.writeToSql();&#xD;
+		viewprint();&#xD;
+		&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvemwZ7lEea7tMxyX9EakQ" name="checkValid" specification="_Uq0wQJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>checkDateValid();&#xD;
+		checkTimeValid();&#xD;
+		checkRoomIdValid();&#xD;
+		checkEmpolyeeIdValid();&#xD;
+		checkStrLenValid();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_Uqy7EJ7lEea7tMxyX9EakQ" name="execute" method="_UvemwJ7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_Uq0wQJ7lEea7tMxyX9EakQ" name="checkValid" method="_UvemwZ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_Uq4aoJ7lEea7tMxyX9EakQ" name="AddVacation">
+        <generalization xmi:id="_Uur8kJ7lEea7tMxyX9EakQ" general="_UrI5UJ7lEea7tMxyX9EakQ"/>
+        <ownedAttribute xmi:id="_UvBTwJ7lEea7tMxyX9EakQ" name="vacation" visibility="private" type="_UsEGYJ7lEea7tMxyX9EakQ" association="_Uv4PYJ7lEea7tMxyX9EakQ"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvfN0J7lEea7tMxyX9EakQ" name="execute" specification="_Uq5owJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>this.checkValid();&#xD;
+&#xD;
+		vacation.writeToSql();&#xD;
+		&#xD;
+		viewprint();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvfN0Z7lEea7tMxyX9EakQ" name="checkValid" specification="_Uq624p7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>checkDateValid();&#xD;
+		checkTimeValid();&#xD;
+		checkRoomIdValid();&#xD;
+		checkEmpolyeeIdValid();&#xD;
+		checkStrLenValid();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_Uq5owJ7lEea7tMxyX9EakQ" name="execute" method="_UvfN0J7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_Uq624p7lEea7tMxyX9EakQ" name="checkValid" method="_UvfN0Z7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_Uq-hQJ7lEea7tMxyX9EakQ" name="CancelMeeting">
+        <generalization xmi:id="_UusjoJ7lEea7tMxyX9EakQ" general="_UrI5UJ7lEea7tMxyX9EakQ"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvf04J7lEea7tMxyX9EakQ" name="execute" specification="_Uq_vYJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>this.checkValid();&#xD;
+		Meeting meeting = new Meeting();&#xD;
+&#xD;
+		meeting.writeToSql();&#xD;
+		viewprint();&#xD;
+		&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvf04Z7lEea7tMxyX9EakQ" name="checkValid" specification="_UrA9gJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>checkDateValid();&#xD;
+		checkTimeValid();&#xD;
+		checkRoomIdValid();&#xD;
+		checkEmpolyeeIdValid();&#xD;
+		checkStrLenValid();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_Uq_vYJ7lEea7tMxyX9EakQ" name="execute" method="_Uvf04J7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_UrA9gJ7lEea7tMxyX9EakQ" name="checkValid" method="_Uvf04Z7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_UrDZwJ7lEea7tMxyX9EakQ" name="CancelVacation">
+        <generalization xmi:id="_UutKsJ7lEea7tMxyX9EakQ" general="_UrI5UJ7lEea7tMxyX9EakQ"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvgb8J7lEea7tMxyX9EakQ" name="execute" specification="_UrEA0J7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>this.checkValid();&#xD;
+		Vacation vacation = new Vacation();&#xD;
+&#xD;
+		vacation.writeToSql();&#xD;
+		viewprint();&#xD;
+		&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvgb8Z7lEea7tMxyX9EakQ" name="checkValid" specification="_UrFO8p7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>checkDateValid();&#xD;
+		checkTimeValid();&#xD;
+		checkRoomIdValid();&#xD;
+		checkEmpolyeeIdValid();&#xD;
+		checkStrLenValid();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_UrEA0J7lEea7tMxyX9EakQ" name="execute" method="_Uvgb8J7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_UrFO8p7lEea7tMxyX9EakQ" name="checkValid" method="_Uvgb8Z7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_UrI5UJ7lEea7tMxyX9EakQ" clientDependency="_FqquUJ7mEea7tMxyX9EakQ" name="Command">
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvhDAJ7lEea7tMxyX9EakQ" name="viewprint" specification="_UrQ1IJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>Messageout msg = new Messageout();&#xD;
+		msg.run();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_UrKHcJ7lEea7tMxyX9EakQ" name="execute"/>
+        <ownedOperation xmi:id="_UrLVkZ7lEea7tMxyX9EakQ" name="checkValid"/>
+        <ownedOperation xmi:id="_UrL8oZ7lEea7tMxyX9EakQ" name="checkTimeValid"/>
+        <ownedOperation xmi:id="_UrNKwJ7lEea7tMxyX9EakQ" name="checkDateValid"/>
+        <ownedOperation xmi:id="_UrNx0J7lEea7tMxyX9EakQ" name="checkEmpolyeeIdValid"/>
+        <ownedOperation xmi:id="_UrOY4Z7lEea7tMxyX9EakQ" name="checkRoomIdValid"/>
+        <ownedOperation xmi:id="_UrO_8Z7lEea7tMxyX9EakQ" name="checkStrLenValid"/>
+        <ownedOperation xmi:id="_UrQOEJ7lEea7tMxyX9EakQ" name="checkTimeConflict"/>
+        <ownedOperation xmi:id="_UrQ1IJ7lEea7tMxyX9EakQ" name="viewprint" method="_UvhDAJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_UrRcMJ7lEea7tMxyX9EakQ" clientDependency="_DjltEJ7mEea7tMxyX9EakQ" name="CommandFactory">
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvhqEJ7lEea7tMxyX9EakQ" name="CommandFactory" specification="_UrTRYJ7lEea7tMxyX9EakQ">
+          <ownedParameter xmi:id="_UvhqEZ7lEea7tMxyX9EakQ" type="_UrRcMJ7lEea7tMxyX9EakQ" direction="return"/>
+          <language>java</language>
+          <body>super();&#xD;
+		// TODO Auto-generated constructor stub&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvhqEp7lEea7tMxyX9EakQ" name="run" specification="_UrVtoJ7lEea7tMxyX9EakQ">
+          <ownedParameter xmi:id="_UvhqE57lEea7tMxyX9EakQ" name="str">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_UvhqFJ7lEea7tMxyX9EakQ" value="*"/>
+          </ownedParameter>
+          <language>java</language>
+          <body>// TODO Auto-generated method stub&#xD;
+		String name = null;&#xD;
+		Command cmd = null;&#xD;
+		if(name.equals(&quot;add-meeting&quot;)){&#xD;
+			cmd = new AddMeeting();	&#xD;
+			&#xD;
+		} else if(name.equals(&quot;edit-meeting-details&quot;)) {&#xD;
+			cmd = new EditMeeting();&#xD;
+		} else if(name.equals(&quot;a&quot;)) {&#xD;
+			cmd = new CancelMeeting();&#xD;
+		} else if(name.equals(&quot;b&quot;)) {&#xD;
+			cmd = new AddVacation();&#xD;
+		} else if(name.equals(&quot;c&quot;)) {&#xD;
+			cmd = new CancelVacation();&#xD;
+		} else if(name.equals(&quot;d&quot;)) {&#xD;
+			cmd = new AddHoliday();&#xD;
+		} else if(name.equals(&quot;es&quot;)) {&#xD;
+			cmd = new PrintScheduleAll();&#xD;
+		} else if(name.equals(&quot;f&quot;)) {&#xD;
+			cmd = new PrintScheduleEmpolyee();&#xD;
+		} else if(name.equals(&quot;f&quot;)) {&#xD;
+			cmd = new PrintScheduleRoom();&#xD;
+		} else {&#xD;
+			&#xD;
+		}&#xD;
+		cmd.checkValid();&#xD;
+		cmd.execute();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_UrTRYJ7lEea7tMxyX9EakQ" name="CommandFactory" method="_UvhqEJ7lEea7tMxyX9EakQ">
+          <eAnnotations xmi:id="_UrT4cJ7lEea7tMxyX9EakQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+            <details xmi:id="_UrT4cZ7lEea7tMxyX9EakQ" key="create"/>
+          </eAnnotations>
+          <ownedParameter xmi:id="_UrVGkJ7lEea7tMxyX9EakQ" type="_UrRcMJ7lEea7tMxyX9EakQ" direction="return"/>
+        </ownedOperation>
+        <ownedOperation xmi:id="_UrVtoJ7lEea7tMxyX9EakQ" name="run" method="_UvhqEp7lEea7tMxyX9EakQ">
+          <ownedParameter xmi:id="_UrWUsJ7lEea7tMxyX9EakQ" name="str">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_UrWUsZ7lEea7tMxyX9EakQ" value="*"/>
+          </ownedParameter>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_UrXi0J7lEea7tMxyX9EakQ" name="EditMeeting">
+        <generalization xmi:id="_UuuY0J7lEea7tMxyX9EakQ" general="_UrI5UJ7lEea7tMxyX9EakQ"/>
+        <ownedAttribute xmi:id="_UvCh4J7lEea7tMxyX9EakQ" name="meeting" visibility="private" type="_Ur1c4J7lEea7tMxyX9EakQ" association="_Uv5dgZ7lEea7tMxyX9EakQ"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UviRIJ7lEea7tMxyX9EakQ" name="execute" specification="_UrYJ4J7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>this.checkValid();&#xD;
+&#xD;
+		meeting.writeToSql();&#xD;
+		viewprint();&#xD;
+		&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvi4MJ7lEea7tMxyX9EakQ" name="checkValid" specification="_UrZ_EJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>checkDateValid();&#xD;
+		checkTimeValid();&#xD;
+		checkRoomIdValid();&#xD;
+		checkEmpolyeeIdValid();&#xD;
+		checkStrLenValid();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_UrYJ4J7lEea7tMxyX9EakQ" name="execute" method="_UviRIJ7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_UrZ_EJ7lEea7tMxyX9EakQ" name="checkValid" method="_Uvi4MJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_UrdCYJ7lEea7tMxyX9EakQ" name="PrintScheduleAll">
+        <generalization xmi:id="_UuwOAJ7lEea7tMxyX9EakQ" general="_UrI5UJ7lEea7tMxyX9EakQ"/>
+        <ownedAttribute xmi:id="_UvDwAJ7lEea7tMxyX9EakQ" name="room" visibility="private" type="_Ur-m0J7lEea7tMxyX9EakQ" association="_Uv7SsZ7lEea7tMxyX9EakQ"/>
+        <ownedAttribute xmi:id="_UvEXEZ7lEea7tMxyX9EakQ" name="employee" visibility="private" type="_UrxLcJ7lEea7tMxyX9EakQ" association="_Uv8g0Z7lEea7tMxyX9EakQ"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvi4MZ7lEea7tMxyX9EakQ" name="execute" specification="_UreQgJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>this.checkValid();&#xD;
+		Sql sql = new Sql();&#xD;
+&#xD;
+		sql.read();&#xD;
+		sql.write();&#xD;
+		viewprint();&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvjfQJ7lEea7tMxyX9EakQ" name="checkValid" specification="_UrgFsp7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>checkDateValid();&#xD;
+		checkTimeValid();&#xD;
+		checkRoomIdValid();&#xD;
+		checkEmpolyeeIdValid();&#xD;
+		checkStrLenValid();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_UreQgJ7lEea7tMxyX9EakQ" name="execute" method="_Uvi4MZ7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_UrgFsp7lEea7tMxyX9EakQ" name="checkValid" method="_UvjfQJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_UrkXIJ7lEea7tMxyX9EakQ" name="PrintScheduleEmpolyee">
+        <generalization xmi:id="_UuxcIJ7lEea7tMxyX9EakQ" general="_UrI5UJ7lEea7tMxyX9EakQ"/>
+        <ownedAttribute xmi:id="_UvFlMJ7lEea7tMxyX9EakQ" name="employee" visibility="private" type="_UrxLcJ7lEea7tMxyX9EakQ" association="_Uv-WAZ7lEea7tMxyX9EakQ"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvjfQZ7lEea7tMxyX9EakQ" name="execute" specification="_Urk-MJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>this.checkValid();&#xD;
+		Sql sql = new Sql();&#xD;
+&#xD;
+		sql.read();&#xD;
+		sql.write();&#xD;
+		viewprint();&#xD;
+		&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvkGUJ7lEea7tMxyX9EakQ" name="checkValid" specification="_UrmzYJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>checkDateValid();&#xD;
+		checkTimeValid();&#xD;
+		checkRoomIdValid();&#xD;
+		checkEmpolyeeIdValid();&#xD;
+		checkStrLenValid();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_Urk-MJ7lEea7tMxyX9EakQ" name="execute" method="_UvjfQZ7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_UrmzYJ7lEea7tMxyX9EakQ" name="checkValid" method="_UvkGUJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_UrqdwJ7lEea7tMxyX9EakQ" name="PrintScheduleRoom">
+        <generalization xmi:id="_UuyqQJ7lEea7tMxyX9EakQ" general="_UrI5UJ7lEea7tMxyX9EakQ"/>
+        <ownedAttribute xmi:id="_UvGzUJ7lEea7tMxyX9EakQ" name="room" visibility="private" type="_Ur-m0J7lEea7tMxyX9EakQ" association="_Uv_kIZ7lEea7tMxyX9EakQ"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvkGUZ7lEea7tMxyX9EakQ" name="execute" specification="_Urrr4J7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>this.checkValid();&#xD;
+		Sql sql = new Sql();&#xD;
+&#xD;
+		sql.read();&#xD;
+		sql.write();&#xD;
+		viewprint();&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvktYJ7lEea7tMxyX9EakQ" name="checkValid" specification="_Urs6Ap7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>checkDateValid();&#xD;
+		checkTimeValid();&#xD;
+		checkRoomIdValid();&#xD;
+		checkEmpolyeeIdValid();&#xD;
+		checkStrLenValid();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_Urrr4J7lEea7tMxyX9EakQ" name="execute" method="_UvkGUZ7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_Urs6Ap7lEea7tMxyX9EakQ" name="checkValid" method="_UvktYJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_Uv0lAJ7lEea7tMxyX9EakQ" name="" memberEnd="_Uv0lAZ7lEea7tMxyX9EakQ _Uu9CUJ7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_Uv0lAZ7lEea7tMxyX9EakQ" name="" type="_Uqmt0J7lEea7tMxyX9EakQ" association="_Uv0lAJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_Uv2aMZ7lEea7tMxyX9EakQ" name="" memberEnd="_Uv2aMp7lEea7tMxyX9EakQ _Uu_ekJ7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_Uv2aMp7lEea7tMxyX9EakQ" name="" type="_Uqxs8J7lEea7tMxyX9EakQ" association="_Uv2aMZ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_Uv4PYJ7lEea7tMxyX9EakQ" name="" memberEnd="_Uv4PYZ7lEea7tMxyX9EakQ _UvBTwJ7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_Uv4PYZ7lEea7tMxyX9EakQ" name="" type="_Uq4aoJ7lEea7tMxyX9EakQ" association="_Uv4PYJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_Uv5dgZ7lEea7tMxyX9EakQ" name="" memberEnd="_Uv5dgp7lEea7tMxyX9EakQ _UvCh4J7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_Uv5dgp7lEea7tMxyX9EakQ" name="" type="_UrXi0J7lEea7tMxyX9EakQ" association="_Uv5dgZ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_Uv7SsZ7lEea7tMxyX9EakQ" name="" memberEnd="_Uv7Ssp7lEea7tMxyX9EakQ _UvDwAJ7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_Uv7Ssp7lEea7tMxyX9EakQ" name="" type="_UrdCYJ7lEea7tMxyX9EakQ" association="_Uv7SsZ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_Uv8g0Z7lEea7tMxyX9EakQ" name="" memberEnd="_Uv8g0p7lEea7tMxyX9EakQ _UvEXEZ7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_Uv8g0p7lEea7tMxyX9EakQ" name="" type="_UrdCYJ7lEea7tMxyX9EakQ" association="_Uv8g0Z7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_Uv-WAZ7lEea7tMxyX9EakQ" name="" memberEnd="_Uv-WAp7lEea7tMxyX9EakQ _UvFlMJ7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_Uv-WAp7lEea7tMxyX9EakQ" name="" type="_UrkXIJ7lEea7tMxyX9EakQ" association="_Uv-WAZ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_Uv_kIZ7lEea7tMxyX9EakQ" name="" memberEnd="_Uv_kIp7lEea7tMxyX9EakQ _UvGzUJ7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_Uv_kIp7lEea7tMxyX9EakQ" name="" type="_UrqdwJ7lEea7tMxyX9EakQ" association="_Uv_kIZ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_DjltEJ7mEea7tMxyX9EakQ" client="_UrRcMJ7lEea7tMxyX9EakQ" supplier="_UrI5UJ7lEea7tMxyX9EakQ"/>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_FqquUJ7mEea7tMxyX9EakQ" client="_UrI5UJ7lEea7tMxyX9EakQ" supplier="_UqcVwJ7lEea7tMxyX9EakQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_UokGcJ7lEea7tMxyX9EakQ" name="client">
+      <packagedElement xmi:type="uml:Class" xmi:id="_UqkRkJ7lEea7tMxyX9EakQ" clientDependency="_C4loQJ7mEea7tMxyX9EakQ" name="Main">
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uva8YJ7lEea7tMxyX9EakQ" name="main" specification="_UqlfsJ7lEea7tMxyX9EakQ">
+          <ownedParameter xmi:id="_Uva8YZ7lEea7tMxyX9EakQ" name="args">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Uva8Yp7lEea7tMxyX9EakQ" value="*"/>
+          </ownedParameter>
+          <language>java</language>
+          <body>CommandFactory cmdF = new CommandFactory();&#xD;
+		cmdF.run(args);&#xD;
+			&#xD;
+			&#xD;
+			&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_UqlfsJ7lEea7tMxyX9EakQ" name="main" isStatic="true" method="_Uva8YJ7lEea7tMxyX9EakQ">
+          <ownedParameter xmi:id="_UqlfsZ7lEea7tMxyX9EakQ" name="args">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_UqmGwJ7lEea7tMxyX9EakQ" value="*"/>
+          </ownedParameter>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_C4loQJ7mEea7tMxyX9EakQ" client="_UqkRkJ7lEea7tMxyX9EakQ" supplier="_UrRcMJ7lEea7tMxyX9EakQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_UonJwJ7lEea7tMxyX9EakQ" name="model">
+      <packagedElement xmi:type="uml:Class" xmi:id="_UrxLcJ7lEea7tMxyX9EakQ" name="Employee">
+        <ownedAttribute xmi:id="_UvIBcJ7lEea7tMxyX9EakQ" name="meeting" type="_Ur1c4J7lEea7tMxyX9EakQ" association="_UwBZUJ7lEea7tMxyX9EakQ">
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_UvIBcZ7lEea7tMxyX9EakQ" value="*"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvJPkJ7lEea7tMxyX9EakQ" name="vacation" type="_UsEGYJ7lEea7tMxyX9EakQ" association="_UwCncZ7lEea7tMxyX9EakQ">
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_UvJPkZ7lEea7tMxyX9EakQ" value="*"/>
+        </ownedAttribute>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvmikJ7lEea7tMxyX9EakQ" name="Employee" specification="_UryZkJ7lEea7tMxyX9EakQ">
+          <ownedParameter xmi:id="_UvmikZ7lEea7tMxyX9EakQ" type="_UrxLcJ7lEea7tMxyX9EakQ" direction="return"/>
+          <language>java</language>
+          <body>super();&#xD;
+		// TODO Auto-generated constructor stub&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_UryZkJ7lEea7tMxyX9EakQ" name="Employee" method="_UvmikJ7lEea7tMxyX9EakQ">
+          <eAnnotations xmi:id="_UrzAoJ7lEea7tMxyX9EakQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+            <details xmi:id="_UrzAoZ7lEea7tMxyX9EakQ" key="create"/>
+          </eAnnotations>
+          <ownedParameter xmi:id="_UrzAop7lEea7tMxyX9EakQ" type="_UrxLcJ7lEea7tMxyX9EakQ" direction="return"/>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_Ur1c4J7lEea7tMxyX9EakQ" clientDependency="_Bl7GgJ7mEea7tMxyX9EakQ" name="Meeting">
+        <ownedAttribute xmi:id="_UvJ2oJ7lEea7tMxyX9EakQ" name="meetingId">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvKdsJ7lEea7tMxyX9EakQ" name="date">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvLEwJ7lEea7tMxyX9EakQ" name="startTime">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvLEwZ7lEea7tMxyX9EakQ" name="endTime">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvLr0J7lEea7tMxyX9EakQ" name="roomId">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvLr0Z7lEea7tMxyX9EakQ" name="attendee">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvMS4J7lEea7tMxyX9EakQ" name="description">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvmikp7lEea7tMxyX9EakQ" name="Meeting" specification="_Ur4gMJ7lEea7tMxyX9EakQ">
+          <ownedParameter xmi:id="_Uvmik57lEea7tMxyX9EakQ" type="_Ur1c4J7lEea7tMxyX9EakQ" direction="return"/>
+          <language>java</language>
+          <body>super();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvnJoJ7lEea7tMxyX9EakQ" name="readFromSql" specification="_Ur5HQZ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>Sql server = new Sql();&#xD;
+		server.read();&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvnwsJ7lEea7tMxyX9EakQ" name="writeToSql" specification="_Ur5uUJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>Sql server = new Sql();&#xD;
+		server.write();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_Ur4gMJ7lEea7tMxyX9EakQ" name="Meeting" method="_Uvmikp7lEea7tMxyX9EakQ">
+          <eAnnotations xmi:id="_Ur4gMZ7lEea7tMxyX9EakQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+            <details xmi:id="_Ur4gMp7lEea7tMxyX9EakQ" key="create"/>
+          </eAnnotations>
+          <ownedParameter xmi:id="_Ur5HQJ7lEea7tMxyX9EakQ" type="_Ur1c4J7lEea7tMxyX9EakQ" direction="return"/>
+        </ownedOperation>
+        <ownedOperation xmi:id="_Ur5HQZ7lEea7tMxyX9EakQ" name="readFromSql" method="_UvnJoJ7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_Ur5uUJ7lEea7tMxyX9EakQ" name="writeToSql" method="_UvnwsJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_Ur-m0J7lEea7tMxyX9EakQ" name="Room">
+        <ownedAttribute xmi:id="_UvM58J7lEea7tMxyX9EakQ" name="meeting" type="_Ur1c4J7lEea7tMxyX9EakQ" association="_UwEcoJ7lEea7tMxyX9EakQ">
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_UvNhAJ7lEea7tMxyX9EakQ" value="*"/>
+        </ownedAttribute>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvoXwJ7lEea7tMxyX9EakQ" name="Room" specification="_Ur_08J7lEea7tMxyX9EakQ">
+          <ownedParameter xmi:id="_UvoXwZ7lEea7tMxyX9EakQ" type="_Ur-m0J7lEea7tMxyX9EakQ" direction="return"/>
+          <language>java</language>
+          <body>super();&#xD;
+		// TODO Auto-generated constructor stub&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_Ur_08J7lEea7tMxyX9EakQ" name="Room" method="_UvoXwJ7lEea7tMxyX9EakQ">
+          <eAnnotations xmi:id="_UsAcAJ7lEea7tMxyX9EakQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+            <details xmi:id="_UsAcAZ7lEea7tMxyX9EakQ" key="create"/>
+          </eAnnotations>
+          <ownedParameter xmi:id="_UsAcAp7lEea7tMxyX9EakQ" type="_Ur-m0J7lEea7tMxyX9EakQ" direction="return"/>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_UsCRMJ7lEea7tMxyX9EakQ" name="Sql">
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvo-0J7lEea7tMxyX9EakQ" name="write" specification="_UsC4QJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>// TODO Auto-generated method stub&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Uvq0AJ7lEea7tMxyX9EakQ" name="read" specification="_UsDfUJ7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>// TODO Auto-generated method stub&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_UsC4QJ7lEea7tMxyX9EakQ" name="write" method="_Uvo-0J7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_UsDfUJ7lEea7tMxyX9EakQ" name="read" method="_Uvq0AJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_UsEGYJ7lEea7tMxyX9EakQ" clientDependency="_Aw90cJ7mEea7tMxyX9EakQ" name="Vacation">
+        <ownedAttribute xmi:id="_UvOIEJ7lEea7tMxyX9EakQ" name="vacationId">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvOvIJ7lEea7tMxyX9EakQ" name="empolyeeId">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvPWMJ7lEea7tMxyX9EakQ" name="startDate">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvPWMZ7lEea7tMxyX9EakQ" name="endDate">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="_UvP9QJ7lEea7tMxyX9EakQ" name="description">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvrbEJ7lEea7tMxyX9EakQ" name="Vacation" specification="_UsHJsJ7lEea7tMxyX9EakQ">
+          <ownedParameter xmi:id="_UvrbEZ7lEea7tMxyX9EakQ" type="_UsEGYJ7lEea7tMxyX9EakQ" direction="return"/>
+          <language>java</language>
+          <body>super();&#xD;
+		// TODO Auto-generated constructor stub&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvsCIJ7lEea7tMxyX9EakQ" name="readFromSql" specification="_UsHwwp7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>Sql server = new Sql();&#xD;
+		server.read();&#xD;
+		&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UvsCIZ7lEea7tMxyX9EakQ" name="writeToSql" specification="_UsIX0J7lEea7tMxyX9EakQ">
+          <language>java</language>
+          <body>Sql server = new Sql();&#xD;
+		server.write();&#xD;
+	</body>
+        </ownedBehavior>
+        <ownedOperation xmi:id="_UsHJsJ7lEea7tMxyX9EakQ" name="Vacation" method="_UvrbEJ7lEea7tMxyX9EakQ">
+          <eAnnotations xmi:id="_UsHJsZ7lEea7tMxyX9EakQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+            <details xmi:id="_UsHwwJ7lEea7tMxyX9EakQ" key="create"/>
+          </eAnnotations>
+          <ownedParameter xmi:id="_UsHwwZ7lEea7tMxyX9EakQ" type="_UsEGYJ7lEea7tMxyX9EakQ" direction="return"/>
+        </ownedOperation>
+        <ownedOperation xmi:id="_UsHwwp7lEea7tMxyX9EakQ" name="readFromSql" method="_UvsCIJ7lEea7tMxyX9EakQ"/>
+        <ownedOperation xmi:id="_UsIX0J7lEea7tMxyX9EakQ" name="writeToSql" method="_UvsCIZ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_UwBZUJ7lEea7tMxyX9EakQ" name="" memberEnd="_UwBZUZ7lEea7tMxyX9EakQ _UvIBcJ7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_UwBZUZ7lEea7tMxyX9EakQ" name="" type="_UrxLcJ7lEea7tMxyX9EakQ" association="_UwBZUJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_UwCncZ7lEea7tMxyX9EakQ" name="" memberEnd="_UwCncp7lEea7tMxyX9EakQ _UvJPkJ7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_UwCncp7lEea7tMxyX9EakQ" name="" type="_UrxLcJ7lEea7tMxyX9EakQ" association="_UwCncZ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="_UwEcoJ7lEea7tMxyX9EakQ" name="" memberEnd="_UwEcoZ7lEea7tMxyX9EakQ _UvM58J7lEea7tMxyX9EakQ">
+        <ownedEnd xmi:id="_UwEcoZ7lEea7tMxyX9EakQ" name="" type="_Ur-m0J7lEea7tMxyX9EakQ" association="_UwEcoJ7lEea7tMxyX9EakQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_Aw90cJ7mEea7tMxyX9EakQ" client="_UsEGYJ7lEea7tMxyX9EakQ" supplier="_UsCRMJ7lEea7tMxyX9EakQ"/>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_Bl7GgJ7mEea7tMxyX9EakQ" client="_Ur1c4J7lEea7tMxyX9EakQ" supplier="_UsCRMJ7lEea7tMxyX9EakQ"/>
+    </packagedElement>
+    <profileApplication xmi:id="_UB02kJ7lEea7tMxyX9EakQ">
+      <eAnnotations xmi:id="_UB354J7lEea7tMxyX9EakQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="pathmap://UMLLAB_PROFILES/UMLLab.profile.uml#UMLLabProfile-Annotation_2-UMLLabProfile"/>
+      </eAnnotations>
+      <appliedProfile href="pathmap://UMLLAB_PROFILES/UMLLab.profile.uml#UMLLabProfile"/>
+    </profileApplication>
+  </uml:Model>
+  <UMLLabProfile:TargetLanguage xmi:id="_UB8yYJ7lEea7tMxyX9EakQ" base_Package="_T8r34J7lEea7tMxyX9EakQ">
+    <languageName>java</languageName>
+  </UMLLabProfile:TargetLanguage>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UqjqgJ7lEea7tMxyX9EakQ" base_Element="_Uqh1UJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UqpKEJ7lEea7tMxyX9EakQ" base_Element="_Uqn78J7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UqqYMJ7lEea7tMxyX9EakQ" base_Element="_Uqn78J7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UqtbgJ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UqupoJ7lEea7tMxyX9EakQ" base_Element="_UquCkJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UqupoZ7lEea7tMxyX9EakQ" base_Element="_UquCkJ7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UqvQsJ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UqziIJ7lEea7tMxyX9EakQ" base_Element="_Uqy7EJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_Uq0JMJ7lEea7tMxyX9EakQ" base_Element="_Uqy7EJ7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_Uq0JMZ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_Uq1XUJ7lEea7tMxyX9EakQ" base_Element="_Uq0wQJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_Uq1XUZ7lEea7tMxyX9EakQ" base_Element="_Uq0wQJ7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_Uq1-YJ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_Uq6P0J7lEea7tMxyX9EakQ" base_Element="_Uq5owJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_Uq624J7lEea7tMxyX9EakQ" base_Element="_Uq5owJ7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_Uq624Z7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_Uq7d8J7lEea7tMxyX9EakQ" base_Element="_Uq624p7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_Uq8FAJ7lEea7tMxyX9EakQ" base_Element="_Uq624p7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_Uq8FAZ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrAWcJ7lEea7tMxyX9EakQ" base_Element="_Uq_vYJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UrAWcZ7lEea7tMxyX9EakQ" base_Element="_Uq_vYJ7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UrAWcp7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrBkkJ7lEea7tMxyX9EakQ" base_Element="_UrA9gJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UrCLoJ7lEea7tMxyX9EakQ" base_Element="_UrA9gJ7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UrCLoZ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrEn4J7lEea7tMxyX9EakQ" base_Element="_UrEA0J7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UrFO8J7lEea7tMxyX9EakQ" base_Element="_UrEA0J7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UrFO8Z7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrGdEJ7lEea7tMxyX9EakQ" base_Element="_UrFO8p7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UrHEIJ7lEea7tMxyX9EakQ" base_Element="_UrFO8p7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UrHEIZ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrLVkJ7lEea7tMxyX9EakQ" base_Element="_UrKHcJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrL8oJ7lEea7tMxyX9EakQ" base_Element="_UrLVkZ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrMjsJ7lEea7tMxyX9EakQ" base_Element="_UrL8oZ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrNKwZ7lEea7tMxyX9EakQ" base_Element="_UrNKwJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrOY4J7lEea7tMxyX9EakQ" base_Element="_UrNx0J7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrO_8J7lEea7tMxyX9EakQ" base_Element="_UrOY4Z7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrPnAJ7lEea7tMxyX9EakQ" base_Element="_UrO_8Z7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrQOEZ7lEea7tMxyX9EakQ" base_Element="_UrQOEJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrYw8J7lEea7tMxyX9EakQ" base_Element="_UrYJ4J7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UrZYAJ7lEea7tMxyX9EakQ" base_Element="_UrYJ4J7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UrZYAZ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UramIJ7lEea7tMxyX9EakQ" base_Element="_UrZ_EJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UramIZ7lEea7tMxyX9EakQ" base_Element="_UrZ_EJ7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UrbNMJ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrfeoJ7lEea7tMxyX9EakQ" base_Element="_UreQgJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UrgFsJ7lEea7tMxyX9EakQ" base_Element="_UreQgJ7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UrgFsZ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrgswJ7lEea7tMxyX9EakQ" base_Element="_UrgFsp7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UrhT0J7lEea7tMxyX9EakQ" base_Element="_UrgFsp7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UrhT0Z7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrmMUJ7lEea7tMxyX9EakQ" base_Element="_Urk-MJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UrmMUZ7lEea7tMxyX9EakQ" base_Element="_Urk-MJ7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UrmMUp7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrnacJ7lEea7tMxyX9EakQ" base_Element="_UrmzYJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UroBgJ7lEea7tMxyX9EakQ" base_Element="_UrmzYJ7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UroBgZ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrsS8J7lEea7tMxyX9EakQ" base_Element="_Urrr4J7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_Urs6AJ7lEea7tMxyX9EakQ" base_Element="_Urrr4J7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_Urs6AZ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UrthEJ7lEea7tMxyX9EakQ" base_Element="_Urs6Ap7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Annotations xmi:id="_UruIIJ7lEea7tMxyX9EakQ" base_Element="_Urs6Ap7lEea7tMxyX9EakQ">
+    <annotations xmi:id="_UruIIZ7lEea7tMxyX9EakQ" name="Override"/>
+  </UMLLabProfile:Annotations>
+  <UMLLabProfile:Array xmi:id="_Uu-QcJ7lEea7tMxyX9EakQ" base_Element="_Uu9CUJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_Uu-3gJ7lEea7tMxyX9EakQ" base_Element="_Uu9CUJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UvAssJ7lEea7tMxyX9EakQ" base_Element="_Uu_ekJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UvB60J7lEea7tMxyX9EakQ" base_Element="_UvBTwJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UvDI8J7lEea7tMxyX9EakQ" base_Element="_UvCh4J7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UvEXEJ7lEea7tMxyX9EakQ" base_Element="_UvDwAJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UvE-IJ7lEea7tMxyX9EakQ" base_Element="_UvEXEZ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UvGMQJ7lEea7tMxyX9EakQ" base_Element="_UvFlMJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:LegacyStyledElement xmi:id="_UvHaYJ7lEea7tMxyX9EakQ" base_Element="_UvGzUJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Array xmi:id="_UvIogJ7lEea7tMxyX9EakQ" base_Element="_UvIBcJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Array xmi:id="_UvJPkp7lEea7tMxyX9EakQ" base_Element="_UvJPkJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Array xmi:id="_UvNhAZ7lEea7tMxyX9EakQ" base_Element="_UvM58J7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_Uv2aMJ7lEea7tMxyX9EakQ" base_Element="_Uv0lAJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_Uv3oUJ7lEea7tMxyX9EakQ" base_Element="_Uv2aMZ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_Uv5dgJ7lEea7tMxyX9EakQ" base_Element="_Uv4PYJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_Uv7SsJ7lEea7tMxyX9EakQ" base_Element="_Uv5dgZ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_Uv8g0J7lEea7tMxyX9EakQ" base_Element="_Uv7SsZ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_Uv-WAJ7lEea7tMxyX9EakQ" base_Element="_Uv8g0Z7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_Uv_kIJ7lEea7tMxyX9EakQ" base_Element="_Uv-WAZ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_UwAyQJ7lEea7tMxyX9EakQ" base_Element="_Uv_kIZ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_UwCncJ7lEea7tMxyX9EakQ" base_Element="_UwBZUJ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_UwD1kJ7lEea7tMxyX9EakQ" base_Element="_UwCncZ7lEea7tMxyX9EakQ"/>
+  <UMLLabProfile:Reference xmi:id="_UwFqwJ7lEea7tMxyX9EakQ" base_Element="_UwEcoJ7lEea7tMxyX9EakQ"/>
+</xmi:XMI>

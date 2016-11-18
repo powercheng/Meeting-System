@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import common.CommonUtil;
 import common.SysConfig;
 import common.TimeConflictException;
 /**
@@ -110,7 +111,7 @@ public class EditMeeting extends Command {
 					}
 				case "description" :					
 					if(checkStrLenValid(value)){
-						meeting.setDescription(value);		// chaning description		
+						meeting.setDescription(value);		// changing description		
 						break;
 					} else {
 						System.out.println("description is too long for edit-meeting command");
@@ -118,10 +119,12 @@ public class EditMeeting extends Command {
 					}
 				case "attendee" :					
 					if(checkEmpolyeeIdValid(value)) {
-						String regex = ",|，|\\s+";
+						String regex = ",|\\s+";
 				        String[] attendees = value.split(regex);
 				        for (String attendee : attendees) {
-
+				        	/* if blank or null attendee contains, continues */
+							if (CommonUtil.nullTrim(attendee).equals("")) continue;
+							
 							if (this.atteedeeOption != null) {
 								// Only attendee add option
 								if (this.atteedeeOption.equals(SysConfig.addTag)) {

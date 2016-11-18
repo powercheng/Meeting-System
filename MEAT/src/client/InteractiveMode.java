@@ -3,11 +3,8 @@ package client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
 import common.SysConfig;
 import controller.AddHoliday;
 import controller.AddMeeting;
@@ -19,7 +16,11 @@ import controller.EditMeeting;
 import controller.PrintScheduleAll;
 import controller.PrintScheduleEmployee;
 import controller.PrintScheduleRoom;
-
+/**
+ * This class is used for interactive mode to communicate with user to dealing meeting schedule
+ * @author group7
+ *
+ */
 public class InteractiveMode {
 	
     private static String inputOutput(String msg) {
@@ -33,15 +34,16 @@ public class InteractiveMode {
 	        printMainMenu();
 	    }
 	    return str;
-    }
-	
-		// process the interactive mode 0-11 commands	
-		// print out questions for each commands
-		// store the pair of names and values into the JSONArray
-		// pass JSONArray to the command, it uses the same interface with script mode
-		// for the name : attendee, we can store the multiple attendees' id into one string, separate by space.
+    }		
+    /**
+     *  process the interactive mode 0-11 commands	
+	 *	print out questions for each commands
+	 *	store the pair of names and values into the JSONArray
+	 *	pass JSONArray to the command, it uses the same interface with script mode
+	 *	for the name : attendee, we can store the multiple attendees' id into one string, separate by space.
+     */
     public static void printMainMenu() {    	
-    	System.out.println("# Interactive mode is running (Menu Below)#\n");
+    	System.out.println("\n# Interactive mode is running (Menu Below)#\n");
         System.out.println("1. Book a meeting");
         System.out.println("2. edit-meeting-details");
         System.out.println("3. edit-meeting-add-attendees");
@@ -58,13 +60,13 @@ public class InteractiveMode {
         System.out.println("11. Add company holiday");
         System.out.println("---------------------");
         System.out.println("0. Exit\n");
-        String res = null;
+     
         //Get user input
         try {
         	int userInput = Integer.parseInt(inputOutput("Please press the task number : "));
         	Command command = null;
         	JSONArray command_array = null;
-        	if (userInput >= 0 && userInput <= 9) {        		
+        	if (userInput >= 0 && userInput <= 11) {        		
         		switch (userInput) {        		
 					case 1:
 						String[] questions = {
@@ -73,13 +75,13 @@ public class InteractiveMode {
 						    	"Please enter the meeting endTIME (HH24:MI) or [ enter Q for mainManu ] : ",
 						    	"Please enter the meeting RoomID or [ enter Q for mainManu ] : ",
 						    	"Please enter the description or [ enter Q for mainManu ] : ",
-						    	"Please enter the employeeIDs, separate by space, to attend (delete) or [ enter Q for mainManu ] : "
+						    	"Please enter the employeeIDs (separate by space) to attend (delete) or [ enter Q for mainManu ] : "
 						};
 						String[] values = askQuestions(questions);
 						String[] names = {
 								"date","start-time","end-time","room-id","description","attendee"
 						};
-						command_array = changeToJson(names,values);
+						command_array = changeToJson(names,values);						
 						command = new AddMeeting(command_array);							
 						break;
 					case 2:
@@ -101,7 +103,7 @@ public class InteractiveMode {
 					case 3:
 						String[] questions2 = {
 								"Please enter the meeting ID to edit or [ enter Q for mainManu ] : ",
-								"Please enter the employeeIDs, separate by space, to attend or [ enter Q for mainManu ] : "
+								"Please enter the employeeIDs (separate by space) to attend or [ enter Q for mainManu ] : "
 						};
 						String[] values2 = askQuestions(questions2);
 						String[] names2 = {
@@ -113,7 +115,7 @@ public class InteractiveMode {
 					case 4:
 						String[] questions3 = {
 								"Please enter the meeting ID to edit or [ enter Q for mainManu ] : ",
-								"Please enter the employeeIDs, separate by space, to delete or [ enter Q for mainManu ] : "
+								"Please enter the employeeIDs (separate by space) to delete or [ enter Q for mainManu ] : "
 						};
 						String[] values3 = askQuestions(questions3);
 						String[] names3 = {
@@ -191,7 +193,7 @@ public class InteractiveMode {
 						String[] questions9 = {
 								"Please enter the search start date (MMDDYYYY) or [ enter Q for mainManu ] : ",
 								"Please enter the search end date (MMDDYYYY) or [ enter Q for mainManu ] : ",
-								"Print screen (Press S) or Save File (Press F)  or [ enter Q for mainManu ] : "
+								"Please give the output file name  or [ enter Q for mainManu ] : "
 						};
 						String[] values9 = askQuestions(questions9);
 						String[] names9 = {
@@ -214,6 +216,7 @@ public class InteractiveMode {
 						command = new AddHoliday(command_array);
 						break;
 					case 0:
+						System.out.println("System is terminated........");
 						System.exit(0); 
 						break;				
 				}
@@ -222,15 +225,19 @@ public class InteractiveMode {
 					System.out.println("### command : " + result);				
 				}	
         	} else {
-        		System.out.println("Please enter a menu number from 0 - 8");       		
+        		System.out.println("Please enter a menu number from 0 - 11");       		
         	}
         	
         } catch (NumberFormatException e) {
-        	System.out.println("Please enter a menu number from 0 - 8");
+        	System.out.println("Please enter a menu number from 0 - 11");
         }         
         printMainMenu();
     }    
-	
+	/**
+	 * Show message and capture user input from user interface
+	 * @param strs
+	 * @return
+	 */
 
 	private static String[] askQuestions(String[] strs) {
 		if (strs == null || strs.length == 0)
@@ -252,16 +259,21 @@ public class InteractiveMode {
 		}
 		return res;
 	}
-	
+	/**
+	 * Name and its value convert into json object
+	 * @param names
+	 * @param values
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private static JSONArray changeToJson(String[] names, String[] values) {
 		JSONArray command_array = new JSONArray();
 		for(int i = 0; i < names.length; i++) {
 			if(values[i].equalsIgnoreCase("s")) continue;
-			JSONObject jDate = new JSONObject();
-	    	jDate.put("name", names[i]);
-	    	jDate.put("value", values[i]);
-	    	command_array.add(jDate);
+			JSONObject jObj = new JSONObject();
+			jObj.put("name", names[i]);
+			jObj.put("value", values[i]);
+	    	command_array.add(jObj);
 		}		
 		return command_array;
 	}

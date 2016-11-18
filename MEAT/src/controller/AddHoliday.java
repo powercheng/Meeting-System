@@ -1,16 +1,12 @@
 package controller;
 
-import java.util.LinkedList;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import common.CommonUtil;
 import common.SysConfig;
 import common.TimeConflictException;
-import model.Meeting;
 import model.Sql;
-import model.Vacation;
 /**
  * This class is used for add company's holiday into database
  * @author group7

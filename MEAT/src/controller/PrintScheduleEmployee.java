@@ -29,7 +29,7 @@ public class PrintScheduleEmployee extends Command {
 		this.employee = new Employee();
 	}
 	/**
-	 * default constructor for interactive mode
+	 * default constructor 
 	 */
 	public PrintScheduleEmployee() {		
 		this.employee = new Employee();
@@ -197,8 +197,7 @@ public class PrintScheduleEmployee extends Command {
 	 */
 	public boolean printFileEmployeeSchedule() {
 		
-		JSONObject jsonObj = getEmployeeScheduleList();
-		
+		JSONObject jsonObj = getEmployeeScheduleList();		
 		/* Save json object content into file */
 		return CommonUtil.saveFile(getOutfileName(), jsonObj);
 		

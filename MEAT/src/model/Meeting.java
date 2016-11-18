@@ -62,12 +62,14 @@ public class Meeting {
 		return attendee;
 	}
 	public void addAttendee(String str) {
-		String regex = ",|，|\\s+";
+		String regex = ",|\\s+";
         String[] attendees = str.split(regex);
-        for(String attend : attendees){
-        	this.attendee.add(attend);
-        }
-		
+        for(String attendee : attendees){
+        	/* if blank or null attendee contains, continues */
+			if (CommonUtil.nullTrim(attendee).equals("")) 
+				continue;
+        	this.attendee.add(attendee);
+        }		
 	} 
 	public void setAttendee(LinkedList<String> attendee) {
 		this.attendee = attendee;

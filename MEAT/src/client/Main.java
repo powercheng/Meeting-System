@@ -1,33 +1,14 @@
 package client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import common.CommonUtil;
 import common.SysConfig;
-import controller.AddHoliday;
-import controller.AddMeeting;
-import controller.AddVacation;
-import controller.CancelMeeting;
-import controller.CancelVacation;
-import controller.Command;
 import controller.CommandFactory;
-import controller.EditMeeting;
-import controller.PrintScheduleAll;
-import controller.PrintScheduleEmployee;
-import controller.PrintScheduleRoom;
-import model.Employee;
-import model.Meeting;
-import model.Room;
-import model.Vacation;
 /**
  * Main controller in our MEAT system <br>
  * How to run this program. <br>
- * 1. Interactive     mode : java -jar MEAT.jar  <br>
- * 2. ScriptCommdnRun mode : java -jar MEAT.jar filename.json <br>
- * 3. Load externalDB mode : java -jar MEAT.jar DBSYNC <br>
+ * 1. Interactive       mode : java -jar MEAT.jar  <br>
+ * 2. ScriptCommand run mode : java -jar MEAT.jar filename.json <br>
+ * 3. Load externalDB mode   : java -jar MEAT.jar DBSYNC <br>
  * @author group7
  */
 public class Main {	
