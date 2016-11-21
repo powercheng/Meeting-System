@@ -64,6 +64,7 @@ public class Main {
 					break;
 			}
 	    }
+	    System.exit(0);
 	}      
    /**
     * Run all commands in the script file (json format) at once 

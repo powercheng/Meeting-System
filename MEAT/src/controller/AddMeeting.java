@@ -6,8 +6,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import common.CommonUtil;
-import common.SysConfig;
-import common.TimeConflictException;
+import exceptions.TimeConflictException;
+import exceptions.AddMeetingException;
 import model.Employee;
 import model.Meeting;
 import model.Room;
@@ -32,11 +32,10 @@ public class AddMeeting extends Command {
 	 * analyze incoming commands and check validity, finally save meeting information into database
 	 */
 	@Override
-	public String execute() {
+	public void execute() throws AddMeetingException {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No arguments for adding meeting command");
-			return "failed";
+			throw new AddMeetingException("No arguments for adding meeting command");
 		}
 		for(int i = 0; i < command_array.size(); i++) {
 			JSONObject command_json = (JSONObject) command_array.get(i);
@@ -48,72 +47,61 @@ public class AddMeeting extends Command {
 						meeting.setDate(value);
 						break;
 					} else {						
-						System.out.println("invalid date ("+value+") for adding meeting command");
-						return SysConfig.fail;
+						throw new AddMeetingException("invalid date ("+value+") for adding meeting command");												
 					}
 				case "start-time" :					
 					if(checkTimeValid(value)){
 						meeting.setStartTime(value);
 						break;
 					} else {
-						System.out.println("invalid time("+value+") for adding meeting command");
-						return SysConfig.fail;
+						throw new AddMeetingException("invalid time("+value+") for adding meeting command");
 					}
 				case "end-time" :
 					if(checkTimeValid(value)){
 						meeting.setEndTime(value);
 						break;
 					} else {
-						System.out.println("invalid time ("+value+") for adding meeting command");
-						return SysConfig.fail;
+						throw new AddMeetingException("invalid time ("+value+") for adding meeting command");
 					}
 				case "room-id" :
 					if(checkRoomIdValid(value)){
 						meeting.setRoomId(value);					
 						break;
 					} else {
-						System.out.println("invalid room id ("+value+") for adding meeting command");
-						return SysConfig.fail;
+						throw new AddMeetingException("invalid room id ("+value+") for adding meeting command");
 					}
 				case "description" :					
 					if(checkStrLenValid(value)){
 						meeting.setDescription(value);				
 						break;
 					} else {
-						System.out.println("description is too long for adding meeting command");
-						return SysConfig.fail;
+						throw new AddMeetingException("description is too long for adding meeting command");
 					}
 				case "attendee" :					
 					if(checkEmpolyeeIdValid(value)){
 						meeting.addAttendee(value);				
 						break;
 					} else {
-						return SysConfig.fail;
+						throw new AddMeetingException("invalid attendee id ("+value+") for adding meeting command");
 					}
 				default :
-					System.out.println("invalid arguments : " + name + "for adding meeting");
-					return SysConfig.fail;
+					throw new AddMeetingException("invalid arguments : " + name + "for adding meeting");
 			}			
 		}
 		
-		if(checkMeetingArgument()) {			
-			/* check room and employee schedule */
-			if (!ableToAttendWithoutConflict()) {
-				return SysConfig.fail;
-			}			
-			/* Database saving */			
-			String meetingID = CommonUtil.getNextMeetID();
-			meeting.setMeetingId(meetingID);
-			if (!insertMeetingInfo(this.meeting)) {
-				//System.out.println("Add meeting is failed");
-				return SysConfig.fail;
-			} else {
-				return SysConfig.success;
-			}
-			//viewprint();
-		} else {			
-			return SysConfig.fail;
-		}		
+		if(!checkMeetingArgument()) {			
+			throw new AddMeetingException("Missing argumets for adding meeting command");
+		} 
+		if(!checkTimeConflict(meeting.getStartTime(),meeting.getEndTime())){
+			throw new AddMeetingException("end time before start time");
+		}
+		ableToAttendWithoutConflict();
+		
+		String meetingID = CommonUtil.getNextMeetID();
+		meeting.setMeetingId(meetingID);
+		if (!insertMeetingInfo(this.meeting)) {
+			throw new AddMeetingException("adding meeting to database is failed for adding meeting command");
+		} 
 		
 	}
 	/**
@@ -128,24 +116,19 @@ public class AddMeeting extends Command {
 		   meeting.getClass() == null && meeting.getDate().isEmpty() ||
 		   meeting.getStartTime() == null && meeting.getAttendee().isEmpty() ||
 		   meeting.getEndTime() == null && meeting.getEndTime().isEmpty())
-		{
-			System.out.println("Missing argumets for adding meeting command");
-			return false;
-		} else if(!checkTimeConflict(meeting.getStartTime(),meeting.getEndTime())){
-		//	System.out.println(meeting.getStartTime());
-		//	System.out.println(meeting.getEndTime());
-			System.out.println("end time before start time");
+		{			
 			return false;
 		} else {
 			return true;
 		}
 		
 	}
+	
 	/**
 	 * check if meeting date has a conflict with room schedules, holiday, and attendee's schedules
 	 * @return
 	 */
-	public boolean ableToAttendWithoutConflict() {
+	public void ableToAttendWithoutConflict() throws AddMeetingException {
 		
 		// 1. first check room available
 		Room room = new Room();
@@ -154,16 +137,14 @@ public class AddMeeting extends Command {
 		try {
 			room.roomAvailable(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
 		} catch (TimeConflictException tce) {
-			tce.printStackTrace();
-			return false;			
+			throw new AddMeetingException(tce.getMessage() + "for adding meeting command");
 		}
 		// 2. check holiday
 		AddHoliday holi = new AddHoliday();		
 		try {
 			holi.checkAvailableWithHoliday(meeting.getDate());			
 		} catch (TimeConflictException tce) {
-			tce.printStackTrace();
-			return false;			
+			throw new AddMeetingException(tce.getMessage() + "for adding meeting command");			
 		}		
 		// 3. check all attendees' meeting and vacation date
 		LinkedList<String> attendList = meeting.getAttendee();
@@ -177,21 +158,16 @@ public class AddMeeting extends Command {
 			try {
 				emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
 			} catch (TimeConflictException tce) {
-				tce.printStackTrace();
-				return false;
+				throw new AddMeetingException(tce.getMessage() + "for adding meeting command");
 			}			
 			
 			/*check vacation*/
 			try { 
 				emp.checkAvailableWithVacation(meeting.getDate());
 			} catch (TimeConflictException tce) {
-				tce.printStackTrace();
-				return false;
+				throw new AddMeetingException(tce.getMessage() + "for adding meeting command");
 			}			
-		}
-		// No error !
-		return true;
-		
+		}		
 	}
 	/**
 	 * Insert final checked meeting information into database

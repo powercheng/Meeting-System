@@ -7,6 +7,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import common.SysConfig;
+import exceptions.CancelMeetingException;
+import exceptions.CancelVacationException;
+
 /**
  * Cancel employee's scheduled vacation
  * @author group7
@@ -29,11 +32,10 @@ public class CancelVacation extends Command {
 	 * check parameters validity and deleting passing vacation information 
 	 */
 	@Override
-	public String execute() {
+	public void execute() throws CancelVacationException {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No arguments for delete-vacation command");
-			return SysConfig.fail;
+			throw new CancelVacationException("No argument for cancel-vacation command");
 		}
 		for(int i = 0; i < command_array.size(); i++) {
 			JSONObject command_json = (JSONObject) command_array.get(i);
@@ -45,31 +47,25 @@ public class CancelVacation extends Command {
 						vacation.setEmpolyeeId(value);
 						break;
 					} else {
-						System.out.println("invalid empolyee id("+value+") for delete-vacation command");
-						return SysConfig.fail;
+						throw new CancelVacationException("invalid empolyee id("+value+") for cancel-vacation command");
 					}
 				default :
-					System.out.println("invalid arguments : " + name + "for delete-vacation");					
-					return SysConfig.fail;
+					throw new CancelVacationException("invalid arguments : " + name + "for cancel-vacation");					
 			}			
 		}
-		
-		if ( vacation.getEmpolyeeId() != null ) {
-			if (!cancelVactionInfo(this.vacation)) {
-				//System.out.println("delete-vacation : (empID : "+vacation.getEmpolyeeId()+") failed");
-				return SysConfig.fail;
-			}
-		}
-		
-		//viewprint();	
-		return SysConfig.success;
+		if ( vacation.getEmpolyeeId() == null ) {
+			throw new CancelVacationException("Missing vacation id for cancel vacation command");
+		}	
+		if (!cancelVacationInfo(this.vacation)) {
+			throw new CancelVacationException("cancel vacation to database is failed for cancel vacation command");
+		}	
 	}
 	/**
 	 * Delete the passing vacation information from database
 	 * @param vinfo
 	 * @return
 	 */
-	public boolean cancelVactionInfo(Vacation vinfo) {
+	public boolean cancelVacationInfo(Vacation vinfo) {
 		
 		boolean bSuccess = false;
 		

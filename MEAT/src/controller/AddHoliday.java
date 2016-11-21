@@ -4,8 +4,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import common.CommonUtil;
-import common.SysConfig;
-import common.TimeConflictException;
+import exceptions.AddHolidayException;
+import exceptions.TimeConflictException;
 import model.Sql;
 /**
  * This class is used for add company's holiday into database
@@ -35,11 +35,10 @@ public class AddHoliday extends Command  {
 	 * analyze commands and put analyzed data into database 
 	 */
 	@Override
-	public String execute() {
+	public void execute() throws AddHolidayException{
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No argument for add-holiday command");
-			return SysConfig.fail;
+			throw new AddHolidayException("No argument for add-holiday command");
 		}
 		for(int i = 0; i < command_array.size(); i++) {
 			
@@ -53,42 +52,34 @@ public class AddHoliday extends Command  {
 						setStartDate(value);
 						break;
 					} else {
-						System.out.println("invalid start-date("+value+") for add-holiday command");
-						return SysConfig.fail;
+						throw new AddHolidayException("invalid start-date("+value+") for add-holiday command");
 					}
 				case "end-date" :
 					if(checkDateValid(value)){
 						setEndDate(value);
 						break;
 					} else {
-						System.out.println("invalid end-date("+value+") for add-holiday command");
-						return SysConfig.fail;
+						throw new AddHolidayException("invalid end-date("+value+") for add-holiday command");
 					}
 				case "description" :
 					if(checkStrLenValid(value)){
 						setDescription(value);
 						break;
 					} else {
-						System.out.println("description is too long for add-holiday command");
-						return SysConfig.fail;
+						throw new AddHolidayException("description is too long for add-holiday command");
 					}
 				default :
-					System.out.println("invalid arguments : " + name + "for add-holiday");
-					return SysConfig.fail;
+					throw new AddHolidayException("invalid arguments : " + name + "for add-holiday");
 			}			
 		}
 		
-		if(checkHolidyArgument()) {	
-			
-			if (!insertHolidayInfo()) {			
-				return SysConfig.fail;
-			} else {
-				return SysConfig.success;
-			}		
-			
-		} else {
-			return SysConfig.fail;
+		if(!checkHolidyArgument()) {	
+			throw new AddHolidayException("Missing argumets for adding holiday command");
 		}
+		
+		if(!insertHolidayInfo()) {			
+			throw new AddHolidayException("adding holiday to database is failed for adding meeting command");
+		}		
 	}
 	/**
 	 * Check variables' validity
@@ -97,7 +88,6 @@ public class AddHoliday extends Command  {
 	private boolean checkHolidyArgument() {
 		
 		if (getStartDate() == null || getEndDate() == null || getDescription() == null) {
-			System.out.println("Missing argumets for adding holiday command");
 			return false;
 		}
 		return true;

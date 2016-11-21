@@ -3,8 +3,10 @@ package client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 import common.SysConfig;
 import controller.AddHoliday;
 import controller.AddMeeting;
@@ -12,10 +14,20 @@ import controller.AddVacation;
 import controller.CancelMeeting;
 import controller.CancelVacation;
 import controller.Command;
+import controller.CommandFactory;
 import controller.EditMeeting;
 import controller.PrintScheduleAll;
 import controller.PrintScheduleEmployee;
 import controller.PrintScheduleRoom;
+import exceptions.AddHolidayException;
+import exceptions.AddMeetingException;
+import exceptions.AddVacationException;
+import exceptions.CancelMeetingException;
+import exceptions.CancelVacationException;
+import exceptions.EditMeetingException;
+import exceptions.PrintScheduleAllException;
+import exceptions.PrintScheduleEmployeeException;
+import exceptions.PrintScheduleRoomException;
 /**
  * This class is used for interactive mode to communicate with user to dealing meeting schedule
  * @author group7
@@ -23,7 +35,7 @@ import controller.PrintScheduleRoom;
  */
 public class InteractiveMode {
 	
-    private static String inputOutput(String msg) {
+    public static String inputOutput(String msg) {
         System.out.println(msg);
 	    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	    String str = "";
@@ -66,9 +78,11 @@ public class InteractiveMode {
         	int userInput = Integer.parseInt(inputOutput("Please press the task number : "));
         	Command command = null;
         	JSONArray command_array = null;
+        	String name = null;
         	if (userInput >= 0 && userInput <= 11) {        		
         		switch (userInput) {        		
 					case 1:
+						name = "add-meeting";
 						String[] questions = {
 								"Please enter the meeting date (MMDDYYYY) or [ enter Q for mainManu ] : ",
 						    	"Please enter the meeting startTIME (HH24:MI) or [ enter Q for mainManu ] : ",
@@ -85,6 +99,7 @@ public class InteractiveMode {
 						command = new AddMeeting(command_array);							
 						break;
 					case 2:
+						name = "edit-meeting-details";
 						String[] questions1 = {
 								"Please enter the meeting ID to edit or [ enter Q for mainManu ] : ",
 								"Please enter the meeting date (MMDDYYYY) or [ enter S to skip ] : ",
@@ -101,6 +116,7 @@ public class InteractiveMode {
 						command = new EditMeeting(command_array);							
 						break;
 					case 3:
+						name = "edit-meeting-add-attendee";
 						String[] questions2 = {
 								"Please enter the meeting ID to edit or [ enter Q for mainManu ] : ",
 								"Please enter the employeeIDs (separate by space) to attend or [ enter Q for mainManu ] : "
@@ -113,6 +129,7 @@ public class InteractiveMode {
 						command = new EditMeeting(command_array, SysConfig.addTag); // Attendee option = add	
 						break;
 					case 4:
+						name = "edit-meeting-remove-attendee";
 						String[] questions3 = {
 								"Please enter the meeting ID to edit or [ enter Q for mainManu ] : ",
 								"Please enter the employeeIDs (separate by space) to delete or [ enter Q for mainManu ] : "
@@ -125,6 +142,7 @@ public class InteractiveMode {
 						command = new EditMeeting(command_array, SysConfig.removeTag); // Attendee option = remove							
 						break;
 					case 5:
+						name = "cancel-meeting";
 						String[] questions4 = {
 								"Please enter the meeting ID to cancel or [ enter Q for mainManu ] : "
 						};
@@ -136,6 +154,7 @@ public class InteractiveMode {
 						command = new CancelMeeting(command_array);							
 						break;
 					case 6:
+						name = "add-vacation";
 						String[] questions5 = {
 								"Please enter the employeeID to book a vacation or [ enter Q for mainManu ] : ",
 								"Please enter the start date (MMDDYYYY) or [ enter Q for mainManu ] : ",
@@ -149,6 +168,7 @@ public class InteractiveMode {
 						command = new AddVacation(command_array);							
 						break;
 					case 7:
+						name = "cancel-vacation";
 						String[] questions6 = {
 								"Please enter the employeeID to cancel vacations or [ enter Q for mainManu ] : "
 						};
@@ -160,6 +180,7 @@ public class InteractiveMode {
 						command = new CancelVacation(command_array);							
 						break;
 					case 8:
+						name = "print-room-schedule";
 						String[] questions7 = {
 								"Please enter the roomID to print schedule or [ enter Q for mainManu ] : ",
 								"Please enter the search start date (MMDDYYYY) or [ enter Q for mainManu ] : ",
@@ -175,6 +196,7 @@ public class InteractiveMode {
 													
 						break;
 					case 9:
+						name = "print-employee-schedule";
 						String[] questions8 = {
 								"Please enter the employeeID to print schedule or [ enter Q for mainManu ] : ",
 								"Please enter the search start date (MMDDYYYY) or [ enter Q for mainManu ] : ",
@@ -190,6 +212,7 @@ public class InteractiveMode {
 													
 						break;
 					case 10:
+						name = "print-all-shedule";
 						String[] questions9 = {
 								"Please enter the search start date (MMDDYYYY) or [ enter Q for mainManu ] : ",
 								"Please enter the search end date (MMDDYYYY) or [ enter Q for mainManu ] : ",
@@ -203,6 +226,7 @@ public class InteractiveMode {
 						command = new PrintScheduleAll(command_array);						
 						break;
 					case 11:
+						name = "add-holiday";
 						String[] questions10 = {
 								"Please enter the holiday start date (MMDDYYYY) or [ enter Q for mainManu ] : ",
 								"Please enter the holiday end date (MMDDYYYY) or [ enter Q for mainManu ] : ",
@@ -221,8 +245,9 @@ public class InteractiveMode {
 						break;				
 				}
         		if(command != null) {
-					String result = command.execute();
-					System.out.println("### command : " + result);				
+        			CommandFactory factory = new CommandFactory();
+        			factory.commandRun(name,command);
+					//System.out.println("### command : " + result);				
 				}	
         	} else {
         		System.out.println("Please enter a menu number from 0 - 11");       		

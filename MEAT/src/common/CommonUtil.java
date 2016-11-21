@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -190,5 +191,18 @@ public class CommonUtil {
 		}		
 		return true;
 	}
+	
+    public static String inputOutput(String msg) {
+        System.out.println(msg);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	    String str = "";
+	    try {
+	    	str = br.readLine();
+	    } catch (IOException e){
+	        System.out.println("An error occurs when reading system input.");
+	        //ainMenu();
+	    }
+	    return str;
+    }
 	 
 }

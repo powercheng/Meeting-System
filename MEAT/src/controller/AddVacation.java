@@ -2,10 +2,12 @@ package controller;
 import model.Employee;
 import model.Sql;
 import model.Vacation;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import common.SysConfig;
-import common.TimeConflictException;
+
+import exceptions.TimeConflictException;
+import exceptions.AddVacationException;
 /**
  * Scheduling class for employee's vacation
  * @author group7
@@ -28,11 +30,10 @@ public class AddVacation extends Command {
 	 * analyzing passing data array and check validity, insert commands data into database
 	 */
 	@Override
-	public String execute() {
+	public void execute() throws AddVacationException {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No arguments for add-vacation command");
-			return SysConfig.fail;
+			throw new AddVacationException("No argument for add-holiday command");
 		}
 		for(int i = 0; i < command_array.size(); i++) {
 			
@@ -46,56 +47,42 @@ public class AddVacation extends Command {
 						vacation.setEmpolyeeId(value);
 						break;
 					} else {
-						System.out.println("invalid employee id("+value+") for add-vacation command");
-						return SysConfig.fail;
+						throw new AddVacationException("invalid employee id("+value+") for add-vacation command");
 					}
 				case "start-date" :
 					if(checkDateValid(value)){
 						vacation.setStartDate(value);
 						break;
 					} else {
-						System.out.println("invalid start-date("+value+") for add-vacation command");
-						return SysConfig.fail;
+						throw new AddVacationException("invalid start-date("+value+") for add-vacation command");
 					}
 				case "end-date" :
 					if(checkDateValid(value)){
 						vacation.setEndDate(value);
 						break;
 					} else {
-						System.out.println("invalid end-date("+value+") for add-vacation command");
-						return SysConfig.fail;
+						throw new AddVacationException("invalid end-date("+value+") for add-vacation command");
 					}
 				default :
-					System.out.println("invalid arguments : " + name + " for add-vacation");
-					return SysConfig.fail;
+					throw new AddVacationException("invalid arguments : " + name + " for add-vacation");
 			}			
 		}
 		
-		if ( vacation.getEmpolyeeId() != null ) {			
-			/* check employee meeting schedule */
-			if (!ableVacationWithoutConflict()) {
-				return SysConfig.fail;
-			}
-					
-			if (!addVactionInfo(this.vacation)) {
-				//System.out.println("add-vacation (empID : "+vacation.getEmpolyeeId()+") failed");
-				return SysConfig.fail;
-			} else {
-				return SysConfig.success;
-			}
-			
-		} else {
-			return SysConfig.fail;
+		if ( vacation.getEmpolyeeId() == null ) {
+			throw new AddVacationException("missing empolyee id argument for addVacation command");
 		}
+		ableVacationWithoutConflict();
+		if (!addVactionInfo(this.vacation)) {
+			throw new AddVacationException("adding vacation to database is failed for adding vacation command");
+		} 
 		
-		//viewprint();	
 		
 	}
 	/**
 	 * Check if employee's vacation dates conflict with scheduled meeting date
 	 * @return
 	 */
-	public boolean ableVacationWithoutConflict() {
+	public void ableVacationWithoutConflict() throws AddVacationException{
 		
 		// Check if conflict with meeting schedules
 		Employee emp = new Employee();
@@ -104,12 +91,8 @@ public class AddVacation extends Command {
 		try { 
 			emp.checkAvailableWithMeeting(vacation.getStartDate(), vacation.getEndDate());
 		} catch (TimeConflictException tce) {
-			tce.printStackTrace();
-			return false;
+			throw new AddVacationException(tce.getMessage() + "for adding vacation command");
 		}
-		// no conflict
-		return true;
-		
 	}
 	/**
 	 * add employee's vacation information

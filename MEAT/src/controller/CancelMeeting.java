@@ -6,7 +6,7 @@ import model.Sql;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import common.SysConfig;
+import exceptions.CancelMeetingException;
 /**
  * This class is used to cancel the scheduled meeting
  * @author group7
@@ -29,11 +29,10 @@ public class CancelMeeting extends Command {
 	 * analyze the passing commands and check validity, finally insert passing data into database
 	 */
 	@Override
-	public String execute() {
+	public void execute() throws CancelMeetingException {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No arguments for delete-meeting");
-			return SysConfig.fail;
+			throw new CancelMeetingException("No argument for cancel-meeting command");
 		}
 		
 		for(int i = 0; i < command_array.size(); i++) {
@@ -45,21 +44,15 @@ public class CancelMeeting extends Command {
 					meeting.setMeetingId(value);
 					break;							
 				default :
-					System.out.println("invalid arguments : " + name + "for delete-meeting");
-					return SysConfig.fail;
+					throw new CancelMeetingException("invalid arguments : " + name + "for cancel-meeting");
 			}			
 		}
 		
-		if ( meeting.getMeetingId() != null ) 
-		{
-			if (!cancelMeetingInfo(this.meeting)) {
-				//System.out.println("delete-meeting : (meetID - "+meeting.getMeetingId()+") failed");
-				return SysConfig.fail;
-			} else {
-				return SysConfig.success;
-			}
-		} else {
-			return SysConfig.fail;
+		if ( meeting.getMeetingId() == null ) {
+			throw new CancelMeetingException("Missing meeting id for cancel meeting command");
+		}	
+		if (!cancelMeetingInfo(this.meeting)) {
+			throw new CancelMeetingException("cancel meeting to database is failed for cancel meeting command");
 		}		
 	}
 	/**
