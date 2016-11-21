@@ -14,9 +14,10 @@ public class Command {
 	/**
 	 * To allow override method of child classes to handle actions
 	 * @return
+	 * @throws Exception 
 	 */
-	public String execute(){
-		return "";		
+	public void execute() throws Exception{
+				
 	}
 	
 	/**
@@ -91,7 +92,6 @@ public class Command {
 		Meeting mt = new Meeting();
 		mt.getMeetingInfo(meetingID);  // get and setting database information		
 		if (mt.getMeetingId() == null) {
-			System.out.println("No such meeting ID ("+meetingID+") in database");
 			return false;
 		}
 		return true;
@@ -129,7 +129,6 @@ public class Command {
 		rm.getRoomInfo(roomID); // GET AND SETTING DATABASE INFORMATION
 		/* if roomID (fromDB) is null then no such room */
 		if (rm.getRoomID() == null) {
-			System.out.println("No such roomID ("+roomID+") in database");
 			return false;
 		}		
 		return true;

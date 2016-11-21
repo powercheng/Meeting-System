@@ -1,7 +1,6 @@
 package controller;
 
 import common.CommonUtil;
-import exceptions.AddMeetingException;
 import model.Employee;
 import model.Meeting;
 import model.Room;

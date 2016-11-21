@@ -2,10 +2,12 @@ package controller;
 
 import model.Room;
 import model.Sql;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 import common.CommonUtil;
-import common.SysConfig;
+import exceptions.PrintScheduleRoomException;
 /**
  * Print room's schedules onto screen or save it to the file 
  * @author group7
@@ -47,11 +49,10 @@ public class PrintScheduleRoom extends Command {
 	 * Handling passing commands parameter and print out the saved room schedules
 	 */
 	@Override
-	public String execute() {		
+	public void execute() throws PrintScheduleRoomException {		
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No arguments for print-schedule-room");
-			return SysConfig.fail;
+			throw new PrintScheduleRoomException("No arguments for print-schedule-room");
 		}
 		for(int i = 0; i < command_array.size(); i++) {
 			JSONObject command_json = (JSONObject) command_array.get(i);
@@ -66,34 +67,29 @@ public class PrintScheduleRoom extends Command {
 						setSrchStartDay(value);
 						break;
 					} else {
-						return SysConfig.fail;
+						throw new PrintScheduleRoomException("invalid arguments : " + name + "for print-schedule-room");
 					}
 				case "end-date" :
 					if(checkDateValid(value)){
 						setSrchEndDay(value);
 						break;
 					} else {
-						return SysConfig.fail;
+						throw new PrintScheduleRoomException("invalid arguments : " + name + "for print-schedule-room");
 					}
 				case "output-file" :
 					setOutfileName(value);
 					break;
 					
 				default :
-					System.out.println("invalid arguments : " + name + "for print-schedule-room");
-					return SysConfig.fail;
+					throw new PrintScheduleRoomException("invalid arguments : " + name + "for print-schedule-room");
 			}			
 		}
 		
-		if (!checkCondition()) {
-			return SysConfig.fail;
-		}
-		
+		checkCondition();		
 		if (!printFileRoomSchedule()) {
-			return SysConfig.fail;
-		}
-		
-		return SysConfig.success;		
+			throw new PrintScheduleRoomException("save file failed for print-schedule-room");
+		}	
+			
 	}
 	/**
 	 * Fetching room schedules from the database with specific range of time

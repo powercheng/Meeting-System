@@ -5,8 +5,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import client.InteractiveMode;
-import client.Main;
 import common.CommonUtil;
 import common.SysConfig;
 import exceptions.AddHolidayException;

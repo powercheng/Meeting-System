@@ -2,10 +2,12 @@ package controller;
 
 import model.Employee;
 import model.Sql;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 import common.CommonUtil;
-import common.SysConfig;
+import exceptions.PrintScheduleEmployeeException;
 /**
  * Print employee's scheduled meeting within specific range of date or save it into file 
  * @author group7
@@ -48,11 +50,10 @@ public class PrintScheduleEmployee extends Command {
 	 * Gethering an employee's meeting schedules and print the result into file typed json
 	 */
 	@Override
-	public String execute() {		
+	public void execute() throws PrintScheduleEmployeeException{		
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No arguments for print-schedule-employee");
-			return SysConfig.fail;
+			throw new PrintScheduleEmployeeException("No arguments for print-schedule-employee");
 		}
 		
 		for(int i = 0; i < command_array.size(); i++) {
@@ -68,34 +69,28 @@ public class PrintScheduleEmployee extends Command {
 						setSrchStartDay(value);
 						break;
 					} else {
-						return SysConfig.fail;
+						throw new PrintScheduleEmployeeException("invalid arguments : " + name + "for print-schedule-employee");
 					}
 				case "end-date" :
 					if(checkDateValid(value)){
 						setSrchEndDay(value);
 						break;
 					} else {
-						return SysConfig.fail;
+						throw new PrintScheduleEmployeeException("invalid arguments : " + name + "for print-schedule-employee");
 					}
 				case "output-file" :
 					setOutfileName(value);
 					break;
 					
 				default :
-					System.out.println("invalid arguments : " + name + "for print-schedule-employee");
-					return SysConfig.fail;
+					throw new PrintScheduleEmployeeException("invalid arguments : " + name + "for print-schedule-employee");
 			}			
 		}
 		
-		if (!checkCondition()) {
-			return SysConfig.fail;
-		}
-		
+		checkCondition();		
 		if (!printFileEmployeeSchedule()) {
-			return SysConfig.fail;
-		}
-		
-		return SysConfig.success;		
+			throw new PrintScheduleEmployeeException("save file failed for print-schedule-employee");
+		}	
 	}
 	/**
 	 * Fetching employee's meeting schedules in specific range of time	 * 
@@ -206,27 +201,22 @@ public class PrintScheduleEmployee extends Command {
 	 * check passing variables validity	
 	 * @return
 	 */
-	public boolean checkCondition() {
+	public void checkCondition() throws PrintScheduleEmployeeException{
 		
 		/* Necessary information check */
 		if (employee.getEmployeeID() == null) {
-			System.out.println("No employeeID for print-schedule-employee");
-			return false;
+			throw new PrintScheduleEmployeeException("No employeeID for print-schedule-employee");
 		}
 		if (getSrchStartDay() == null) {
-			System.out.println("No start-date for print-schedule-employee");
-			return false;
+			throw new PrintScheduleEmployeeException("No start-date for print-schedule-employee");
 		}
 		if (getSrchEndDay() == null) {
-			System.out.println("No end-date for print-schedule-employee");
-			return false;
+			throw new PrintScheduleEmployeeException("No end-date for print-schedule-employee");
 		}
 		if (getOutfileName() == null) {
-			System.out.println("No output-file for print-schedule-employee");
-			return false;
+			throw new PrintScheduleEmployeeException("No output-file for print-schedule-employee");
 		}		
 		
-		return true;
 	}
 	
 	public String getSrchStartDay() {

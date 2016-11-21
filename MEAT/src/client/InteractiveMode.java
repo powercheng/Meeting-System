@@ -19,15 +19,6 @@ import controller.EditMeeting;
 import controller.PrintScheduleAll;
 import controller.PrintScheduleEmployee;
 import controller.PrintScheduleRoom;
-import exceptions.AddHolidayException;
-import exceptions.AddMeetingException;
-import exceptions.AddVacationException;
-import exceptions.CancelMeetingException;
-import exceptions.CancelVacationException;
-import exceptions.EditMeetingException;
-import exceptions.PrintScheduleAllException;
-import exceptions.PrintScheduleEmployeeException;
-import exceptions.PrintScheduleRoomException;
 /**
  * This class is used for interactive mode to communicate with user to dealing meeting schedule
  * @author group7

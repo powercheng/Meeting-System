@@ -12,13 +12,12 @@ import org.json.simple.JSONObject;
 
 import common.CommonUtil;
 import common.SysConfig;
-import exceptions.AddMeetingException;
 import exceptions.EditMeetingException;
 import exceptions.TimeConflictException;
 
 /**
  * Edit and change the scheduled meeting information
- * @author zoasw
+ * @author group7
   */
 public class EditMeeting extends Command {
 	

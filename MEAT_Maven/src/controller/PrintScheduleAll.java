@@ -1,10 +1,13 @@
 package controller;
 
 import model.Sql;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 import common.CommonUtil;
 import common.SysConfig;
+import exceptions.PrintScheduleAllException;
 /**
  * Print screen or into file about all company's meeting schedules in specific period
  * @author group7
@@ -44,11 +47,10 @@ public class PrintScheduleAll extends Command {
 	 * Gethering meeting schedules and print the result into file typed json
 	 */
 	@Override
-	public String execute() {		
+	public void execute() throws PrintScheduleAllException{		
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No arguments for print-schedule-all");
-			return SysConfig.fail;
+			throw new PrintScheduleAllException("No arguments for print-schedule-all");
 		}
 		for(int i = 0; i < command_array.size(); i++) {
 			
@@ -62,33 +64,28 @@ public class PrintScheduleAll extends Command {
 						setSrchStartDay(value);
 						break;
 					} else {
-						return SysConfig.fail;
+						throw new PrintScheduleAllException("invalid arguments : " + name + "for print-schedule-all");
 					}
 				case "end-date" :
 					if(checkDateValid(value)){
 						setSrchEndDay(value);
 						break;
 					} else {
-						return SysConfig.fail;
+						throw new PrintScheduleAllException("invalid arguments : " + name + "for print-schedule-all");
 					}
 				case "output-file" :
 					setOutfileName(value);
 					break;					
 				default :
-					System.out.println("invalid arguments : " + name + "for print-schedule-all");
-					return SysConfig.fail;
+					throw new PrintScheduleAllException("invalid arguments : " + name + "for print-schedule-all");
 			}			
 		}
 		
-		if (!checkCondition()) {
-			return SysConfig.fail;
-		}
-		
+		checkCondition();		
 		if (!printFileAllCompanySchedule()) {
-			return SysConfig.fail;
-		}
-		
-		return SysConfig.success;		
+			throw new PrintScheduleAllException("save file failed for print-schedule-all");
+		}	
+				
 	}
 	/**
 	 * Fetch the result from database with time span condition
@@ -192,7 +189,7 @@ public class PrintScheduleAll extends Command {
 	 * Check validity of all variables condition	
 	 * @return
 	 */
-	public boolean checkCondition() {
+	public void checkCondition() throws PrintScheduleAllException{
 		
 		if (getSrchStartDay() == null) {  // NULL ALLOWED
 			setSrchStartDay(SysConfig.minDay);
@@ -201,11 +198,9 @@ public class PrintScheduleAll extends Command {
 			setSrchStartDay(SysConfig.maxDay);
 		}
 		if (getOutfileName() == null) {
-			System.out.println("No output-file for print-schedule-all");
-			return false;
+			throw new PrintScheduleAllException("save file failed for print-schedule-all");
 		}		
-		
-		return true;
+
 	}
 	
 	public String getSrchStartDay() {

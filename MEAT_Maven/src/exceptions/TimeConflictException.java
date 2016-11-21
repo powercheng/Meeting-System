@@ -1,4 +1,5 @@
-package common;
+package exceptions;
+
 /**
  * if meeting date conflicts with another meeting time, attendees' vacation time, and company's holiday,
  * then this exception occurs

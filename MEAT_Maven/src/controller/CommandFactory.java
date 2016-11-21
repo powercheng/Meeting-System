@@ -7,6 +7,15 @@ import org.json.simple.parser.ParseException;
 
 import common.CommonUtil;
 import common.SysConfig;
+import exceptions.AddHolidayException;
+import exceptions.AddMeetingException;
+import exceptions.AddVacationException;
+import exceptions.CancelMeetingException;
+import exceptions.CancelVacationException;
+import exceptions.EditMeetingException;
+import exceptions.PrintScheduleAllException;
+import exceptions.PrintScheduleEmployeeException;
+import exceptions.PrintScheduleRoomException;
 /**
  * This class is used for various script commands using factory pattern
  * @author group7
@@ -24,7 +33,7 @@ public class CommandFactory {
 	 * and finally execute the command
 	 * @param jsonData
 	 */
-	public void run(String jsonData) {
+	public void run(String jsonData){
 		// TODO Auto-generated method stub
 		if (CommonUtil.nullTrim(jsonData).length()> 0) {
 			JSONParser parser = new JSONParser();
@@ -86,8 +95,7 @@ public class CommandFactory {
 					}
 					/* execute */
 					if(command != null) {
-						String result = command.execute();
-						System.out.println("### " + name + " : " + result);
+						commandRun(name,command);
 					}					
 				}
 			}
@@ -96,10 +104,46 @@ public class CommandFactory {
 			}
 			catch (ClassCastException e) {
 				e.printStackTrace();
-			}finally {
-				
-			}
+			} 
 		}
+	}
+	
+	
+	public void commandRun(String name,Command command){
+		try {
+			command.execute();
+			System.out.println("command : " + name+ " successfully completed");
+		} catch (AddMeetingException e) {
+			System.out.println(e.getMessage());
+			System.out.println("meeting was not added");
+		} catch (EditMeetingException e) {
+			System.out.println(e.getMessage());
+			System.out.println("meeting was not edited");
+		} catch (CancelMeetingException e) {
+			System.out.println(e.getMessage());
+			System.out.println("meeting was not cancelled");
+		} catch (AddHolidayException e) {
+			System.out.println(e.getMessage());
+			System.out.println("holiday was not added");
+		} catch (CancelVacationException e) {
+			System.out.println(e.getMessage());
+			System.out.println("vacation was not cancelled");
+		} catch (AddVacationException e) {
+			System.out.println(e.getMessage());
+			System.out.println("vacation was not added");
+		} catch (PrintScheduleAllException e) {
+			System.out.println(e.getMessage());
+			System.out.println("All Schedule was not printed");
+		} catch (PrintScheduleRoomException e) {
+			System.out.println(e.getMessage());
+			System.out.println("Room schedulewas not printed");
+		} catch (PrintScheduleEmployeeException e) {
+			System.out.println(e.getMessage());
+			System.out.println("Employee schedule was not printed");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 	}
 }
 

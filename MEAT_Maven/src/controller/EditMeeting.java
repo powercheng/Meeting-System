@@ -12,10 +12,12 @@ import org.json.simple.JSONObject;
 
 import common.CommonUtil;
 import common.SysConfig;
-import common.TimeConflictException;
+import exceptions.EditMeetingException;
+import exceptions.TimeConflictException;
+
 /**
  * Edit and change the scheduled meeting information
- * @author zoasw
+ * @author group7
   */
 public class EditMeeting extends Command {
 	
@@ -52,11 +54,10 @@ public class EditMeeting extends Command {
 	 * Check and verify passing commands data, and update old one into new information
 	 */
 	@Override
-	public String execute() {
+	public void execute() throws EditMeetingException {
 		// TODO Auto-generated method stub	
 		if(command_array == null || command_array.isEmpty()) {
-			System.out.println("No arguments for edit-meeting command");
-			return SysConfig.fail;
+			throw new EditMeetingException("No arguments for edit-meeting command");
 		}
 		for(int i = 0; i < command_array.size(); i++) {
 			JSONObject command_json = (JSONObject) command_array.get(i);
@@ -70,8 +71,7 @@ public class EditMeeting extends Command {
 						checkSkipedAttendeeList = meeting.getAttendee(); // current list no need to check schedule;
 						break;
 					} else {						
-						System.out.println("edit-meeting : meeting-id ("+value+") not in db");
-						return SysConfig.fail;
+						throw new EditMeetingException("edit-meeting : meeting-id ("+value+") not in db");
 					}
 				case "date" :
 					if(checkDateValid(value)){
@@ -79,8 +79,7 @@ public class EditMeeting extends Command {
 						timeChanged = true;
 						break;
 					} else {						
-						System.out.println("invalid date ("+value+") for edit-meeting command");
-						return SysConfig.fail;
+						throw new EditMeetingException("invalid date ("+value+") for edit-meeting command");
 					}
 				case "start-time" :					
 					if(checkTimeValid(value)){
@@ -88,8 +87,7 @@ public class EditMeeting extends Command {
 						timeChanged = true;
 						break;
 					} else {
-						System.out.println("invalid time("+value+") for edit-meeting command");
-						return SysConfig.fail;
+						throw new EditMeetingException("invalid time("+value+") for edit-meeting command");
 					}
 				case "end-time" :
 					if(checkTimeValid(value)){
@@ -97,8 +95,7 @@ public class EditMeeting extends Command {
 						timeChanged = true;
 						break;
 					} else {
-						System.out.println("invalid time ("+value+") for edit-meeting command");
-						return SysConfig.fail;
+						throw new EditMeetingException("invalid time ("+value+") for edit-meeting command");
 					}
 				case "room-id" :
 					if(checkRoomIdValid(value)){
@@ -106,16 +103,14 @@ public class EditMeeting extends Command {
 						roomChanged = true;
 						break;
 					} else {
-						System.out.println("invalid room id ("+value+") for edit-meeting command");
-						return SysConfig.fail;
+						throw new EditMeetingException("invalid room id ("+value+") for edit-meeting command");
 					}
 				case "description" :					
 					if(checkStrLenValid(value)){
 						meeting.setDescription(value);		// changing description		
 						break;
 					} else {
-						System.out.println("description is too long for edit-meeting command");
-						return SysConfig.fail;
+						throw new EditMeetingException("description is too long for edit-meeting command");
 					}
 				case "attendee" :					
 					if(checkEmpolyeeIdValid(value)) {
@@ -135,11 +130,9 @@ public class EditMeeting extends Command {
 																					// person
 																					// already
 																					// exsits
-											System.out
-													.println("empolyee id ("
+											throw new EditMeetingException("empolyee id ("
 															+ value
-															+ ") already exists in the meeting attendees");
-											return SysConfig.fail;
+															+ ") already exists in the meeting attendees for edit-meeting command" );
 										}
 									}
 									meeting.addAttendee(attendee);
@@ -168,38 +161,29 @@ public class EditMeeting extends Command {
 						break;
 					}
 					else {
-						System.out.println("invalid empolyee id ("+value+") for edit-meeting");
-						return SysConfig.fail;
+						throw new EditMeetingException("invalid empolyee id ("+value+") for edit-meeting");
 					}
 				default :
-					System.out.println("invalid arguments : " + name + "for edit-meeting");
-					return SysConfig.fail;
+					throw new EditMeetingException("invalid arguments : " + name + "for edit-meeting");
 			}			
 		}
 		
-		if(meeting.getMeetingId() != null){		
-			
+		if(meeting.getMeetingId() == null){		
+			throw new EditMeetingException("Missing meeting id for edit meeting command");
+		}
 			/* check room and employee schedule */
-			if (!ableToAttendWithoutConflict()) {
-				return SysConfig.fail;
-			}
-			
+		ableToAttendWithoutConflict();			
 			/* Databse writing */		
-			if (!updateMeetingInfo(this.meeting)) {
+		if (!updateMeetingInfo(this.meeting)) {
 				//System.out.println("edit-meeting : meeting ID("+meeting.getMeetingId()+") is failed");
-				return SysConfig.fail;
-			}			
-			return SysConfig.success;
-			
-		} else {			
-			return SysConfig.fail;
+			throw new EditMeetingException("editing meeting to database is failed for edit meeting command");
 		}					
 	}
 	/**
 	 * Check if new meeting date is available for another meeting date, company's holiday, and ateendee's schedules.
 	 * @return
 	 */
-	public boolean ableToAttendWithoutConflict() {
+	public void ableToAttendWithoutConflict() throws EditMeetingException{
 		
 		// 1. first check room available
 		if (timeChanged || roomChanged) {			
@@ -208,8 +192,7 @@ public class EditMeeting extends Command {
 			try {
 				room.roomAvailable(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
 			} catch (TimeConflictException tce) {
-				tce.printStackTrace();
-				return false;
+				throw new EditMeetingException(tce.getMessage() + "for edit meeting command");
 			}			
 		}				
 		// 2. check holiday
@@ -217,8 +200,7 @@ public class EditMeeting extends Command {
 		try {
 			holi.checkAvailableWithHoliday(meeting.getDate());			
 		} catch (TimeConflictException tce) {
-			tce.printStackTrace();
-			return false;			
+			throw new EditMeetingException(tce.getMessage() + "for edit meeting command");			
 		}				
 		// 3. check all attendees' meeting and vacation date
 		if (timeChanged || attendeeChanged) {
@@ -236,8 +218,7 @@ public class EditMeeting extends Command {
 						emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
 					}
 				} catch (TimeConflictException tce) {
-					tce.printStackTrace();
-					return false;
+					throw new EditMeetingException(tce.getMessage() + "for edit meeting command");
 				}								
 				/*check vacation*/
 				try {
@@ -246,12 +227,10 @@ public class EditMeeting extends Command {
 						emp.checkAvailableWithVacation(meeting.getDate());
 					}
 				} catch (TimeConflictException tce) {
-					tce.printStackTrace();
-					return false;
+					throw new EditMeetingException(tce.getMessage() + "for edit meeting command");
 				}				
 			}
 		}		
-		return true;
 		
 	}
 	/**

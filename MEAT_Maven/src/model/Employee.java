@@ -3,7 +3,7 @@ package model;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import common.CommonUtil;
-import common.TimeConflictException;
+import exceptions.TimeConflictException;
 import controller.Command;
 /**
  * Employee model class

@@ -6,8 +6,6 @@ import model.Vacation;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import common.SysConfig;
-import exceptions.CancelMeetingException;
 import exceptions.CancelVacationException;
 
 /**
