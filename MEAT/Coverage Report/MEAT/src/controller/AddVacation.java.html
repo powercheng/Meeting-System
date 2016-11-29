@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>AddVacation.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">controller</a> &gt; <span class="el_source">AddVacation.java</span></div><h1>AddVacation.java</h1><pre class="source lang-java linenums">package controller;
+import model.Employee;
+import model.Sql;
+import model.Vacation;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import exceptions.TimeConflictException;
+import exceptions.AddVacationException;
+/**
+ * Scheduling class for employee's vacation
+ * @author group7
+ *
+ */
+public class AddVacation extends Command {
+	
+	private Vacation vacation;	
+	private JSONArray command_array;
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
+	public AddVacation(JSONArray command_array) {
+<span class="fc" id="L25">		super();</span>
+<span class="fc" id="L26">		this.command_array = command_array;</span>
+<span class="fc" id="L27">		this.vacation = new Vacation();</span>
+<span class="fc" id="L28">	}</span>
+	/**
+	 * analyzing passing data array and check validity, insert commands data into database
+	 */
+	@Override
+	public void execute() throws AddVacationException {
+		// TODO Auto-generated method stub	
+<span class="pc bpc" id="L35" title="1 of 4 branches missed.">		if(command_array == null || command_array.isEmpty()) {</span>
+<span class="fc" id="L36">			throw new AddVacationException(&quot;No argument for add-holiday command&quot;);</span>
+		}
+<span class="fc bfc" id="L38" title="All 2 branches covered.">		for(int i = 0; i &lt; command_array.size(); i++) {</span>
+			
+<span class="fc" id="L40">			JSONObject command_json = (JSONObject) command_array.get(i);</span>
+<span class="fc" id="L41">			String name = (String) command_json.get(&quot;name&quot;);</span>
+<span class="fc" id="L42">			String value = (String) command_json.get(&quot;value&quot;);</span>
+			
+<span class="pc bpc" id="L44" title="3 of 10 branches missed.">			switch(name) {</span>
+				case &quot;employee-id&quot; :
+<span class="fc bfc" id="L46" title="All 2 branches covered.">					if(checkEmpolyeeIdValid(value)){</span>
+<span class="fc" id="L47">						vacation.setEmpolyeeId(value);</span>
+<span class="fc" id="L48">						break;</span>
+					} else {
+<span class="fc" id="L50">						throw new AddVacationException(&quot;invalid employee id(&quot;+value+&quot;) for add-vacation command&quot;);</span>
+					}
+				case &quot;start-date&quot; :
+<span class="fc bfc" id="L53" title="All 2 branches covered.">					if(checkDateValid(value)){</span>
+<span class="fc" id="L54">						vacation.setStartDate(value);</span>
+<span class="fc" id="L55">						break;</span>
+					} else {
+<span class="fc" id="L57">						throw new AddVacationException(&quot;invalid start-date(&quot;+value+&quot;) for add-vacation command&quot;);</span>
+					}
+				case &quot;end-date&quot; :
+<span class="fc bfc" id="L60" title="All 2 branches covered.">					if(checkDateValid(value)){</span>
+<span class="fc" id="L61">						vacation.setEndDate(value);</span>
+<span class="fc" id="L62">						break;</span>
+					} else {
+<span class="fc" id="L64">						throw new AddVacationException(&quot;invalid end-date(&quot;+value+&quot;) for add-vacation command&quot;);</span>
+					}
+				default :
+<span class="fc" id="L67">					throw new AddVacationException(&quot;invalid arguments : &quot; + name + &quot; for add-vacation&quot;);</span>
+			}			
+		}
+		
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">		if ( vacation.getEmpolyeeId() == null ) {</span>
+<span class="nc" id="L72">			throw new AddVacationException(&quot;missing empolyee id argument for addVacation command&quot;);</span>
+		}
+<span class="fc" id="L74">		ableVacationWithoutConflict();</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">		if (!addVactionInfo(this.vacation)) {</span>
+<span class="nc" id="L76">			throw new AddVacationException(&quot;adding vacation to database is failed for adding vacation command&quot;);</span>
+		} 
+		
+		
+<span class="fc" id="L80">	}</span>
+	/**
+	 * Check if employee's vacation dates conflict with scheduled meeting date
+	 * @return
+	 */
+	public void ableVacationWithoutConflict() throws AddVacationException{
+		
+		// Check if conflict with meeting schedules
+<span class="fc" id="L88">		Employee emp = new Employee();</span>
+<span class="fc" id="L89">		emp.setEmployeeID(vacation.getEmpolyeeId());</span>
+		
+		try { 
+<span class="fc" id="L92">			emp.checkAvailableWithMeeting(vacation.getStartDate(), vacation.getEndDate());</span>
+<span class="fc" id="L93">		} catch (TimeConflictException tce) {</span>
+<span class="fc" id="L94">			throw new AddVacationException(tce.getMessage() + &quot;for adding vacation command&quot;);</span>
+		}
+<span class="fc" id="L96">	}</span>
+	/**
+	 * add employee's vacation information
+	 * @param vinfo
+	 * @return
+	 */
+	public boolean addVactionInfo(Vacation vinfo) {
+		
+<span class="fc" id="L104">		boolean bSuccess = false;</span>
+		
+<span class="fc" id="L106">		String insVacQuery = &quot;INSERT INTO TB_VACATION(employeeID, startDATE, endDATE) VALUES (?,?,?) &quot;;</span>
+		
+<span class="fc" id="L108">		Sql db = new Sql();		</span>
+<span class="fc" id="L109">		db.setQuery(insVacQuery);</span>
+<span class="fc" id="L110">		db.setParameter(1, vinfo.getEmpolyeeId());</span>
+<span class="fc" id="L111">		db.setParameter(2, vinfo.getStartDate());</span>
+<span class="fc" id="L112">		db.setParameter(3, vinfo.getEndDate());</span>
+<span class="fc" id="L113">		int n = db.write(); </span>
+		
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">		if (n &gt; 0) </span>
+<span class="fc" id="L116">			bSuccess = true;</span>
+		
+<span class="fc" id="L118">		db.close();</span>
+		
+<span class="fc" id="L120">		return bSuccess;		</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

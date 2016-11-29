@@ -143,6 +143,7 @@ public class PrintScheduleEmployee extends Command {
 	/**
 	 * Print fetched employee's schedules onto screen 
 	 */
+/*	
 	public void printScreenEmployeeSchedule() {
 		
 		if (getSrchStartDay() == null || getSrchEndDay() == null) {
@@ -186,7 +187,7 @@ public class PrintScheduleEmployee extends Command {
     	System.out.println("------------------------------------------------------------------------------------------------");
 		
 	}
-	
+*/	
 	/**
 	 * save fetched employee's schedules into json file 
 	 */

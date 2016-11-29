@@ -1,9 +1,5 @@
 package model;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import common.CommonUtil;
 /**
  * Vacation model class
  * @author group7
@@ -50,6 +46,7 @@ public class Vacation {
 	 * @param empID
 	 * @return
 	 */
+/*	
 	public JSONArray getVacationList(String empID) {
 		
 		Sql db = new Sql();
@@ -63,10 +60,12 @@ public class Vacation {
 		return vacArr;
 		
 	}
+*/
 	/**
 	 * Print an employee's vacation schedule on the command screen
 	 * @param empID
 	 */
+/*	
 	public void printScreenVacationList(String empID) {
 		
 		JSONArray vacArr = getVacationList(empID);
@@ -85,5 +84,5 @@ public class Vacation {
     	}
     	System.out.println("-------------------------------------------------------------------");	
 	}
-	
+*/	
 }

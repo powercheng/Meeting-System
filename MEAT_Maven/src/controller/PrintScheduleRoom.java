@@ -42,7 +42,7 @@ public class PrintScheduleRoom extends Command {
 		test.setSrchStartDay("01012016");
 		test.setSrchEndDay("01012017");
 		test.setOutfileName("test.txt");
-		test.printRoomSchedule();
+		test.printRoomSchedule(); 
 	}
 */
 	/**
@@ -60,8 +60,12 @@ public class PrintScheduleRoom extends Command {
 			String value = (String) command_json.get("value");
 			switch(name) {
 				case "room-id" :
-					room.getRoomInfo(value);
-					break;	
+					if(checkRoomIdValid(value)) { 
+						room.getRoomInfo(value);
+						break;
+					} else {
+						throw new PrintScheduleRoomException("invalid arguments : " + name + "for print-schedule-room");
+					}
 				case "start-date" :
 					if(checkDateValid(value)){
 						setSrchStartDay(value);
@@ -139,6 +143,7 @@ public class PrintScheduleRoom extends Command {
 	/**
 	 * Print fectched result onto screen
 	 */
+	/*
 	public void printScreenRoomSchedule() {
 		
 		if (getSrchStartDay() == null || getSrchEndDay() == null) {
@@ -182,7 +187,7 @@ public class PrintScheduleRoom extends Command {
     	System.out.println("------------------------------------------------------------------------------------------------");
 		
 	}
-
+*/
 	/**
 	 * Save the fetched result into file (json)
 	 * @return

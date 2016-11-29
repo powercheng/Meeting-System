@@ -156,6 +156,23 @@
                     "value": "test3.json"
                 }
             ]
-        }
+        },
+	 {
+            "name": "add-holiday",
+            "arguments": [
+                {
+                    "name": "description",
+                    "value": "Christmas holiday"
+                },
+                {
+                    "name": "start-date",
+                    "value": "16232017"
+                },
+                {
+                    "name": "end-date",
+                    "value": "02252017"
+                }
+            ]
+        }       
     ]
 }]

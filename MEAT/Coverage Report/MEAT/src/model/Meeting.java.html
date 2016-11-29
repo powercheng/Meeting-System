@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Meeting.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">Meeting.java</span></div><h1>Meeting.java</h1><pre class="source lang-java linenums">package model;
+
+import java.util.LinkedList;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import common.CommonUtil;
+/**
+ * Meeting model class
+ * @author group7
+ *
+ */
+public class Meeting {
+	private String meetingId;
+	private String date;
+	private String startTime;
+	private String endTime;
+	private String roomId;
+	private LinkedList&lt;String&gt; attendee;
+	private String description;
+	
+	/**
+	 * Default constructor 
+	 */
+	public Meeting() {
+<span class="fc" id="L27">		super();</span>
+<span class="fc" id="L28">		this.attendee = new LinkedList&lt;String&gt;();</span>
+<span class="fc" id="L29">	}</span>
+	
+	public String getMeetingId() {
+<span class="fc" id="L32">		return meetingId;</span>
+	}
+	public void setMeetingId(String meetingId) {
+<span class="fc" id="L35">		this.meetingId = meetingId;</span>
+<span class="fc" id="L36">	}</span>
+	public String getDate() {
+<span class="fc" id="L38">		return date;</span>
+	}
+	public void setDate(String date) {
+<span class="fc" id="L41">		this.date = date;</span>
+<span class="fc" id="L42">	}</span>
+	public String getStartTime() {
+<span class="fc" id="L44">		return startTime;</span>
+	}
+	public void setStartTime(String startTime) {
+<span class="fc" id="L47">		this.startTime = startTime;</span>
+<span class="fc" id="L48">	}</span>
+	public String getEndTime() {
+<span class="fc" id="L50">		return endTime;</span>
+	}
+	public void setEndTime(String endTime) {
+<span class="fc" id="L53">		this.endTime = endTime;</span>
+<span class="fc" id="L54">	}</span>
+	public String getRoomId() {
+<span class="fc" id="L56">		return roomId;</span>
+	}
+	public void setRoomId(String roomId) {
+<span class="fc" id="L59">		this.roomId = roomId;</span>
+<span class="fc" id="L60">	}</span>
+	public LinkedList&lt;String&gt; getAttendee() {
+<span class="fc" id="L62">		return attendee;</span>
+	}
+	public void addAttendee(String str) {
+<span class="fc" id="L65">		String regex = &quot;,|\\s+&quot;;</span>
+<span class="fc" id="L66">        String[] attendees = str.split(regex);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        for(String attendee : attendees){</span>
+        	/* if blank or null attendee contains, continues */
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">			if (CommonUtil.nullTrim(attendee).equals(&quot;&quot;)) </span>
+<span class="nc" id="L70">				continue;</span>
+<span class="fc" id="L71">        	this.attendee.add(attendee);</span>
+        }		
+<span class="fc" id="L73">	} </span>
+	public void setAttendee(LinkedList&lt;String&gt; attendee) {
+<span class="fc" id="L75">		this.attendee = attendee;</span>
+<span class="fc" id="L76">	}</span>
+	public String getDescription() {
+<span class="fc" id="L78">		return description;</span>
+	}
+	public void setDescription(String description) {
+<span class="fc" id="L81">		this.description = description;</span>
+<span class="fc" id="L82">	}</span>
+	/**
+	 * Get the stored meeting information and set the fetched information into this class
+	 * @param meetID
+	 */
+	public void getMeetingInfo(String meetID) {
+		
+<span class="pc bpc" id="L89" title="2 of 4 branches missed.">		if (meetID != null &amp;&amp; meetID.length() &gt; 0) {</span>
+			
+<span class="fc" id="L91">			Sql db = new Sql();</span>
+<span class="fc" id="L92">			String infoMeetQuery = &quot;SELECT meetID, meetDATE, startTIME, endTIME, description, roomID&quot;</span>
+					+ &quot; FROM TB_MEETING WHERE meetID = ? &quot;;
+<span class="fc" id="L94">			db.setQuery(infoMeetQuery);</span>
+<span class="fc" id="L95">			db.setParameter(1, meetID);</span>
+<span class="fc" id="L96">			JSONArray recArr = db.read();		</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">			for (int i=0; i&lt;recArr.size(); i++) {</span>
+				// In reality, every time just one record
+<span class="fc" id="L99">				JSONObject rsObj = (JSONObject) recArr.get(i);</span>
+				/* Set personal information */
+<span class="fc" id="L101">				setMeetingId((String) rsObj.get(&quot;meetID&quot;));</span>
+<span class="fc" id="L102">				setDate((String) rsObj.get(&quot;meetDATE&quot;));</span>
+<span class="fc" id="L103">				setStartTime((String) rsObj.get(&quot;startTIME&quot;));</span>
+<span class="fc" id="L104">				setEndTime((String) rsObj.get(&quot;endTIME&quot;));</span>
+<span class="fc" id="L105">				setDescription((String) rsObj.get(&quot;description&quot;));</span>
+<span class="fc" id="L106">				setRoomId((String) rsObj.get(&quot;roomID&quot;));</span>
+			}	
+			
+<span class="fc bfc" id="L109" title="All 2 branches covered.">			if (recArr.size() == 0) {</span>
+<span class="fc" id="L110">				System.out.println(&quot;No such meeting scheduled&quot;);</span>
+			}
+			
+			/* Attendees getting */
+<span class="fc" id="L114">			String infoAttendeeQuery = &quot;SELECT meetID, employeeID FROM TB_ATTENDEE WHERE meetID = ? &quot;;</span>
+<span class="fc" id="L115">			db.setQuery(infoAttendeeQuery);</span>
+<span class="fc" id="L116">			db.setParameter(1, meetID);</span>
+<span class="fc" id="L117">			JSONArray attArr = db.read();</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">			for (int i=0;i&lt;attArr.size();i++) {</span>
+<span class="fc" id="L119">				JSONObject rsObj = (JSONObject) attArr.get(i);</span>
+<span class="fc" id="L120">				this.attendee.add((String) rsObj.get(&quot;employeeID&quot;));</span>
+			}			
+<span class="fc" id="L122">			db.close();</span>
+<span class="fc" id="L123">		} else {</span>
+<span class="nc" id="L124">			System.out.println(&quot;meetingID is not passed&quot;);</span>
+		}
+<span class="fc" id="L126">	}</span>
+	
+	/**
+	 * Print this meeting information onto the screen
+	 */
+/*	
+	public void printCurrentMeetingInfo() {
+		
+		System.out.println(&quot;#MeetID   #Meeting Time             #RoomID    #Description           #AttendeeID &quot;);
+    	System.out.println(&quot;------------------------------------------------------------------------------------------------&quot;);
+    	
+		String attendString = &quot;&quot;;
+		for (int k=0;k&lt;attendee.size();k++) {			
+			attendString += (String) attendee.get(k);
+			if (k != attendee.size()-1) {  // last list
+				attendString += &quot;,&quot;;
+			}
+		}
+		
+		System.out.println(&quot;# &quot; + getMeetingId() + &quot;       &quot; + CommonUtil.dateFormat(getDate(),&quot;MMddyyyy&quot;,&quot;MM.dd.yyyy&quot;) 
+		+ &quot; &quot; + getStartTime() + &quot;-&quot; + getEndTime() + &quot;     &quot; + getRoomId() 
+		+ &quot;       &quot; + CommonUtil.blankPadding(getDescription(), 18) + &quot;    &quot; + attendString);
+    	
+	}
+*/	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

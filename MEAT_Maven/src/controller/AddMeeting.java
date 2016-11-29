@@ -78,8 +78,8 @@ public class AddMeeting extends Command {
 						throw new AddMeetingException("description is too long for adding meeting command");
 					}
 				case "attendee" :					
-					if(checkEmpolyeeIdValid(value)){
-						meeting.addAttendee(value);				
+					if(checkEmpolyeeIdValid(value)){						
+						meeting.addAttendee(value);	
 						break;
 					} else {
 						throw new AddMeetingException("invalid attendee id ("+value+") for adding meeting command");
@@ -101,8 +101,7 @@ public class AddMeeting extends Command {
 		meeting.setMeetingId(meetingID);
 		if (!insertMeetingInfo(this.meeting)) {
 			throw new AddMeetingException("adding meeting to database is failed for adding meeting command");
-		} 
-		
+		} 		
 	}
 	/**
 	 * check if necessary variables are valid for adding a meeting
@@ -195,7 +194,7 @@ public class AddMeeting extends Command {
 		int n = db.write();
 		/* if insMeetQuery is successful */
 		if (n > 0) {
-			LinkedList<String> attendList = minfo.getAttendee();
+			LinkedList<String> attendList = minfo.getAttendee();			
 			for (int i=0;i<attendList.size();i++) {
 				db.setQuery(insAttendeeQuery);
 				db.setParameter(1, minfo.getMeetingId());

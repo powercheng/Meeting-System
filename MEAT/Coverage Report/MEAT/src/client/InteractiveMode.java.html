@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>InteractiveMode.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">client</a> &gt; <span class="el_source">InteractiveMode.java</span></div><h1>InteractiveMode.java</h1><pre class="source lang-java linenums">package client;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import common.SysConfig;
+import controller.AddHoliday;
+import controller.AddMeeting;
+import controller.AddVacation;
+import controller.CancelMeeting;
+import controller.CancelVacation;
+import controller.Command;
+import controller.CommandFactory;
+import controller.EditMeeting;
+import controller.PrintScheduleAll;
+import controller.PrintScheduleEmployee;
+import controller.PrintScheduleRoom;
+/**
+ * This class is used for interactive mode to communicate with user to dealing meeting schedule
+ * @author group7
+ *
+ */
+<span class="nc" id="L28">public class InteractiveMode {</span>
+	
+	public static JSONArray mocked_cmd_array; // for test oracle
+	public static InputStream mocked_std_stream;
+<span class="fc" id="L32">	public static boolean isTest = false;</span>
+	
+	public static String inputOutput(String msg) {
+<span class="fc" id="L35">        System.out.println(msg);</span>
+<span class="fc" id="L36">	    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));</span>
+<span class="fc" id="L37">	    String str = &quot;&quot;;</span>
+	    try {
+<span class="fc" id="L39">	    	str = br.readLine();</span>
+<span class="pc" id="L40">	    } catch (IOException e){</span>
+<span class="nc" id="L41">	        System.out.println(&quot;An error occurs when reading system input.&quot;);</span>
+<span class="nc" id="L42">	        printMainMenu();</span>
+	    }
+<span class="fc" id="L44">	    return str;</span>
+    }		
+    /**
+     *  process the interactive mode 0-11 commands	
+	 *	print out questions for each commands
+	 *	store the pair of names and values into the JSONArray
+	 *	pass JSONArray to the command, it uses the same interface with script mode
+	 *	for the name : attendee, we can store the multiple attendees' id into one string, separate by space.
+     */
+    public static void printMainMenu() {    	
+<span class="fc" id="L54">    	System.out.println(&quot;\n# Interactive mode is running (Menu Below)#\n&quot;);</span>
+<span class="fc" id="L55">        System.out.println(&quot;1. Book a meeting&quot;);</span>
+<span class="fc" id="L56">        System.out.println(&quot;2. edit-meeting-details&quot;);</span>
+<span class="fc" id="L57">        System.out.println(&quot;3. edit-meeting-add-attendees&quot;);</span>
+<span class="fc" id="L58">        System.out.println(&quot;4. edit-meeting-remove-attendees&quot;);</span>
+<span class="fc" id="L59">        System.out.println(&quot;5. Cancel a meeting&quot;);</span>
+<span class="fc" id="L60">        System.out.println(&quot;---------------------&quot;);</span>
+<span class="fc" id="L61">        System.out.println(&quot;6. Book a vacation&quot;);</span>
+<span class="fc" id="L62">        System.out.println(&quot;7. Cancel a vacation&quot;);</span>
+<span class="fc" id="L63">        System.out.println(&quot;---------------------&quot;);</span>
+<span class="fc" id="L64">        System.out.println(&quot;8. Print room's schedule&quot;);</span>
+<span class="fc" id="L65">        System.out.println(&quot;9. Print employee's schedule&quot;);</span>
+<span class="fc" id="L66">        System.out.println(&quot;10. Print company's schedule&quot;);</span>
+<span class="fc" id="L67">        System.out.println(&quot;---------------------&quot;);</span>
+<span class="fc" id="L68">        System.out.println(&quot;11. Add company holiday&quot;);</span>
+<span class="fc" id="L69">        System.out.println(&quot;---------------------&quot;);</span>
+<span class="fc" id="L70">        System.out.println(&quot;0. Exit\n&quot;);</span>
+     
+        //Get user input
+        try {
+<span class="fc" id="L74">        	int userInput = Integer.parseInt(inputOutput(&quot;Please press the task number : &quot;));</span>
+<span class="fc" id="L75">        	Command command = null;</span>
+<span class="fc" id="L76">        	JSONArray command_array = null;</span>
+<span class="fc" id="L77">        	String name = null;</span>
+<span class="pc bpc" id="L78" title="2 of 4 branches missed.">        	if (userInput &gt;= 0 &amp;&amp; userInput &lt;= 11) {        		</span>
+<span class="pc bpc" id="L79" title="1 of 13 branches missed.">        		switch (userInput) {        		</span>
+					case 1:
+<span class="fc" id="L81">						name = &quot;add-meeting&quot;;</span>
+<span class="fc" id="L82">						String[] questions = {</span>
+<span class="fc" id="L83">								&quot;Please enter the meeting date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L84">						    	&quot;Please enter the meeting startTIME (HH24:MI) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L85">						    	&quot;Please enter the meeting endTIME (HH24:MI) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L86">						    	&quot;Please enter the meeting RoomID or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L87">						    	&quot;Please enter the description or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L88">						    	&quot;Please enter the employeeIDs (separate by space) to attend (delete) or [ enter Q for mainManu ] : &quot;</span>
+						};
+<span class="fc" id="L90">						String[] values = askQuestions(questions);</span>
+<span class="fc" id="L91">						String[] names = {</span>
+<span class="fc" id="L92">								&quot;date&quot;,&quot;start-time&quot;,&quot;end-time&quot;,&quot;room-id&quot;,&quot;description&quot;,&quot;attendee&quot;</span>
+						};
+<span class="fc" id="L94">						command_array = changeToJson(names,values);						</span>
+<span class="fc" id="L95">						command = new AddMeeting(command_array);							</span>
+<span class="fc" id="L96">						break;</span>
+					case 2:
+<span class="fc" id="L98">						name = &quot;edit-meeting-details&quot;;</span>
+<span class="fc" id="L99">						String[] questions1 = {</span>
+<span class="fc" id="L100">								&quot;Please enter the meeting ID to edit or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L101">								&quot;Please enter the meeting date (MMDDYYYY) or [ enter S to skip ] : &quot;,</span>
+<span class="fc" id="L102">								&quot;Please enter the meeting startTIME (HH24:MI) or [ enter S to skip ] : &quot;,</span>
+<span class="fc" id="L103">								&quot;Please enter the meeting endTIME (HH24:MI) or [ enter S to skip ] : &quot;,</span>
+<span class="fc" id="L104">								&quot;Please enter the meeting RoomID or [ enter S to skip ] : &quot;,</span>
+<span class="fc" id="L105">								&quot;Please enter the description or [ enter S to skip ] : &quot;</span>
+						};
+<span class="fc" id="L107">						String[] values1 = askQuestions(questions1);</span>
+<span class="fc" id="L108">						String[] names1 = {</span>
+<span class="fc" id="L109">								&quot;meeting-id&quot;,&quot;date&quot;,&quot;start-time&quot;,&quot;end-time&quot;,&quot;room-id&quot;,&quot;description&quot;</span>
+						};
+<span class="fc" id="L111">						command_array = changeToJson(names1,values1);</span>
+<span class="fc" id="L112">						command = new EditMeeting(command_array);							</span>
+<span class="fc" id="L113">						break;</span>
+					case 3:
+<span class="fc" id="L115">						name = &quot;edit-meeting-add-attendee&quot;;</span>
+<span class="fc" id="L116">						String[] questions2 = {</span>
+<span class="fc" id="L117">								&quot;Please enter the meeting ID to edit or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L118">								&quot;Please enter the employeeIDs (separate by space) to attend or [ enter Q for mainManu ] : &quot;</span>
+						};
+<span class="fc" id="L120">						String[] values2 = askQuestions(questions2);</span>
+<span class="fc" id="L121">						String[] names2 = {</span>
+<span class="fc" id="L122">								&quot;meeting-id&quot;,&quot;attendee&quot;</span>
+						};
+<span class="fc" id="L124">						command_array = changeToJson(names2,values2);</span>
+<span class="fc" id="L125">						command = new EditMeeting(command_array, SysConfig.addTag); // Attendee option = add	</span>
+<span class="fc" id="L126">						break;</span>
+					case 4:
+<span class="fc" id="L128">						name = &quot;edit-meeting-remove-attendee&quot;;</span>
+<span class="fc" id="L129">						String[] questions3 = {</span>
+<span class="fc" id="L130">								&quot;Please enter the meeting ID to edit or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L131">								&quot;Please enter the employeeIDs (separate by space) to delete or [ enter Q for mainManu ] : &quot;</span>
+						};
+<span class="fc" id="L133">						String[] values3 = askQuestions(questions3);</span>
+<span class="fc" id="L134">						String[] names3 = {</span>
+<span class="fc" id="L135">								&quot;meeting-id&quot;,&quot;attendee&quot;</span>
+						};
+<span class="fc" id="L137">						command_array = changeToJson(names3,values3);</span>
+<span class="fc" id="L138">						command = new EditMeeting(command_array, SysConfig.removeTag); // Attendee option = remove							</span>
+<span class="fc" id="L139">						break;</span>
+					case 5:
+<span class="fc" id="L141">						name = &quot;cancel-meeting&quot;;</span>
+<span class="fc" id="L142">						String[] questions4 = {</span>
+<span class="fc" id="L143">								&quot;Please enter the meeting ID to cancel or [ enter Q for mainManu ] : &quot;</span>
+						};
+<span class="fc" id="L145">						String[] values4 = askQuestions(questions4);</span>
+<span class="fc" id="L146">						String[] names4 = {</span>
+<span class="fc" id="L147">								&quot;meeting-id&quot;</span>
+						};
+<span class="fc" id="L149">						command_array = changeToJson(names4,values4);</span>
+<span class="fc" id="L150">						command = new CancelMeeting(command_array);							</span>
+<span class="fc" id="L151">						break;</span>
+					case 6:
+<span class="fc" id="L153">						name = &quot;add-vacation&quot;;</span>
+<span class="fc" id="L154">						String[] questions5 = {</span>
+<span class="fc" id="L155">								&quot;Please enter the employeeID to book a vacation or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L156">								&quot;Please enter the start date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L157">								&quot;Please enter the end date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;</span>
+						};
+<span class="fc" id="L159">						String[] values5 = askQuestions(questions5);</span>
+<span class="fc" id="L160">						String[] names5 = {</span>
+<span class="fc" id="L161">								&quot;employee-id&quot;,&quot;start-date&quot;,&quot;end-date&quot;</span>
+						};
+<span class="fc" id="L163">						command_array = changeToJson(names5,values5);</span>
+<span class="fc" id="L164">						command = new AddVacation(command_array);							</span>
+<span class="fc" id="L165">						break;</span>
+					case 7:
+<span class="fc" id="L167">						name = &quot;cancel-vacation&quot;;</span>
+<span class="fc" id="L168">						String[] questions6 = {</span>
+<span class="fc" id="L169">								&quot;Please enter the employeeID to cancel vacations or [ enter Q for mainManu ] : &quot;</span>
+						};
+<span class="fc" id="L171">						String[] values6 = askQuestions(questions6);</span>
+<span class="fc" id="L172">						String[] names6 = {</span>
+<span class="fc" id="L173">								&quot;employee-id&quot;</span>
+						};
+<span class="fc" id="L175">						command_array = changeToJson(names6,values6);</span>
+<span class="fc" id="L176">						command = new CancelVacation(command_array);							</span>
+<span class="fc" id="L177">						break;</span>
+					case 8:
+<span class="fc" id="L179">						name = &quot;print-room-schedule&quot;;</span>
+<span class="fc" id="L180">						String[] questions7 = {</span>
+<span class="fc" id="L181">								&quot;Please enter the roomID to print schedule or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L182">								&quot;Please enter the search start date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L183">								&quot;Please enter the search end date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L184">								&quot;Please give the output file name  or [ enter Q for mainManu ] :  &quot;</span>
+						};
+<span class="fc" id="L186">						String[] values7 = askQuestions(questions7);</span>
+<span class="fc" id="L187">						String[] names7 = {</span>
+<span class="fc" id="L188">								&quot;room-id&quot;,&quot;start-date&quot;,&quot;end-date&quot;,&quot;output-file&quot;</span>
+						};
+<span class="fc" id="L190">						command_array = changeToJson(names7,values7);</span>
+<span class="fc" id="L191">						command = new PrintScheduleRoom(command_array);	</span>
+													
+<span class="fc" id="L193">						break;</span>
+					case 9:
+<span class="fc" id="L195">						name = &quot;print-employee-schedule&quot;;</span>
+<span class="fc" id="L196">						String[] questions8 = {</span>
+<span class="fc" id="L197">								&quot;Please enter the employeeID to print schedule or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L198">								&quot;Please enter the search start date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L199">								&quot;Please enter the search end date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L200">								&quot;Please give the output file name  or [ enter Q for mainManu ] : &quot;</span>
+						};
+<span class="fc" id="L202">						String[] values8 = askQuestions(questions8);</span>
+<span class="fc" id="L203">						String[] names8 = {</span>
+<span class="fc" id="L204">								&quot;employee-id&quot;,&quot;start-date&quot;,&quot;end-date&quot;,&quot;output-file&quot;</span>
+						};
+<span class="fc" id="L206">						command_array = changeToJson(names8,values8);</span>
+<span class="fc" id="L207">						command = new PrintScheduleEmployee(command_array);	</span>
+													
+<span class="fc" id="L209">						break;</span>
+					case 10:
+<span class="fc" id="L211">						name = &quot;print-all-shedule&quot;;</span>
+<span class="fc" id="L212">						String[] questions9 = {</span>
+<span class="fc" id="L213">								&quot;Please enter the search start date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L214">								&quot;Please enter the search end date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L215">								&quot;Please give the output file name  or [ enter Q for mainManu ] : &quot;</span>
+						};
+<span class="fc" id="L217">						String[] values9 = askQuestions(questions9);</span>
+<span class="fc" id="L218">						String[] names9 = {</span>
+<span class="fc" id="L219">								&quot;start-date&quot;,&quot;end-date&quot;,&quot;output-file&quot;</span>
+						};
+<span class="fc" id="L221">						command_array = changeToJson(names9,values9);</span>
+<span class="fc" id="L222">						command = new PrintScheduleAll(command_array);						</span>
+<span class="fc" id="L223">						break;</span>
+					case 11:
+<span class="fc" id="L225">						name = &quot;add-holiday&quot;;</span>
+<span class="fc" id="L226">						String[] questions10 = {</span>
+<span class="fc" id="L227">								&quot;Please enter the holiday start date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L228">								&quot;Please enter the holiday end date (MMDDYYYY) or [ enter Q for mainManu ] : &quot;,</span>
+<span class="fc" id="L229">								&quot;Please enter the description or [ enter Q for mainManu ] : &quot;</span>
+						};
+<span class="fc" id="L231">						String[] values10 = askQuestions(questions10);</span>
+<span class="fc" id="L232">						String[] names10 = {</span>
+<span class="fc" id="L233">								&quot;start-date&quot;,&quot;end-date&quot;,&quot;description&quot;</span>
+						};
+<span class="fc" id="L235">						command_array = changeToJson(names10,values10);</span>
+<span class="fc" id="L236">						command = new AddHoliday(command_array);</span>
+<span class="fc" id="L237">						break;</span>
+					case 0:
+<span class="fc" id="L239">						System.out.println(&quot;System is terminated........&quot;);</span>
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">						if (!Main.isTest) System.exit(0);   // when junit testing, no exit</span>
+						break;				
+				}
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        		if(command != null) {</span>
+<span class="fc" id="L244">        			CommandFactory factory = new CommandFactory();</span>
+<span class="fc" id="L245">        			factory.commandRun(name,command);</span>
+<span class="fc" id="L246">        			mocked_cmd_array = command_array;  // for external access to internal cmd array </span>
+					//System.out.println(&quot;### command : &quot; + result);				
+				}	
+<span class="fc" id="L249">        	} else {</span>
+<span class="nc" id="L250">        		System.out.println(&quot;Please enter a menu number from 0 - 11&quot;);       		</span>
+        	}
+        	
+<span class="nc" id="L253">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L254">        	System.out.println(&quot;Please enter a menu number from 0 - 11&quot;);</span>
+        }         
+<span class="pc bpc" id="L256" title="1 of 4 branches missed.">        if (Main.isTest || isTest)</span>
+<span class="fc" id="L257">        	;</span>
+        else 
+<span class="nc" id="L259">        	printMainMenu();  // if not test mode, then return print menu</span>
+<span class="fc" id="L260">    }    </span>
+	/**
+	 * Show message and capture user input from user interface
+	 * @param strs
+	 * @return
+	 */
+
+	private static String[] askQuestions(String[] strs) {
+<span class="pc bpc" id="L268" title="2 of 4 branches missed.">		if (strs == null || strs.length == 0)</span>
+<span class="nc" id="L269">			return null;</span>
+<span class="fc" id="L270">		String[] res = new String[strs.length];</span>
+
+		try {
+			BufferedReader strin;
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">			if (isTest)</span>
+<span class="fc" id="L275">				strin = new BufferedReader(new InputStreamReader(mocked_std_stream));</span>
+			else 
+<span class="nc" id="L277">				strin = new BufferedReader(new InputStreamReader(System.in));</span>
+			
+<span class="fc bfc" id="L279" title="All 2 branches covered.">			for (int i = 0; i &lt; strs.length; i++) {</span>
+<span class="fc" id="L280">				System.out.println(strs[i]);</span>
+<span class="fc" id="L281">				res[i] = strin.readLine();				</span>
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">				if(res[i].equalsIgnoreCase(&quot;q&quot;)){</span>
+<span class="nc" id="L283">					printMainMenu();</span>
+				}
+			}
+<span class="pc" id="L286">		} catch (Exception e) {</span>
+<span class="nc" id="L287">			e.printStackTrace();</span>
+		}
+<span class="fc" id="L289">		return res;</span>
+	}
+	/**
+	 * Name and its value convert into json object
+	 * @param names
+	 * @param values
+	 * @return
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static JSONArray changeToJson(String[] names, String[] values) {
+<span class="fc" id="L299">		JSONArray command_array = new JSONArray();</span>
+<span class="fc bfc" id="L300" title="All 2 branches covered.">		for(int i = 0; i &lt; names.length; i++) {</span>
+<span class="pc bpc" id="L301" title="1 of 2 branches missed.">			if(values[i].equalsIgnoreCase(&quot;s&quot;)) continue;</span>
+<span class="fc" id="L302">			JSONObject jObj = new JSONObject();</span>
+<span class="fc" id="L303">			jObj.put(&quot;name&quot;, names[i]);</span>
+<span class="fc" id="L304">			jObj.put(&quot;value&quot;, values[i]);</span>
+<span class="fc" id="L305">	    	command_array.add(jObj);</span>
+		}		
+<span class="fc" id="L307">		return command_array;</span>
+	}
+	
+
+
+
+
+
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

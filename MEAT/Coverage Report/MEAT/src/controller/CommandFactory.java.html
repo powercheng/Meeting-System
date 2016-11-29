@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>CommandFactory.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">controller</a> &gt; <span class="el_source">CommandFactory.java</span></div><h1>CommandFactory.java</h1><pre class="source lang-java linenums">package controller;
+
+import java.util.ArrayList;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import common.CommonUtil;
+import common.SysConfig;
+import exceptions.AddHolidayException;
+import exceptions.AddMeetingException;
+import exceptions.AddVacationException;
+import exceptions.CancelMeetingException;
+import exceptions.CancelVacationException;
+import exceptions.EditMeetingException;
+import exceptions.PrintScheduleAllException;
+import exceptions.PrintScheduleEmployeeException;
+import exceptions.PrintScheduleRoomException;
+/**
+ * This class is used for various script commands using factory pattern
+ * @author group7
+ */
+public class CommandFactory {
+	
+<span class="fc" id="L27">	public ArrayList&lt;Boolean&gt; cmd_result_lst = new ArrayList&lt;Boolean&gt;();</span>
+	/**
+	 * default constructor
+	 */	
+	public CommandFactory() {
+<span class="fc" id="L32">		super();</span>
+		// TODO Auto-generated constructor stub
+<span class="fc" id="L34">	}</span>
+	/**
+	 * analyzing passing commands and initialize the suitable class for the commands
+	 * and finally execute the command
+	 * @param jsonData
+	 */
+	public void run(String jsonData){
+		// TODO Auto-generated method stub
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">		if (CommonUtil.nullTrim(jsonData).length()&gt; 0) {</span>
+<span class="fc" id="L43">			JSONParser parser = new JSONParser();</span>
+			
+			try {							
+<span class="fc" id="L46">				JSONArray jsonArray = (JSONArray) parser.parse(jsonData);					</span>
+<span class="fc" id="L47">				JSONObject jsonObj = (JSONObject) jsonArray.get(0);</span>
+<span class="fc" id="L48">				JSONArray commands_array = (JSONArray) jsonObj.get(&quot;commands&quot;);</span>
+				
+<span class="fc bfc" id="L50" title="All 2 branches covered.">				for(int i = 0; i &lt; commands_array.size(); i++) {</span>
+<span class="fc" id="L51">					JSONObject command_json = (JSONObject) commands_array.get(i);</span>
+<span class="fc" id="L52">					String name = (String) command_json.get(&quot;name&quot;);</span>
+<span class="fc" id="L53">					JSONArray command_array = (JSONArray) command_json.get(&quot;arguments&quot;);</span>
+					//System.out.println(name);
+<span class="fc" id="L55">					Command command = null;</span>
+<span class="pc bpc" id="L56" title="11 of 34 branches missed.">					switch(name.trim()) {</span>
+						case &quot;add-meeting&quot; :
+<span class="fc" id="L58">							command = new AddMeeting(command_array);							</span>
+<span class="fc" id="L59">							break;</span>
+						case &quot;edit-meeting-details&quot; :
+<span class="fc" id="L61">							command = new EditMeeting(command_array);							</span>
+<span class="fc" id="L62">							break;</span>
+						case &quot;edit-meeting-add-attendees&quot;:
+<span class="fc" id="L64">							command = new EditMeeting(command_array, SysConfig.addTag); // Attendee option = add	</span>
+<span class="fc" id="L65">							break;</span>
+						case &quot;edit-meeting-remove-attendees&quot; :
+<span class="fc" id="L67">							command = new EditMeeting(command_array, SysConfig.removeTag); // Attendee option = remove							</span>
+<span class="fc" id="L68">							break;</span>
+						case &quot;delete-meeting&quot; :
+<span class="fc" id="L70">							command = new CancelMeeting(command_array);							</span>
+<span class="fc" id="L71">							break;</span>
+							
+						case &quot;add-vacation&quot; :
+<span class="fc" id="L74">							command = new AddVacation(command_array);							</span>
+<span class="fc" id="L75">							break;</span>
+							
+						case &quot;delete-vacation&quot; :
+<span class="fc" id="L78">							command = new CancelVacation(command_array);							</span>
+<span class="fc" id="L79">							break;</span>
+							
+						case &quot;add-holiday&quot; :
+<span class="fc" id="L82">							command = new AddHoliday(command_array);							</span>
+<span class="fc" id="L83">							break;</span>
+						
+						case &quot;print-schedule-all&quot; :
+<span class="fc" id="L86">							command = new PrintScheduleAll(command_array);							</span>
+<span class="fc" id="L87">							break;</span>
+						
+						case &quot;print-schedule-room&quot; :
+<span class="fc" id="L90">							command = new PrintScheduleRoom(command_array);							</span>
+<span class="fc" id="L91">							break;</span>
+						
+						case &quot;print-schedule-employee&quot; :
+<span class="fc" id="L94">							command = new PrintScheduleEmployee(command_array);							</span>
+<span class="fc" id="L95">							break;</span>
+						
+						default :
+<span class="fc" id="L98">							System.out.println(name + &quot; : invalid command&quot;);</span>
+					}
+					/* execute */
+<span class="fc bfc" id="L101" title="All 2 branches covered.">					if(command != null) {</span>
+<span class="fc" id="L102">						commandRun(name,command);</span>
+					}					
+				}
+<span class="fc" id="L105">			}</span>
+<span class="nc" id="L106">			catch (ParseException e) {</span>
+<span class="nc" id="L107">				e.printStackTrace();</span>
+			}
+<span class="nc" id="L109">			catch (ClassCastException e) {</span>
+<span class="nc" id="L110">				e.printStackTrace();</span>
+			} 
+		}
+<span class="fc" id="L113">	}</span>
+	
+	
+	public void commandRun(String name,Command command){
+		try {
+<span class="fc" id="L118">			command.execute();</span>
+<span class="fc" id="L119">			System.out.println(&quot;command : &quot; + name+ &quot; successfully completed&quot;);</span>
+<span class="fc" id="L120">			cmd_result_lst.add(true);</span>
+<span class="fc" id="L121">		} catch (AddMeetingException e) {</span>
+<span class="fc" id="L122">			System.out.println(e.getMessage());</span>
+<span class="fc" id="L123">			System.out.println(&quot;meeting was not added&quot;);</span>
+<span class="fc" id="L124">			cmd_result_lst.add(false);</span>
+<span class="fc" id="L125">		} catch (EditMeetingException e) {</span>
+<span class="fc" id="L126">			System.out.println(e.getMessage());</span>
+<span class="fc" id="L127">			System.out.println(&quot;meeting was not edited&quot;);</span>
+<span class="fc" id="L128">			cmd_result_lst.add(false);</span>
+<span class="fc" id="L129">		} catch (CancelMeetingException e) {</span>
+<span class="fc" id="L130">			System.out.println(e.getMessage());</span>
+<span class="fc" id="L131">			System.out.println(&quot;meeting was not cancelled&quot;);</span>
+<span class="fc" id="L132">			cmd_result_lst.add(false);</span>
+<span class="fc" id="L133">		} catch (AddHolidayException e) {</span>
+<span class="fc" id="L134">			System.out.println(e.getMessage());</span>
+<span class="fc" id="L135">			System.out.println(&quot;holiday was not added&quot;);</span>
+<span class="fc" id="L136">			cmd_result_lst.add(false);</span>
+<span class="fc" id="L137">		} catch (CancelVacationException e) {</span>
+<span class="fc" id="L138">			System.out.println(e.getMessage());</span>
+<span class="fc" id="L139">			System.out.println(&quot;vacation was not cancelled&quot;);</span>
+<span class="fc" id="L140">			cmd_result_lst.add(false);</span>
+<span class="fc" id="L141">		} catch (AddVacationException e) {</span>
+<span class="fc" id="L142">			System.out.println(e.getMessage());</span>
+<span class="fc" id="L143">			System.out.println(&quot;vacation was not added&quot;);</span>
+<span class="fc" id="L144">			cmd_result_lst.add(false);</span>
+<span class="fc" id="L145">		} catch (PrintScheduleAllException e) {</span>
+<span class="fc" id="L146">			System.out.println(e.getMessage());</span>
+<span class="fc" id="L147">			System.out.println(&quot;All Schedule was not printed&quot;);</span>
+<span class="fc" id="L148">			cmd_result_lst.add(false);</span>
+<span class="fc" id="L149">		} catch (PrintScheduleRoomException e) {</span>
+<span class="fc" id="L150">			System.out.println(e.getMessage());</span>
+<span class="fc" id="L151">			System.out.println(&quot;Room schedulewas not printed&quot;);</span>
+<span class="fc" id="L152">			cmd_result_lst.add(false);</span>
+<span class="fc" id="L153">		} catch (PrintScheduleEmployeeException e) {</span>
+<span class="fc" id="L154">			System.out.println(e.getMessage());</span>
+<span class="fc" id="L155">			System.out.println(&quot;Employee schedule was not printed&quot;);</span>
+<span class="fc" id="L156">			cmd_result_lst.add(false);</span>
+<span class="fc" id="L157">		} catch (Exception e) {</span>
+<span class="fc" id="L158">			cmd_result_lst.add(false);</span>
+			// TODO Auto-generated catch block
+<span class="fc" id="L160">			e.printStackTrace();</span>
+		} 
+<span class="fc" id="L162">	}</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

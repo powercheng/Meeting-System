@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.ArrayList;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -21,9 +23,11 @@ import exceptions.PrintScheduleRoomException;
  * @author group7
  */
 public class CommandFactory {
+	
+	public ArrayList<Boolean> cmd_result_lst = new ArrayList<Boolean>();
 	/**
 	 * default constructor
-	 */
+	 */	
 	public CommandFactory() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -49,7 +53,7 @@ public class CommandFactory {
 					JSONArray command_array = (JSONArray) command_json.get("arguments");
 					//System.out.println(name);
 					Command command = null;
-					switch(name) {
+					switch(name.trim()) {
 						case "add-meeting" :
 							command = new AddMeeting(command_array);							
 							break;
@@ -113,34 +117,45 @@ public class CommandFactory {
 		try {
 			command.execute();
 			System.out.println("command : " + name+ " successfully completed");
+			cmd_result_lst.add(true);
 		} catch (AddMeetingException e) {
 			System.out.println(e.getMessage());
 			System.out.println("meeting was not added");
+			cmd_result_lst.add(false);
 		} catch (EditMeetingException e) {
 			System.out.println(e.getMessage());
 			System.out.println("meeting was not edited");
+			cmd_result_lst.add(false);
 		} catch (CancelMeetingException e) {
 			System.out.println(e.getMessage());
 			System.out.println("meeting was not cancelled");
+			cmd_result_lst.add(false);
 		} catch (AddHolidayException e) {
 			System.out.println(e.getMessage());
 			System.out.println("holiday was not added");
+			cmd_result_lst.add(false);
 		} catch (CancelVacationException e) {
 			System.out.println(e.getMessage());
 			System.out.println("vacation was not cancelled");
+			cmd_result_lst.add(false);
 		} catch (AddVacationException e) {
 			System.out.println(e.getMessage());
 			System.out.println("vacation was not added");
+			cmd_result_lst.add(false);
 		} catch (PrintScheduleAllException e) {
 			System.out.println(e.getMessage());
 			System.out.println("All Schedule was not printed");
+			cmd_result_lst.add(false);
 		} catch (PrintScheduleRoomException e) {
 			System.out.println(e.getMessage());
 			System.out.println("Room schedulewas not printed");
+			cmd_result_lst.add(false);
 		} catch (PrintScheduleEmployeeException e) {
 			System.out.println(e.getMessage());
 			System.out.println("Employee schedule was not printed");
+			cmd_result_lst.add(false);
 		} catch (Exception e) {
+			cmd_result_lst.add(false);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 

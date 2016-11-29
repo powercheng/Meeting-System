@@ -5,13 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -42,6 +39,7 @@ public class CommonUtil {
 	 * @param paddingSize
 	 * @return
 	 */
+/*	
 	public static String blankPadding(String str, int paddingSize) {
 		
 		StringBuffer rtn_buffer = new StringBuffer();
@@ -57,6 +55,7 @@ public class CommonUtil {
 		
 		return rtn_buffer.toString();			
 	}
+*/
 	/**
 	 * Date format converter
 	 * @param dateStr
@@ -84,6 +83,7 @@ public class CommonUtil {
 	 * @param format
 	 * @return
 	 */
+/*	
 	public static String getAddDayStringFromNow(String format, int days) {
 		
 		SimpleDateFormat sdfDate = new SimpleDateFormat(format);
@@ -92,13 +92,14 @@ public class CommonUtil {
 	    String strDate = sdfDate.format(futureDay);
 	    return strDate;
 	}
-	
+*/	
 	/**
 	 * add days and return new day 
 	 * @param date
 	 * @param days
 	 * @return
 	 */
+/*	
 	public static Date addDays(Date date, int days)
     {
         Calendar cal = Calendar.getInstance();
@@ -106,20 +107,7 @@ public class CommonUtil {
         cal.add(Calendar.DATE, days); //minus number would decrement the days
         return cal.getTime();
     }
-	/**
-	 * Create globally unique string 
-	 * @param cutindex
-	 * @return
-	 */
-	public static String createUUID(int cutindex)
-	{	
-		UUID uuid = UUID.randomUUID();
-		String uuidString = uuid.toString().replaceAll("-", "");
-		if (uuidString.length() >= cutindex)
-			return uuidString.substring(0, cutindex);
-		else 
-			return uuidString;			
-	}
+*/
 	/**
 	 * Get a next meeting ID (Sequential number)
 	 * @return
@@ -177,21 +165,21 @@ public class CommonUtil {
 	 * @return
 	 */
 	public static boolean saveFile(String fileName, JSONObject obj) {		
-		File file = new File(SysConfig.JsonOutDirectory + fileName);		
+		File file = new File(SysConfig.runningDir + "\\" + fileName);		
 		try {
 			if (file.exists()) file.delete();  // previous one delete.			
 			FileWriter fw = new FileWriter(file);
 			fw.write(obj.toJSONString());
 			fw.flush();
 			fw.close();			
-			System.out.println(SysConfig.JsonOutDirectory + fileName + " is succssfully saved.");			
+			//System.out.println(" ( " + SysConfig.JsonOutDirectory + fileName + " is succssfully saved. )");			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}		
 		return true;
 	}
-	
+/*	
     public static String inputOutput(String msg) {
         System.out.println(msg);
 	    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -204,5 +192,31 @@ public class CommonUtil {
 	    }
 	    return str;
     }
+  */  
+    /**
+	 * Test input data clear
+	 */
+	public static void initDB() {
+		
+		try {
+			String query = "DELETE FROM TB_ATTENDEE ";
+			Sql db = new Sql();		
+			db.setQuery(query);			
+			db.write();
+			query = "DELETE FROM TB_MEETING ";
+			db.setQuery(query);			
+			db.write();
+			query = "DELETE FROM TB_VACATION ";
+			db.setQuery(query);			
+			db.write();
+			query = "DELETE FROM TB_HOLIDAY ";
+			db.setQuery(query);			
+			db.write();
+			// close connection
+			db.close();  // make sure to call this method			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}		
+	}
 	 
 }

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Command.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">controller</a> &gt; <span class="el_source">Command.java</span></div><h1>Command.java</h1><pre class="source lang-java linenums">package controller;
+
+import common.CommonUtil;
+import model.Employee;
+import model.Meeting;
+import model.Room;
+/**
+ * super class for respective action handling class
+ * @author group7
+ *
+ */
+<span class="fc" id="L12">public class Command {</span>
+	
+	/**
+	 * To allow override method of child classes to handle actions
+	 * @return
+	 * @throws Exception 
+	 */
+	public void execute() throws Exception{
+				
+<span class="nc" id="L21">	}</span>
+	
+	/**
+	 * Check if time-format is valid (HH24:MI) 
+	 * @param str
+	 * @return
+	 */
+	public boolean checkTimeValid(String str){
+<span class="fc" id="L29">		str = str.trim();</span>
+		
+<span class="fc bfc" id="L31" title="All 2 branches covered.">		if(str.length() == 4){</span>
+<span class="fc" id="L32">			int hour = Integer.parseInt(str.substring(0, 1));</span>
+<span class="fc" id="L33">			int min = Integer.parseInt(str.substring(2, 4));</span>
+<span class="pc bpc" id="L34" title="4 of 8 branches missed.">			return hour &gt;= 0 &amp;&amp; hour &lt; 10 &amp;&amp; min &gt;=0 &amp;&amp; min &lt;=60;</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">		} else if(str.length() == 5) {</span>
+<span class="fc" id="L36">			int hour = Integer.parseInt(str.substring(0, 2));</span>
+<span class="fc" id="L37">			int min = Integer.parseInt(str.substring(3, 5));</span>
+<span class="pc bpc" id="L38" title="2 of 8 branches missed.">			return hour &gt;= 0 &amp;&amp; hour &lt; 24 &amp;&amp; min &gt;=0 &amp;&amp; min &lt;=60;</span>
+		} else {
+<span class="nc" id="L40">			return false;</span>
+		}
+	}		
+    /**
+     * To check whether leap year or not 
+     * @param y
+     * @return
+     */
+	private static boolean isLeapYear(int y) {
+<span class="pc bpc" id="L49" title="5 of 6 branches missed.">		return y % 4 == 0 &amp;&amp; (y % 400 == 0 || y % 100 != 0);  </span>
+	}	
+	/**
+	 * Check date format validity (MMDDYYYY)
+	 * @param str
+	 * @return
+	 */
+	public boolean checkDateValid(String str){
+<span class="fc" id="L57">		str = str.trim();</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		if(str.length() == 8) {</span>
+<span class="fc" id="L59">			int d = Integer.parseInt(str.substring(2, 4));</span>
+<span class="fc" id="L60">			int m = Integer.parseInt(str.substring(0, 2));</span>
+<span class="fc" id="L61">			int y = Integer.parseInt(str.substring(4, 8));</span>
+
+<span class="pc bpc" id="L63" title="1 of 6 branches missed.">			if (d &lt; 1 || m &lt; 1 || m &gt; 12) {</span>
+<span class="fc" id="L64">				return false; </span>
+			}
+   
+<span class="fc bfc" id="L67" title="All 2 branches covered.">			if (m == 2) { </span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">				if (isLeapYear(y)) {</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">					return d &lt;= 29; </span>
+				}
+				else {
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">					return d &lt;= 28; 				</span>
+				}
+			} 
+<span class="pc bpc" id="L75" title="3 of 8 branches missed.">			else if (m == 4 || m == 6 || m == 9 || m == 11){</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">				return d &lt;= 30;</span>
+			}				 
+			else  {
+<span class="fc bfc" id="L79" title="All 2 branches covered.">				return d &lt;= 31; </span>
+			}
+		} else {
+<span class="fc" id="L82">			return false;</span>
+		}
+	}
+	/**
+	 * Verify passing meeting ID is in the database.
+	 * @param meetingID
+	 * @return
+	 */
+	public boolean checkMeetingIdValid(String meetingID){
+		/* if meetID (from DB) == null then no such meeting ID*/
+<span class="fc" id="L92">		Meeting mt = new Meeting();</span>
+<span class="fc" id="L93">		mt.getMeetingInfo(meetingID);  // get and setting database information		</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		if (mt.getMeetingId() == null) {</span>
+<span class="fc" id="L95">			return false;</span>
+		}
+<span class="fc" id="L97">		return true;</span>
+	}	
+	/**
+	 * Check if employeeID is in the database.
+	 * @param employeeID
+	 * @return
+	 */
+	public boolean checkEmpolyeeIdValid(String employeeID){
+		/* if employeeID (from DB) == null then no such employeeID*/	
+<span class="fc" id="L106">		String regex = &quot;,|\\s+&quot;;</span>
+<span class="fc" id="L107">        String[] attendees = employeeID.split(regex);</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        for(String attendee : attendees){</span>
+			/* if blank or null attendee contains, continues */
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">			if (CommonUtil.nullTrim(attendee).equals(&quot;&quot;)) </span>
+<span class="nc" id="L111">				continue;</span>
+			
+<span class="fc" id="L113">			Employee emp = new Employee();</span>
+<span class="fc" id="L114">			emp.getPersonInfo(attendee);  // get and setting database information		</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">			if (emp.getEmployeeID() == null) {</span>
+<span class="fc" id="L116">				System.out.println(&quot;invalid empolyee id (&quot;+attendee+&quot;) for adding meeting command&quot;);</span>
+<span class="fc" id="L117">				return false;</span>
+			}
+		}
+<span class="fc" id="L120">		return true;</span>
+	}
+	/**
+	 * Check if roomID is in the database
+	 * @param roomID
+	 * @return
+	 */
+	public boolean checkRoomIdValid(String roomID) {
+<span class="fc" id="L128">		Room rm = new Room();</span>
+<span class="fc" id="L129">		rm.getRoomInfo(roomID); // GET AND SETTING DATABASE INFORMATION</span>
+		/* if roomID (fromDB) is null then no such room */
+<span class="fc bfc" id="L131" title="All 2 branches covered.">		if (rm.getRoomID() == null) {</span>
+<span class="fc" id="L132">			return false;</span>
+		}		
+<span class="fc" id="L134">		return true;</span>
+	}
+	/**
+	 * Check passing string is less than 1024 bytes
+	 * @param str
+	 * @return
+	 */
+	public boolean checkStrLenValid(String str) {
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">		return str.length() &lt; 1024;</span>
+	}
+	/**
+	 * Check if time1 (str1) precedes time2 (str2)
+	 * @param str1
+	 * @param str2
+	 * @return
+	 */
+	public boolean checkTimeConflict(String str1,String str2) {
+<span class="fc" id="L151">		int hour1 = Integer.parseInt(str1.substring(0, str1.length()-3));</span>
+<span class="fc" id="L152">		int hour2 = Integer.parseInt(str2.substring(0, str2.length()-3));</span>
+<span class="fc" id="L153">		int min1 = Integer.parseInt(str1.substring(str1.length()-2, str1.length()));</span>
+<span class="fc" id="L154">		int min2 = Integer.parseInt(str2.substring(str2.length()-2, str2.length()));</span>
+		
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">		if(hour2 &gt; hour1){		</span>
+<span class="fc" id="L157">			return true;</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">		} else if(hour1 == hour2){</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">			if(min2 &gt; min1){</span>
+<span class="nc" id="L160">				return true;</span>
+			} else {
+<span class="nc" id="L162">				return false;</span>
+			}
+		} else {
+<span class="nc" id="L165">			return false;</span>
+		}
+	}	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

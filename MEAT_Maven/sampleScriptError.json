@@ -1,0 +1,259 @@
+[{
+    "commands": [
+        {
+            "name": "add-meeting",
+            "arguments": [
+                {
+                    "name": "date",
+                    "value": "11272016"
+                },
+                {
+                    "name": "start-time",
+                    "value": "0045"
+                },
+                {
+                    "name": "end-time",
+                    "value": "13:53"
+                },
+                {
+                    "name": "room-id",
+                    "value": "3TTT"
+                },
+                {
+                    "name": "description",
+                    "value": "Status update"
+                },
+                {
+                    "name": "attendee",
+                    "value": "gayxx067"
+                },
+                {
+                    "name": "attendee",
+                    "value": "bob099"
+                }
+            ]
+        },
+        {
+            "name": "edit-meeting-details",
+            "arguments": [
+                {
+                    "name": "meeting-id",
+                    "value": "10"
+                },
+                {
+                    "name": "date",
+                    "value": "11242016"
+                }
+            ]
+        },
+	{
+            "name": "edit-meeting-add-attendees",
+            "arguments": [
+                {
+                    "name": "meeting-id",
+                    "value": "10"
+                },
+                {
+                    "name": "attendee",
+                    "value": "gayxx06773"
+                }
+            ]
+        },
+        {
+            "name": "edit-meeting-remove-attendees",
+            "arguments": [
+                {
+                    "name": "meeting-id",
+                    "value": "1"
+                },
+                {
+                    "name": "attendee",
+                    "value": "gayxx06773"
+                }
+            ]
+        },
+        {
+            "name": "print-schedule-room",
+            "arguments": [
+                {
+                    "name": "roomid",
+                    "value": "3XXX"
+                },
+                {
+                    "name": "start-date",
+                    "value": "11242016"
+                },
+                {
+                    "name": "end-date",
+                    "value": "11252016"
+                },
+                {
+                    "name": "output-file",
+                    "value": "test.json"
+                }
+            ]
+        },
+        {
+            "name": "delete-meeting",
+            "arguments": [
+                {
+                    "name": "meet-id",
+                    "value": "2"
+                }
+            ]
+        },
+        {
+            "name": "print-schedule-room",
+            "arguments": [
+                {
+                    "name": "room-id",
+                    "value": "3A66"
+                },
+                {
+                    "name": "start-date",
+                    "value": "11392016"
+                },
+                {
+                    "name": "end-date",
+                    "value": "23252016"
+                },
+                {
+                    "name": "output-file",
+                    "value": "test2.json"
+                }
+            ]
+        },
+	{
+            "name": "print-schedule-employee",
+            "arguments": [
+                {
+                    "name": "employee-id",
+                    "value": "test0001"
+                },
+                {
+                    "name": "start-date",
+                    "value": "11392016"
+                },
+                {
+                    "name": "end-date",
+                    "value": "23252016"
+                },
+                {
+                    "name": "output-file",
+                    "value": "test2.json"
+                }
+            ]
+        },
+	{
+            "name": "print-schedule-all",
+            "arguments": [              
+                {
+                    "name": "start-date",
+                    "value": "13032016"
+                },
+                {
+                    "name": "end-date",
+                    "value": "23252016"
+                },
+                {
+                    "name": "output-file",
+                    "value": "test2.json"
+                }
+            ]
+        },
+        {
+            "name": "add-vacation",
+            "arguments": [
+                {
+                    "name": "employee-id",
+                    "value": "gayxx067"
+                },
+                {
+                    "name": "start-date",
+                    "value": "16232017"
+                },
+                {
+                    "name": "end-date",
+                    "value": "02252017"
+                }
+            ]
+        },        
+        {
+            "name": "delete-vacation",
+            "arguments": [
+                {
+                    "name": "employee-id",
+                    "value": "gayxx067TT"
+                }
+            ]
+        },
+	{
+            "name": "deleting-vacation",
+            "arguments": [
+                {
+                    "name": "employee-id",
+                    "value": "gayxx067TT"
+                }
+            ]
+        },
+        {
+            "name": "print-schedule-employee",
+            "arguments": [
+                {
+                    "name": "employee-id",
+                    "value": "gayxx067"
+                },
+                {
+                    "name": "start-date",
+                    "value": "dd012017"
+                },
+                {
+                    "name": "end-date",
+                    "value": "02282017"
+                },
+                {
+                    "name": "output-file",
+                    "value": "test3.json"
+                }
+            ]
+        },
+	{
+            "name": "print-schedule-room",
+            "arguments": [
+                {
+                    "name": "room-id",
+                    "value": "3XXX"
+                },
+                {
+                    "name": "start-date",
+                    "value": "dd012017"
+                },
+                {
+                    "name": "end-date",
+                    "value": "02282017"
+                },
+                {
+                    "name": "output-file",
+                    "value": "test3.json"
+                }
+            ]
+        },
+	 {
+            "name": "add-holiday",
+            "arguments": [
+                {
+                    "name": "description",
+                    "value": "Christmas holiday"
+                },
+                {
+                    "name": "start-date",
+                    "value": "ttttt"
+                },
+                {
+                    "name": "end-date",
+                    "value": "02252017"
+                }
+            ]
+        }       
+    ]
+}]

@@ -134,6 +134,7 @@ public class PrintScheduleAll extends Command {
 	/**
 	 * Print fetching data onto current command-line screen
 	 */
+/*	
 	public void printScreenAllCompanySchedule() {
 		
 		if (getSrchStartDay() == null || getSrchEndDay() == null) {
@@ -174,6 +175,7 @@ public class PrintScheduleAll extends Command {
     	System.out.println("------------------------------------------------------------------------------------------------");
 		
 	}
+*/
 	/**
 	 * Save fetched result into the json file
 	 * @return

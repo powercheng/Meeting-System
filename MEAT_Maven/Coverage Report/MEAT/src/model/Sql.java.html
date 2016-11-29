@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Sql.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">Sql.java</span></div><h1>Sql.java</h1><pre class="source lang-java linenums">package model;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import common.SysConfig;
+/**
+ * Database connection and handling class (wrapper)
+ * @author group7
+ *
+ */
+public class Sql {
+	
+<span class="fc" id="L22">	private String     dbfilePath = null;</span>
+<span class="fc" id="L23">	private Connection conn = null;</span>
+<span class="fc" id="L24">	private PreparedStatement pstmt = null;</span>
+<span class="fc" id="L25">	private String  Query = null;</span>
+	
+<span class="fc" id="L27">	public boolean isFault = false;</span>
+	
+	/**
+	 * default constructor
+	 */
+<span class="fc" id="L32">	public Sql() {</span>
+		try {
+<span class="fc" id="L34">			this.dbfilePath = SysConfig.dbFile;</span>
+<span class="pc bpc" id="L35" title="1 of 4 branches missed.">			if (!(new File(dbfilePath)).exists() || (new File(dbfilePath)).length() == 0) {</span>
+<span class="fc" id="L36">				isFault = true;</span>
+<span class="fc" id="L37">				throw new SQLException(&quot;No db file exists&quot;);</span>
+			}
+<span class="fc" id="L39">			conn = DriverManager.getConnection(&quot;jdbc:sqlite:&quot;+dbfilePath);</span>
+<span class="fc" id="L40">		} catch (SQLException e) {</span>
+			// TODO Auto-generated catch block
+<span class="fc" id="L42">			isFault = true;</span>
+<span class="fc" id="L43">			e.printStackTrace();</span>
+		}
+<span class="fc" id="L45">	}</span>
+	
+	/**
+	 * close connection 
+	 */
+	public void close() {
+<span class="pc bfc" id="L51" title="All 2 branches covered.">		if (pstmt != null) try { pstmt.close(); } catch (Exception ex) {} ;</span>
+<span class="pc bfc" id="L52" title="All 2 branches covered.">		if (conn != null)  try { conn.close(); }  catch (Exception ex) {};		</span>
+<span class="fc" id="L53">	}</span>
+	/**
+	 * Set query into statement
+	 * @param query
+	 */
+	public void setQuery(String query) {
+<span class="fc" id="L59">		this.Query = query;</span>
+		try {
+<span class="fc" id="L61">			this.pstmt = conn.prepareStatement(getQuery());</span>
+<span class="pc" id="L62">		} catch (SQLException e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L64">			e.printStackTrace();</span>
+<span class="nc" id="L65">			isFault = true;</span>
+		}
+<span class="fc" id="L67">	}</span>
+	
+	public String getQuery() {
+<span class="fc" id="L70">		return this.Query;</span>
+	}
+	/**
+	 * Set parameter(string) into preparedstatement 
+	 * @param idx
+	 * @param param
+	 */
+	public void setParameter(int idx, String param) {
+		try {
+<span class="fc" id="L79">			this.pstmt.setString(idx, param);</span>
+<span class="pc" id="L80">		} catch (SQLException e) {			</span>
+<span class="nc" id="L81">			isFault = true;</span>
+		}		
+<span class="fc" id="L83">	}</span>
+	/**
+	 * Set parameter(long) into preparedstatement 
+	 * @param idx
+	 * @param param
+	 */	
+	public void setParameter(int idx, long param) {
+		try {
+<span class="fc" id="L91">			this.pstmt.setLong(idx, param);</span>
+<span class="pc" id="L92">		} catch (SQLException e) {</span>
+<span class="nc" id="L93">			isFault = true;</span>
+		}		
+<span class="fc" id="L95">	}</span>
+	/**
+	 * Execute insert, update, delete query
+	 * @return
+	 */
+	public int write() {
+<span class="fc" id="L101">		int n = -1;</span>
+		
+		try {
+<span class="fc bfc" id="L104" title="All 2 branches covered.">			if (this.getQuery() == null) </span>
+<span class="fc" id="L105">				throw new SQLException(&quot;No DML Query is setted.&quot;);			</span>
+<span class="fc" id="L106">			n = this.pstmt.executeUpdate();</span>
+<span class="fc" id="L107">		} catch (SQLException e) {</span>
+			// TODO Auto-generated catch block
+<span class="fc" id="L109">			e.printStackTrace();</span>
+<span class="fc" id="L110">			isFault = true;</span>
+		} 
+		
+<span class="fc bfc" id="L113" title="All 2 branches covered.">		if (pstmt != null)</span>
+<span class="pc" id="L114">			try { pstmt.close(); } catch (SQLException e) {}</span>
+		
+<span class="fc" id="L116">		return n;		</span>
+	}
+	/**
+	 * Fetch recordset and transform it into JSONArray format and return
+	 * @return
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public JSONArray read() {
+		
+<span class="fc" id="L125">		JSONArray rsArray = new JSONArray();		</span>
+<span class="fc" id="L126">		ResultSet rs = null;</span>
+				
+		try {			
+<span class="fc bfc" id="L129" title="All 2 branches covered.">			if (this.getQuery() == null) </span>
+<span class="fc" id="L130">				throw new SQLException(&quot;No Select Query is setted.&quot;);</span>
+			
+<span class="fc" id="L132">			rs = this.pstmt.executeQuery();</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">			while (rs.next()) {		</span>
+				//System.out.println(rs.getString(1));
+<span class="fc" id="L135">				JSONObject  rObj  = new JSONObject();</span>
+<span class="fc" id="L136">				ResultSetMetaData rmd = rs.getMetaData();</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">                for ( int i=1; i&lt;=rmd.getColumnCount(); i++ ) {</span>
+                	//System.out.println(rmd.getColumnName(i));
+<span class="fc" id="L139">                	rObj.put(rmd.getColumnName(i),rs.getString(rmd.getColumnName(i)));</span>
+                }
+<span class="fc" id="L141">                rsArray.add(rObj);</span>
+            }
+			//System.out.println(rsArray.size());
+<span class="fc" id="L144">		} catch (Exception e) {</span>
+			// TODO Auto-generated catch block
+<span class="fc" id="L146">			e.printStackTrace();</span>
+<span class="fc" id="L147">			isFault = true;</span>
+		} 
+		
+<span class="fc bfc" id="L150" title="All 2 branches covered.">		if (rs != null)</span>
+<span class="pc" id="L151">			try { rs.close(); } catch (SQLException e) {}</span>
+		
+<span class="fc bfc" id="L153" title="All 2 branches covered.">		if (pstmt != null)</span>
+<span class="pc" id="L154">			try { pstmt.close(); } catch (SQLException e) {}</span>
+		
+<span class="fc" id="L156">		return rsArray;</span>
+	}	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

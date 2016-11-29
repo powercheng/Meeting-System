@@ -128,6 +128,7 @@ public class Meeting {
 	/**
 	 * Print this meeting information onto the screen
 	 */
+/*	
 	public void printCurrentMeetingInfo() {
 		
 		System.out.println("#MeetID   #Meeting Time             #RoomID    #Description           #AttendeeID ");
@@ -146,5 +147,5 @@ public class Meeting {
 		+ "       " + CommonUtil.blankPadding(getDescription(), 18) + "    " + attendString);
     	
 	}
-	
+*/	
 }

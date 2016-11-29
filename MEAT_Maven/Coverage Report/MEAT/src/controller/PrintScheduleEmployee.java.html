@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>PrintScheduleEmployee.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">controller</a> &gt; <span class="el_source">PrintScheduleEmployee.java</span></div><h1>PrintScheduleEmployee.java</h1><pre class="source lang-java linenums">package controller;
+
+import model.Employee;
+import model.Sql;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import common.CommonUtil;
+import exceptions.PrintScheduleEmployeeException;
+/**
+ * Print employee's scheduled meeting within specific range of date or save it into file 
+ * @author group7
+ *
+ */
+public class PrintScheduleEmployee extends Command {
+	
+	private Employee employee;
+	private String srchStartDay;
+	private String srchEndDay;
+	private String outfileName;
+	
+	private JSONArray command_array;
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
+	public PrintScheduleEmployee(JSONArray command_array) {
+<span class="fc" id="L29">		super();</span>
+<span class="fc" id="L30">		this.command_array = command_array;		</span>
+<span class="fc" id="L31">		this.employee = new Employee();</span>
+<span class="fc" id="L32">	}</span>
+	/**
+	 * default constructor 
+	 */
+<span class="nc" id="L36">	public PrintScheduleEmployee() {		</span>
+<span class="nc" id="L37">		this.employee = new Employee();</span>
+<span class="nc" id="L38">	}</span>
+/*
+	public static void main(String[] args) {
+		PrintScheduleEmployee test = new PrintScheduleEmployee();
+		test.employee.getPersonInfo(&quot;bob099&quot;);
+		test.setSrchStartDay(&quot;01012016&quot;);
+		test.setSrchEndDay(&quot;01012017&quot;);
+		test.setOutfileName(&quot;test.txt&quot;);
+		test.printEmployeeSchedule();
+	}
+*/	
+	/**
+	 * Gethering an employee's meeting schedules and print the result into file typed json
+	 */
+	@Override
+	public void execute() throws PrintScheduleEmployeeException{		
+		// TODO Auto-generated method stub	
+<span class="pc bpc" id="L55" title="2 of 4 branches missed.">		if(command_array == null || command_array.isEmpty()) {</span>
+<span class="nc" id="L56">			throw new PrintScheduleEmployeeException(&quot;No arguments for print-schedule-employee&quot;);</span>
+		}
+		
+<span class="fc bfc" id="L59" title="All 2 branches covered.">		for(int i = 0; i &lt; command_array.size(); i++) {</span>
+<span class="fc" id="L60">			JSONObject command_json = (JSONObject) command_array.get(i);</span>
+<span class="fc" id="L61">			String name = (String) command_json.get(&quot;name&quot;);</span>
+<span class="fc" id="L62">			String value = (String) command_json.get(&quot;value&quot;);</span>
+<span class="pc bpc" id="L63" title="4 of 13 branches missed.">			switch(name) {</span>
+				case &quot;employee-id&quot; :
+<span class="fc" id="L65">					employee.getPersonInfo(value);</span>
+<span class="fc" id="L66">					break;	</span>
+				case &quot;start-date&quot; :
+<span class="fc bfc" id="L68" title="All 2 branches covered.">					if(checkDateValid(value)){</span>
+<span class="fc" id="L69">						setSrchStartDay(value);</span>
+<span class="fc" id="L70">						break;</span>
+					} else {
+<span class="fc" id="L72">						throw new PrintScheduleEmployeeException(&quot;invalid arguments : &quot; + name + &quot;for print-schedule-employee&quot;);</span>
+					}
+				case &quot;end-date&quot; :
+<span class="fc bfc" id="L75" title="All 2 branches covered.">					if(checkDateValid(value)){</span>
+<span class="fc" id="L76">						setSrchEndDay(value);</span>
+<span class="fc" id="L77">						break;</span>
+					} else {
+<span class="fc" id="L79">						throw new PrintScheduleEmployeeException(&quot;invalid arguments : &quot; + name + &quot;for print-schedule-employee&quot;);</span>
+					}
+				case &quot;output-file&quot; :
+<span class="fc" id="L82">					setOutfileName(value);</span>
+<span class="fc" id="L83">					break;</span>
+					
+				default :
+<span class="fc" id="L86">					throw new PrintScheduleEmployeeException(&quot;invalid arguments : &quot; + name + &quot;for print-schedule-employee&quot;);</span>
+			}			
+		}
+		
+<span class="fc" id="L90">		checkCondition();		</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		if (!printFileEmployeeSchedule()) {</span>
+<span class="fc" id="L92">			throw new PrintScheduleEmployeeException(&quot;save file failed for print-schedule-employee&quot;);</span>
+		}	
+<span class="fc" id="L94">	}</span>
+	/**
+	 * Fetching employee's meeting schedules in specific range of time	 * 
+	 * @return
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public JSONObject getEmployeeScheduleList() {
+		
+<span class="fc" id="L102">		JSONObject rtnObj = new JSONObject();</span>
+<span class="fc" id="L103">		Sql db = new Sql();</span>
+<span class="fc" id="L104">		String meetDetailQuery = &quot;SELECT TA.meetID as 'meeting-id', TA.meetDATE as date, &quot;</span>
+				+ &quot; TA.startTIME as 'start-time', TA.endTime as 'end-time', &quot;
+				+ &quot; TA.roomID as 'room-id', TA.description &quot;
+				+ &quot; FROM TB_MEETING TA INNER JOIN TB_ATTENDEE TB ON TA.meetID = TB.meetID &quot;
+				+ &quot; WHERE TB.employeeID = ? and &quot;
+				+ &quot; substr(TA.meetDATE,5,4)||substr(TA.meetDATE,0,3)||substr(TA.meetDATE,3,2) between ? and ? &quot;;
+		
+<span class="fc" id="L111">		db.setQuery(meetDetailQuery);</span>
+<span class="fc" id="L112">		db.setParameter(1, this.getEmployee().getEmployeeID());</span>
+<span class="fc" id="L113">		db.setParameter(2, CommonUtil.dateFormat(getSrchStartDay(),&quot;MMddyyyy&quot;,&quot;yyyyMMdd&quot;));</span>
+<span class="fc" id="L114">		db.setParameter(3, CommonUtil.dateFormat(getSrchEndDay(),&quot;MMddyyyy&quot;,&quot;yyyyMMdd&quot;));</span>
+		
+<span class="fc" id="L116">		JSONArray meetArr = db.read();</span>
+<span class="fc" id="L117">		JSONArray mergedArr = new JSONArray();</span>
+	
+<span class="fc bfc" id="L119" title="All 2 branches covered.">		for (int i=0; i&lt;meetArr.size(); i++) {</span>
+			
+<span class="fc" id="L121">			JSONObject rsetObj = (JSONObject) meetArr.get(i);		</span>
+<span class="fc" id="L122">			String meetID = (String) rsetObj.get(&quot;meeting-id&quot;);</span>
+			/*Attendees find*/
+<span class="fc" id="L124">			String meetAttendeeQuery = &quot;SELECT TA.employeeID as 'employee-id', &quot;</span>
+					+ &quot;ifnull(TB.firstNAME||' '||TB.lastNAME,'') as 'name' &quot;
+					+ &quot; FROM TB_ATTENDEE TA LEFT JOIN TB_EMPLOYEE TB ON TA.employeeID = TB.employeeID &quot;
+					+ &quot; WHERE TA.meetID = ? &quot;;
+<span class="fc" id="L128">			db.setQuery(meetAttendeeQuery);</span>
+<span class="fc" id="L129">			db.setParameter(1, meetID);</span>
+<span class="fc" id="L130">			JSONArray attendeeArr = db.read();</span>
+			
+			/* Put the meeting detail json object's tail */
+<span class="fc" id="L133">			rsetObj.put(&quot;attendees&quot;, attendeeArr);			</span>
+			/* Put the merged one into new mergedArr*/
+<span class="fc" id="L135">			mergedArr.add(rsetObj);</span>
+		}
+<span class="fc" id="L137">		rtnObj.put(&quot;events&quot;, mergedArr);</span>
+<span class="fc" id="L138">		db.close();</span>
+		
+<span class="fc" id="L140">		return rtnObj;</span>
+		
+	}
+	/**
+	 * Print fetched employee's schedules onto screen 
+	 */
+/*	
+	public void printScreenEmployeeSchedule() {
+		
+		if (getSrchStartDay() == null || getSrchEndDay() == null) {
+			System.out.println(&quot;Not set search time interval&quot;);
+			return;
+		}
+		
+		JSONObject rTobObj = getEmployeeScheduleList();
+    	JSONArray  rMeetList = (JSONArray) rTobObj.get(&quot;events&quot;);
+    	
+    	System.out.println(&quot;#Current scheduled meetings for the employee(&quot;+getEmployee().getEmployeeID()+&quot;) between &quot;+getSrchStartDay()+&quot; and &quot;+getSrchEndDay()+&quot; #&quot;);
+    	System.out.println(&quot;#MeetID   #Meeting Time             #RoomID    #Description           #AttendeeID(NAME)&quot;);
+    	System.out.println(&quot;------------------------------------------------------------------------------------------------&quot;);
+    	
+    	for (int i=0; i&lt;rMeetList.size();i++) {
+    		
+    		JSONObject rSubObj = (JSONObject) rMeetList.get(i);
+    		String saveMID = (String) rSubObj.get(&quot;meeting-id&quot;);
+    		String saveDate = (String) rSubObj.get(&quot;date&quot;);
+    		String saveSTime = (String) rSubObj.get(&quot;start-time&quot;);
+    		String saveETime = (String) rSubObj.get(&quot;end-time&quot;);
+    		String saveRID   = (String) rSubObj.get(&quot;room-id&quot;);
+    		String saveDESC   = (String) rSubObj.get(&quot;description&quot;);
+    		JSONArray attList = (JSONArray) rSubObj.get(&quot;attendees&quot;);
+    		String attendString = &quot;&quot;;
+    		for (int k=0;k&lt;attList.size();k++) {
+    			JSONObject attObj = (JSONObject) attList.get(k);
+    			attendString += (String) attObj.get(&quot;employee-id&quot;) +&quot;(&quot;+(String) attObj.get(&quot;name&quot;)+&quot;)&quot;;
+    			if (k != attList.size()-1) {  // last list
+    				attendString += &quot;,&quot;;
+    			}
+    		}
+    		   			
+    		System.out.println(&quot;# &quot; + saveMID + &quot;       &quot; + CommonUtil.dateFormat(saveDate,&quot;MMddyyyy&quot;,&quot;MM.dd.yyyy&quot;) 
+    								+ &quot; &quot; + saveSTime + &quot;-&quot; + saveETime + &quot;     &quot; + saveRID 
+    								+ &quot;       &quot; + CommonUtil.blankPadding(saveDESC, 18) + &quot;    &quot; + attendString);
+    	}
+    	
+    	if (rMeetList.size() == 0) System.out.println(&quot; No scheduled meeting for &quot;+this.getEmployee().getEmployeeID()+&quot;&quot;);
+        	
+    	System.out.println(&quot;------------------------------------------------------------------------------------------------&quot;);
+		
+	}
+*/	
+	/**
+	 * save fetched employee's schedules into json file 
+	 */
+	public boolean printFileEmployeeSchedule() {
+		
+<span class="fc" id="L196">		JSONObject jsonObj = getEmployeeScheduleList();		</span>
+		/* Save json object content into file */
+<span class="fc" id="L198">		return CommonUtil.saveFile(getOutfileName(), jsonObj);</span>
+		
+	}
+	/**
+	 * check passing variables validity	
+	 * @return
+	 */
+	public void checkCondition() throws PrintScheduleEmployeeException{
+		
+		/* Necessary information check */
+<span class="fc bfc" id="L208" title="All 2 branches covered.">		if (employee.getEmployeeID() == null) {</span>
+<span class="fc" id="L209">			throw new PrintScheduleEmployeeException(&quot;No employeeID for print-schedule-employee&quot;);</span>
+		}
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">		if (getSrchStartDay() == null) {</span>
+<span class="nc" id="L212">			throw new PrintScheduleEmployeeException(&quot;No start-date for print-schedule-employee&quot;);</span>
+		}
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">		if (getSrchEndDay() == null) {</span>
+<span class="nc" id="L215">			throw new PrintScheduleEmployeeException(&quot;No end-date for print-schedule-employee&quot;);</span>
+		}
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">		if (getOutfileName() == null) {</span>
+<span class="nc" id="L218">			throw new PrintScheduleEmployeeException(&quot;No output-file for print-schedule-employee&quot;);</span>
+		}		
+		
+<span class="fc" id="L221">	}</span>
+	
+	public String getSrchStartDay() {
+<span class="fc" id="L224">		return srchStartDay;</span>
+	}
+
+	public void setSrchStartDay(String srchStartDay) {
+<span class="fc" id="L228">		this.srchStartDay = srchStartDay;</span>
+<span class="fc" id="L229">	}</span>
+
+	public Employee getEmployee() {
+<span class="fc" id="L232">		return employee;</span>
+	}
+
+	public void setEmployee(Employee employee) {
+<span class="nc" id="L236">		this.employee = employee;</span>
+<span class="nc" id="L237">	}</span>
+	
+	public String getSrchEndDay() {
+<span class="fc" id="L240">		return srchEndDay;</span>
+	}
+
+	public void setSrchEndDay(String srchEndDay) {
+<span class="fc" id="L244">		this.srchEndDay = srchEndDay;</span>
+<span class="fc" id="L245">	}</span>
+
+	public String getOutfileName() {
+<span class="fc" id="L248">		return outfileName;</span>
+	}
+
+	public void setOutfileName(String outfileName) {
+<span class="fc" id="L252">		this.outfileName = outfileName;</span>
+<span class="fc" id="L253">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

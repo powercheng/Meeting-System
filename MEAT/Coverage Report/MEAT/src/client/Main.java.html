@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">client</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">package client;
+
+import java.util.ArrayList;
+
+import common.CommonUtil;
+import common.SysConfig;
+import controller.CommandFactory;
+/**
+ * Main controller in our MEAT system &lt;br&gt;
+ * How to run this program. &lt;br&gt;
+ * 1. Interactive       mode : java -jar MEAT.jar  &lt;br&gt;
+ * 2. ScriptCommand run mode : java -jar MEAT.jar filename.json &lt;br&gt;
+ * 3. Load externalDB mode   : java -jar MEAT.jar DBSYNC &lt;br&gt;
+ * @author group7
+ */
+<span class="nc" id="L16">public class Main {		</span>
+	/**
+     * MEAT System begins !    
+     * @param args 1. nothing or 2. filename or 3. DBSYNC (only input DBSYNC)
+     */
+	public static String runMode;
+<span class="fc" id="L22">	public static int sleepMilliTime = 3000;</span>
+<span class="fc" id="L23">	public static boolean isTest = false;</span>
+<span class="fc" id="L24">	public static ArrayList&lt;Boolean&gt; scriptCmdStatus;</span>
+	
+    public static void main(String[] args) {
+    	
+<span class="fc" id="L28">	    System.out.println(&quot;************* How to run the MEAT ! ****************&quot;);	   </span>
+<span class="fc" id="L29">	    System.out.println(&quot;1. Interactive     mode : java -jar MEAT.jar &quot;);</span>
+<span class="fc" id="L30">	    System.out.println(&quot;2. ScriptCommdnRun mode : java -jar MEAT.jar filename.json &quot;);</span>
+<span class="fc" id="L31">	    System.out.println(&quot;3. Load externalDB mode : java -jar MEAT.jar DBSYNC &quot;);</span>
+<span class="fc" id="L32">	    System.out.println(&quot;4. Init local DB   mode : java -jar MEAT.jar DBINIT &quot;);</span>
+<span class="fc" id="L33">	    System.out.println(&quot;\nYour commands will be running in 3second................\n&quot;);</span>
+	    
+	    try {
+<span class="fc" id="L36">			Thread.sleep(sleepMilliTime);</span>
+<span class="fc" id="L37">			System.out.println(&quot;Checking Resources.....&quot;);	</span>
+			/*db file check */
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">			if (!SysConfig.checkResource()) {</span>
+<span class="nc" id="L40">				System.out.println(&quot;System stopped....&quot;);</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">				if (!isTest) System.exit(0);</span>
+			}
+<span class="nc" id="L43">		} catch (InterruptedException e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L45">			e.printStackTrace();</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">			if (!isTest) System.exit(0);</span>
+		}
+	    
+	    /* running mode checking */
+<span class="fc bfc" id="L50" title="All 2 branches covered.">	    if (args.length == 0) {</span>
+	    	// no passing parameter means interactive mode
+<span class="fc" id="L52">	    	InteractiveMode.printMainMenu();</span>
+<span class="fc" id="L53">	    	runMode = &quot;INTERACTIVE&quot;;</span>
+<span class="fc" id="L54">	    } else {</span>
+<span class="pc bpc" id="L55" title="2 of 7 branches missed.">	    	switch (args[0].toUpperCase()) {</span>
+	    		// External DB (employee.json and room.json in resource dir) loaded into local database
+		    	case &quot;DBSYNC&quot;:   
+					/* TO DO */
+<span class="fc" id="L59">		    		runMode = &quot;DBSYNC&quot;;		    		</span>
+<span class="fc" id="L60">		    		System.out.println(&quot;\n----- External DB syncronization is starting..-----\n&quot;);</span>
+<span class="fc" id="L61">		    		ExternalDBImporter dImp = new ExternalDBImporter();</span>
+<span class="fc" id="L62">		    		dImp.updateEmployeeTable(); // TB_EMPLOYEE update</span>
+<span class="fc" id="L63">		    		dImp.updateRoomTable(); // TB_ROOM update</span>
+<span class="fc" id="L64">		    		System.out.println(&quot;\n----- External DB syncronization ended..-----&quot;);</span>
+<span class="fc" id="L65">		    		break;	</span>
+		    	// All other arguments are taken as command script file. args = filename
+		    	case &quot;DBINIT&quot;:
+<span class="fc" id="L68">		    		runMode = &quot;DBINIT&quot;;		    		</span>
+<span class="fc" id="L69">		    		System.out.println(&quot;\n----- DB init is starting..-----\n&quot;);</span>
+<span class="fc" id="L70">		    		CommonUtil.initDB();</span>
+<span class="fc" id="L71">		    		System.out.println(&quot;\n----- DB init is ended..-----&quot;);</span>
+<span class="fc" id="L72">		    		break;</span>
+				default:					
+<span class="fc" id="L74">					boolean isSuccess = runScriptCommand(args[0]);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">					if (isSuccess) runMode = &quot;SCRIPT&quot;;</span>
+<span class="fc" id="L76">					else runMode = null;</span>
+					break;
+			}
+	    }
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">	    if (!isTest) System.exit(0);</span>
+<span class="fc" id="L81">	}      </span>
+   /**
+    * Run all commands in the script file (json format) at once 
+    * Script file should be exists in our current working directory
+    * SysConfig.ScriptFilePath = workingDir//
+    * @param fileName  (such as command.json)
+    */
+   public static boolean runScriptCommand(String fileName) {	
+<span class="fc" id="L89">	    System.out.println(&quot;\n----- ScriptFile running mode is starting..-----\n&quot;);</span>
+<span class="fc" id="L90">		String filePath = SysConfig.ScriptFilePath + fileName;</span>
+<span class="fc" id="L91">		String jsonData = CommonUtil.loadJsonFile(filePath);</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">		if (!jsonData.equals(&quot;&quot;)) {</span>
+<span class="fc" id="L93">			CommandFactory factory = new CommandFactory();</span>
+<span class="fc" id="L94">			factory.run(jsonData);</span>
+<span class="fc" id="L95">			scriptCmdStatus = factory.cmd_result_lst;</span>
+<span class="fc" id="L96">		} else {</span>
+<span class="fc" id="L97">			System.out.println(&quot;Error: The file(&quot;+fileName+&quot;) should be in the current directory.&quot;);</span>
+<span class="fc" id="L98">			return false;</span>
+		}
+<span class="fc" id="L100">		System.out.println(&quot;\n----- ScriptFile running mode ended..-----&quot;);</span>
+<span class="fc" id="L101">		return true;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

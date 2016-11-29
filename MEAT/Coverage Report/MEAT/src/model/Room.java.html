@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Room.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">Room.java</span></div><h1>Room.java</h1><pre class="source lang-java linenums">package model;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import exceptions.TimeConflictException;
+import controller.Command;
+/**
+ * Room model class
+ * @author group7
+ *
+ */
+public class Room {
+		
+	private String roomID;
+	private String building;
+	private String floor;
+	private String occupancy;
+	/**
+	 * default constructor
+	 */
+	public Room() {
+<span class="fc" id="L23">		super();</span>
+		// TODO Auto-generated constructor stub
+<span class="fc" id="L25">	}</span>
+
+	public String getBuilding() {
+<span class="nc" id="L28">		return building;</span>
+	}
+
+	public void setBuilding(String building) {
+<span class="fc" id="L32">		this.building = building;</span>
+<span class="fc" id="L33">	}</span>
+
+	public String getRoomID() {
+<span class="fc" id="L36">		return roomID;</span>
+	}
+
+	public void setRoomID(String roomID) {
+<span class="fc" id="L40">		this.roomID = roomID;</span>
+<span class="fc" id="L41">	}</span>
+
+	public String getFloor() {
+<span class="nc" id="L44">		return floor;</span>
+	}
+
+	public void setFloor(String floor) {
+<span class="fc" id="L48">		this.floor = floor;</span>
+<span class="fc" id="L49">	}</span>
+
+	public String getOccupancy() {
+<span class="nc" id="L52">		return occupancy;</span>
+	}
+
+	public void setOccupancy(String occupancy) {
+<span class="fc" id="L56">		this.occupancy = occupancy;</span>
+<span class="fc" id="L57">	}</span>
+	/**
+	 * Get room information from database and set the fetched data into this class
+	 * @param id
+	 */
+	public void getRoomInfo(String id) {
+		
+<span class="pc bpc" id="L64" title="2 of 4 branches missed.">		if (id != null &amp;&amp; id.length() &gt; 0) {</span>
+			
+<span class="fc" id="L66">			Sql db = new Sql();</span>
+<span class="fc" id="L67">			String infoQuery = &quot;SELECT roomID, building, floor, occupancy&quot;</span>
+									+ &quot; FROM TB_ROOM WHERE roomID = ? &quot;;
+<span class="fc" id="L69">			db.setQuery(infoQuery);</span>
+<span class="fc" id="L70">			db.setParameter(1, id);</span>
+<span class="fc" id="L71">			JSONArray recArr = db.read();		</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">			for (int i=0; i&lt;recArr.size(); i++) {</span>
+				// In reality, every time just one record
+<span class="fc" id="L74">				JSONObject rsObj = (JSONObject) recArr.get(i);</span>
+				/* Set personal information */
+<span class="fc" id="L76">				setRoomID((String) rsObj.get(&quot;roomID&quot;));</span>
+<span class="fc" id="L77">				setBuilding((String) rsObj.get(&quot;building&quot;));</span>
+<span class="fc" id="L78">				setFloor((String) rsObj.get(&quot;floor&quot;));</span>
+<span class="fc" id="L79">				setOccupancy((String) rsObj.get(&quot;occupancy&quot;));				</span>
+			}				
+<span class="fc bfc" id="L81" title="All 2 branches covered.">			if (recArr.size() == 0) {</span>
+<span class="fc" id="L82">				System.out.println(&quot;No such room&quot;);</span>
+			}			
+<span class="fc" id="L84">			db.close();</span>
+			
+<span class="fc" id="L86">		} else {</span>
+<span class="nc" id="L87">			System.out.println(&quot;roomID is not passed&quot;);</span>
+		}
+<span class="fc" id="L89">	}</span>
+	
+	/**
+	 * Check if target room is opened between specific time range 
+	 * @param meetDate  (MMDDYYYY)
+	 * @param fromTime  (HH24:MI)
+	 * @param endTime   (HH24:MI)
+	 * @throws TimeConflictException
+	 */
+	public void roomAvailable(String meetDate, String fromTime, String endTime) throws TimeConflictException {
+		
+<span class="fc" id="L100">		Command cmd = new Command();</span>
+		
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">		if (getRoomID() == null) {</span>
+<span class="nc" id="L103">			throw new TimeConflictException(&quot;Room ID is not set&quot;);</span>
+		}
+		
+<span class="pc bpc" id="L106" title="3 of 6 branches missed.">		if (cmd.checkDateValid(meetDate) &amp;&amp; fromTime != null &amp;&amp; endTime != null) </span>
+		{			
+<span class="fc" id="L108">			Sql db = new Sql();</span>
+<span class="fc" id="L109">			String infoQuery = &quot;SELECT roomID, startTIME, endTIME FROM (&quot;</span>
+								+ &quot; SELECT roomID,  &quot;
+								+ &quot;  case when length(startTIME) = 4 then '0'||startTime &quot;
+								+ &quot;  	  else startTIME end as startTIME, &quot;
+								+ &quot;  case when length(endTime) = 4 then '0'||endTime &quot;
+								+ &quot;       else endTime end as endTime &quot;
+								+ &quot;  FROM TB_MEETING WHERE meetDATE = ? AND roomID = ? &quot;
+								+ &quot; )&quot;
+								+ &quot; WHERE time(startTIME) between time(?) and time(?) or &quot;
+								+ &quot; 	  time(endTIME)   between time(?) and time(?) or &quot;
+								+ &quot; 	  time(?)  between time(startTIME) and time(endTIME) &quot;; //endTIME
+								/* basically we face problem if we use 1-12 time system without AM or PM*/
+<span class="fc" id="L121">			db.setQuery(infoQuery);</span>
+			// fromTIME 1:53 -&gt; 01:53 transform
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">			if (fromTime.length() == 4) fromTime = &quot;0&quot; + fromTime;</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">			if (endTime.length()  == 4) endTime  = &quot;0&quot; + endTime;</span>
+			
+<span class="fc" id="L126">			db.setParameter(1, meetDate);</span>
+<span class="fc" id="L127">			db.setParameter(2, getRoomID());</span>
+<span class="fc" id="L128">			db.setParameter(3, fromTime);</span>
+<span class="fc" id="L129">			db.setParameter(4, endTime);</span>
+<span class="fc" id="L130">			db.setParameter(5, fromTime);</span>
+<span class="fc" id="L131">			db.setParameter(6, endTime);</span>
+<span class="fc" id="L132">			db.setParameter(7, endTime);</span>
+						
+<span class="fc" id="L134">			JSONArray checkArr = db.read();	</span>
+			
+<span class="fc" id="L136">			db.close();</span>
+			
+<span class="fc bfc" id="L138" title="All 2 branches covered.">			if (checkArr.size() &gt; 0) {</span>
+				// already scheduled
+<span class="fc" id="L140">				throw new TimeConflictException(&quot;Room ID(&quot;+getRoomID()+&quot;) already has a meeting at the same time.&quot;); </span>
+			}
+				
+		} else {
+<span class="nc" id="L144">			throw new TimeConflictException(&quot;Date and Time are not valid&quot;);	</span>
+		}		
+<span class="fc" id="L146">	}	</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

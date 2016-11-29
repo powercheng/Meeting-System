@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Employee.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">Employee.java</span></div><h1>Employee.java</h1><pre class="source lang-java linenums">package model;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import common.CommonUtil;
+import exceptions.TimeConflictException;
+import controller.Command;
+/**
+ * Employee model class
+ * @author group7
+ *
+ */
+public class Employee {
+	
+	private String employeeID;
+	private String firstName;
+	private String lastName;
+	private String email;
+	private String title;
+	private int totalVACATIONDAY;
+	/**
+	 * Default constructor
+	 */
+	public Employee() {
+<span class="fc" id="L25">		super();</span>
+		// TODO Auto-generated constructor stub
+<span class="fc" id="L27">	}</span>
+	
+	public String getEmployeeID() {
+<span class="fc" id="L30">		return employeeID;</span>
+	}
+
+	public void setEmployeeID(String employeeID) {
+<span class="fc" id="L34">		this.employeeID = employeeID;</span>
+<span class="fc" id="L35">	}</span>
+
+	public String getLastName() {
+<span class="nc" id="L38">		return lastName;</span>
+	}
+
+	public void setLastName(String lastName) {
+<span class="fc" id="L42">		this.lastName = lastName;</span>
+<span class="fc" id="L43">	}</span>
+
+	public String getFirstName() {
+<span class="nc" id="L46">		return firstName;</span>
+	}
+
+	public void setFirstName(String firstName) {
+<span class="fc" id="L50">		this.firstName = firstName;</span>
+<span class="fc" id="L51">	}</span>
+
+	public String getEmail() {
+<span class="nc" id="L54">		return email;</span>
+	}
+
+	public void setEmail(String email) {
+<span class="fc" id="L58">		this.email = email;</span>
+<span class="fc" id="L59">	}</span>
+
+	public String getTitle() {
+<span class="nc" id="L62">		return title;</span>
+	}
+
+	public void setTitle(String title) {
+<span class="fc" id="L66">		this.title = title;</span>
+<span class="fc" id="L67">	}</span>
+
+	public int getTotalVACATIONDAY() {
+<span class="nc" id="L70">		return totalVACATIONDAY;</span>
+	}
+
+	public void setTotalVACATIONDAY(int totalVACATIONDAY) {
+<span class="fc" id="L74">		this.totalVACATIONDAY = totalVACATIONDAY;</span>
+<span class="fc" id="L75">	}</span>
+	/**
+	 * Get person information correspond with employeeID
+	 * @param empID
+	 */
+	public void getPersonInfo(String empID) {
+		
+<span class="pc bpc" id="L82" title="2 of 4 branches missed.">		if (empID != null &amp;&amp; empID.length() &gt; 0) {</span>
+			
+<span class="fc" id="L84">			Sql db = new Sql();</span>
+<span class="fc" id="L85">			String infoQuery = &quot;SELECT employeeID, firstNAME, lastNAME, email, title, totalVACATIONDAY&quot;</span>
+					+ &quot; FROM TB_EMPLOYEE WHERE employeeID = ? &quot;;
+<span class="fc" id="L87">			db.setQuery(infoQuery);</span>
+<span class="fc" id="L88">			db.setParameter(1, empID);</span>
+<span class="fc" id="L89">			JSONArray recArr = db.read();		</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">			for (int i=0; i&lt;recArr.size(); i++) {</span>
+				// In reality, every time just one record
+<span class="fc" id="L92">				JSONObject rsObj = (JSONObject) recArr.get(i);</span>
+				/* Set personal information */
+<span class="fc" id="L94">				setEmployeeID((String) rsObj.get(&quot;employeeID&quot;));</span>
+<span class="fc" id="L95">				setFirstName((String) rsObj.get(&quot;firstNAME&quot;));</span>
+<span class="fc" id="L96">				setLastName((String) rsObj.get(&quot;lastNAME&quot;));</span>
+<span class="fc" id="L97">				setEmail((String) rsObj.get(&quot;email&quot;));</span>
+<span class="fc" id="L98">				setTitle((String) rsObj.get(&quot;title&quot;));</span>
+<span class="fc" id="L99">				setTotalVACATIONDAY(Integer.parseInt((String) rsObj.get(&quot;totalVACATIONDAY&quot;)));</span>
+			}	
+			
+<span class="fc bfc" id="L102" title="All 2 branches covered.">			if (recArr.size() == 0) {</span>
+<span class="fc" id="L103">				System.out.println(&quot;No such employee&quot;);</span>
+			}
+			
+<span class="fc" id="L106">			db.close();</span>
+			
+<span class="fc" id="L108">		} else {</span>
+<span class="nc" id="L109">			System.out.println(&quot;employeeID is not passed&quot;);</span>
+		}
+<span class="fc" id="L111">	}</span>
+		
+	/**
+	 * Check if employee conflicts with scheduled meeting for another meeting time 
+	  * @param meetDate  (MMDDYYYY)
+	 * @param fromTime  (HH24:MI)
+	 * @param endTime   (HH24:MI)
+	 * @throws TimeConflictException
+	 */
+	public void checkAvailableWithMeeting(String meetDate, String fromTime, String endTime) throws TimeConflictException  {
+		
+<span class="fc" id="L122">		Command cmd = new Command();</span>
+		
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">		if (getEmployeeID() == null) {</span>
+<span class="nc" id="L125">			throw new TimeConflictException(&quot;Employee ID is not set&quot;);</span>
+		}
+		
+<span class="pc bpc" id="L128" title="3 of 6 branches missed.">		if (cmd.checkDateValid(meetDate) &amp;&amp; fromTime != null &amp;&amp; endTime != null) </span>
+		{			
+<span class="fc" id="L130">			Sql db = new Sql();</span>
+<span class="fc" id="L131">			String infoQuery = &quot;SELECT roomID, startTIME, endTIME FROM (&quot;</span>
+								+ &quot; SELECT roomID,  &quot;
+								+ &quot;  case when length(startTIME) = 4 then '0'||startTime &quot;
+								+ &quot;  	  else startTIME end as startTIME, &quot;
+								+ &quot;  case when length(endTime) = 4 then '0'||endTime &quot;
+								+ &quot;       else endTime end as endTime &quot;
+								+ &quot;  FROM TB_MEETING TA WHERE meetDATE = ? and exists &quot;
+								+ &quot;   (SELECT 'X' FROM TB_ATTENDEE WHERE TA.meetID = meetID and employeeID = ?)&quot;
+								+ &quot; )&quot;
+								+ &quot; WHERE time(startTIME) between time(?) and time(?) or &quot;
+								+ &quot; 	  time(endTIME)   between time(?) and time(?) or &quot;
+								+ &quot; 	  time(?)  between time(startTIME) and time(endTIME) &quot;; //endTIME
+								/* basically we face problem if we use 1-12 time system without AM or PM*/
+<span class="fc" id="L144">			db.setQuery(infoQuery);</span>
+			
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">			if (fromTime.length() == 4) fromTime = &quot;0&quot; + fromTime;</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">			if (endTime.length()  == 4) endTime  = &quot;0&quot; + endTime;</span>
+			
+<span class="fc" id="L149">			db.setParameter(1, meetDate);</span>
+<span class="fc" id="L150">			db.setParameter(2, getEmployeeID());</span>
+<span class="fc" id="L151">			db.setParameter(3, fromTime);</span>
+<span class="fc" id="L152">			db.setParameter(4, endTime);</span>
+<span class="fc" id="L153">			db.setParameter(5, fromTime);</span>
+<span class="fc" id="L154">			db.setParameter(6, endTime);</span>
+<span class="fc" id="L155">			db.setParameter(7, endTime);</span>
+						
+<span class="fc" id="L157">			JSONArray checkArr = db.read();	</span>
+			
+<span class="fc" id="L159">			db.close();</span>
+		//	System.out.println(checkArr.size());
+<span class="fc bfc" id="L161" title="All 2 branches covered.">			if (checkArr.size() &gt; 0) {</span>
+				// already scheduled (conflicted)
+<span class="fc" id="L163">				throw new TimeConflictException(&quot;Employee ID(&quot;+getEmployeeID()+&quot;) already has a meeting at the same time&quot;);  </span>
+			}
+				
+		} else {
+<span class="nc" id="L167">			throw new TimeConflictException(&quot;Date and Time are not valid&quot;);				</span>
+		}
+		
+<span class="fc" id="L170">	}</span>
+	
+	/**
+	 * Check if employee conflicts with scheduled meeting for new vacation time
+	 * @param vacationStartDate  (MMDDYYYY)
+	 * @param vacationEndDate    (MMDDYYYY)
+	 * @throws TimeConflictException
+	 */	
+	public void checkAvailableWithMeeting(String vacationStartDate, String vacationEndDate) throws TimeConflictException  {
+		
+<span class="fc" id="L180">		Command cmd = new Command();</span>
+		
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">		if (getEmployeeID() == null) {</span>
+<span class="nc" id="L183">			throw new TimeConflictException(&quot;Employee ID is not set&quot;);</span>
+		}
+		
+<span class="pc bpc" id="L186" title="2 of 4 branches missed.">		if (cmd.checkDateValid(vacationStartDate) &amp;&amp; cmd.checkDateValid(vacationEndDate)) </span>
+		{			
+<span class="fc" id="L188">			Sql db = new Sql();</span>
+<span class="fc" id="L189">			String infoQuery = &quot;SELECT meetID FROM TB_MEETING TA&quot;</span>
+								+ &quot; WHERE substr(meetDATE,5,4)||substr(meetDATE,0,3)||substr(meetDATE,3,2)  &quot;
+								+ &quot;  	  between ? and ? &quot;
+								+ &quot;  	  and exists &quot;
+								+ &quot;( SELECT 'X' FROM TB_ATTENDEE WHERE TA.meetID = meetID and employeeID = ? ) &quot;;
+								
+								
+<span class="fc" id="L196">			db.setQuery(infoQuery);</span>
+			
+			/* DATE format modify MMddyyyy - &gt; yyyyMMdd */
+<span class="fc" id="L199">			vacationStartDate = CommonUtil.dateFormat(vacationStartDate, &quot;MMddyyyy&quot;, &quot;yyyyMMdd&quot;);</span>
+<span class="fc" id="L200">			vacationEndDate   = CommonUtil.dateFormat(vacationEndDate,   &quot;MMddyyyy&quot;, &quot;yyyyMMdd&quot;);</span>
+			
+<span class="fc" id="L202">			db.setParameter(1, vacationStartDate);</span>
+<span class="fc" id="L203">			db.setParameter(2, vacationEndDate);</span>
+<span class="fc" id="L204">			db.setParameter(3, getEmployeeID());			</span>
+						
+<span class="fc" id="L206">			JSONArray checkArr = db.read();	</span>
+			
+<span class="fc" id="L208">			db.close();</span>
+		//	System.out.println(checkArr.size());
+<span class="fc bfc" id="L210" title="All 2 branches covered.">			if (checkArr.size() &gt; 0) {</span>
+<span class="fc" id="L211">				throw new TimeConflictException(&quot;Employee ID(&quot;+getEmployeeID()+&quot;) has a meeting during such vacation.&quot;); </span>
+			}
+				
+		} else {
+<span class="nc" id="L215">			throw new TimeConflictException(&quot;Date and Time are not valid&quot;);	</span>
+		}		
+<span class="fc" id="L217">	}</span>
+	
+	/**
+	 * Check if employee conflicts with scheduled vacation for new meeting date 
+	 * @param meetDate  (MMDDYYYY)
+	 * @throws TimeConflictException
+	 */	
+	public void checkAvailableWithVacation(String meetDate) throws TimeConflictException {
+		
+<span class="fc" id="L226">		Command cmd = new Command();</span>
+		
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">		if (getEmployeeID() == null) {</span>
+<span class="nc" id="L229">			throw new TimeConflictException(&quot;Employee ID is not set&quot;);</span>
+		}
+		
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">		if (cmd.checkDateValid(meetDate)) </span>
+		{			
+<span class="fc" id="L234">			Sql db = new Sql();</span>
+<span class="fc" id="L235">			String infoQuery = &quot;SELECT startDATE, endDATE FROM TB_VACATION &quot;</span>
+								+ &quot;  WHERE employeeID = ? and   &quot;
+								+ &quot;  ? between  substr(startDATE,5,4)||substr(startDATE,0,3)||substr(startDATE,3,2) &quot;
+								+ &quot;  	   and  substr(endDATE,5,4)||substr(endDATE,0,3)||substr(endDATE,3,2) &quot;;
+<span class="fc" id="L239">			db.setQuery(infoQuery);</span>
+			/* DATE format modify MMddyyyy - &gt; yyyyMMdd */
+<span class="fc" id="L241">			meetDate = CommonUtil.dateFormat(meetDate, &quot;MMddyyyy&quot;, &quot;yyyyMMdd&quot;);</span>
+<span class="fc" id="L242">			db.setParameter(1, getEmployeeID());</span>
+<span class="fc" id="L243">			db.setParameter(2, meetDate);		</span>
+						
+<span class="fc" id="L245">			JSONArray checkArr = db.read();	</span>
+			
+<span class="fc" id="L247">			db.close();</span>
+		//	System.out.println(checkArr.size());
+<span class="fc bfc" id="L249" title="All 2 branches covered.">			if (checkArr.size() &gt; 0) {</span>
+<span class="fc" id="L250">				throw new TimeConflictException(&quot;Employee ID(&quot;+getEmployeeID()+&quot;) has a vacation at the same day.&quot;); </span>
+			}
+			
+		} else {
+<span class="nc" id="L254">			throw new TimeConflictException(&quot;Date is not valid&quot;);</span>
+		}			
+<span class="fc" id="L256">	}</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

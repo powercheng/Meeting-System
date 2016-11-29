@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>AddMeeting.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">controller</a> &gt; <span class="el_source">AddMeeting.java</span></div><h1>AddMeeting.java</h1><pre class="source lang-java linenums">package controller;
+
+import java.util.LinkedList;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import common.CommonUtil;
+import exceptions.TimeConflictException;
+import exceptions.AddMeetingException;
+import model.Employee;
+import model.Meeting;
+import model.Room;
+import model.Sql;
+/**
+ * Gethering and analyzing passing add-meeting information and save into database
+ * @author group7
+ */
+public class AddMeeting extends Command {
+	private Meeting meeting;
+	private JSONArray command_array;
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
+	public AddMeeting(JSONArray command_array) {
+<span class="fc" id="L27">		super();</span>
+<span class="fc" id="L28">		this.command_array = command_array;</span>
+<span class="fc" id="L29">		this.meeting = new Meeting();</span>
+<span class="fc" id="L30">	}</span>
+	/**
+	 * analyze incoming commands and check validity, finally save meeting information into database
+	 */
+	@Override
+	public void execute() throws AddMeetingException {
+		// TODO Auto-generated method stub	
+<span class="pc bpc" id="L37" title="2 of 4 branches missed.">		if(command_array == null || command_array.isEmpty()) {</span>
+<span class="nc" id="L38">			throw new AddMeetingException(&quot;No arguments for adding meeting command&quot;);</span>
+		}
+<span class="fc bfc" id="L40" title="All 2 branches covered.">		for(int i = 0; i &lt; command_array.size(); i++) {</span>
+<span class="fc" id="L41">			JSONObject command_json = (JSONObject) command_array.get(i);</span>
+<span class="fc" id="L42">			String name = (String) command_json.get(&quot;name&quot;);</span>
+<span class="fc" id="L43">			String value = (String) command_json.get(&quot;value&quot;);</span>
+<span class="pc bpc" id="L44" title="6 of 19 branches missed.">			switch(name) {</span>
+				case &quot;date&quot; :
+<span class="fc bfc" id="L46" title="All 2 branches covered.">					if(checkDateValid(value)){</span>
+<span class="fc" id="L47">						meeting.setDate(value);</span>
+<span class="fc" id="L48">						break;</span>
+					} else {						
+<span class="fc" id="L50">						throw new AddMeetingException(&quot;invalid date (&quot;+value+&quot;) for adding meeting command&quot;);												</span>
+					}
+				case &quot;start-time&quot; :					
+<span class="fc bfc" id="L53" title="All 2 branches covered.">					if(checkTimeValid(value)){</span>
+<span class="fc" id="L54">						meeting.setStartTime(value);</span>
+<span class="fc" id="L55">						break;</span>
+					} else {
+<span class="fc" id="L57">						throw new AddMeetingException(&quot;invalid time(&quot;+value+&quot;) for adding meeting command&quot;);</span>
+					}
+				case &quot;end-time&quot; :
+<span class="fc bfc" id="L60" title="All 2 branches covered.">					if(checkTimeValid(value)){</span>
+<span class="fc" id="L61">						meeting.setEndTime(value);</span>
+<span class="fc" id="L62">						break;</span>
+					} else {
+<span class="fc" id="L64">						throw new AddMeetingException(&quot;invalid time (&quot;+value+&quot;) for adding meeting command&quot;);</span>
+					}
+				case &quot;room-id&quot; :
+<span class="fc bfc" id="L67" title="All 2 branches covered.">					if(checkRoomIdValid(value)){</span>
+<span class="fc" id="L68">						meeting.setRoomId(value);					</span>
+<span class="fc" id="L69">						break;</span>
+					} else {
+<span class="fc" id="L71">						throw new AddMeetingException(&quot;invalid room id (&quot;+value+&quot;) for adding meeting command&quot;);</span>
+					}
+				case &quot;description&quot; :					
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">					if(checkStrLenValid(value)){</span>
+<span class="fc" id="L75">						meeting.setDescription(value);				</span>
+<span class="fc" id="L76">						break;</span>
+					} else {
+<span class="nc" id="L78">						throw new AddMeetingException(&quot;description is too long for adding meeting command&quot;);</span>
+					}
+				case &quot;attendee&quot; :					
+<span class="fc bfc" id="L81" title="All 2 branches covered.">					if(checkEmpolyeeIdValid(value)){						</span>
+<span class="fc" id="L82">						meeting.addAttendee(value);	</span>
+<span class="fc" id="L83">						break;</span>
+					} else {
+<span class="fc" id="L85">						throw new AddMeetingException(&quot;invalid attendee id (&quot;+value+&quot;) for adding meeting command&quot;);</span>
+					}
+				default :
+<span class="fc" id="L88">					throw new AddMeetingException(&quot;invalid arguments : &quot; + name + &quot;for adding meeting&quot;);</span>
+			}			
+		}
+		
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">		if(!checkMeetingArgument()) {			</span>
+<span class="nc" id="L93">			throw new AddMeetingException(&quot;Missing argumets for adding meeting command&quot;);</span>
+		} 
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">		if(!checkTimeConflict(meeting.getStartTime(),meeting.getEndTime())){</span>
+<span class="nc" id="L96">			throw new AddMeetingException(&quot;end time before start time&quot;);</span>
+		}
+<span class="fc" id="L98">		ableToAttendWithoutConflict();</span>
+		
+<span class="fc" id="L100">		String meetingID = CommonUtil.getNextMeetID();</span>
+<span class="fc" id="L101">		meeting.setMeetingId(meetingID);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">		if (!insertMeetingInfo(this.meeting)) {</span>
+<span class="nc" id="L103">			throw new AddMeetingException(&quot;adding meeting to database is failed for adding meeting command&quot;);</span>
+		} 		
+<span class="fc" id="L105">	}</span>
+	/**
+	 * check if necessary variables are valid for adding a meeting
+	 * @return
+	 */
+	private boolean checkMeetingArgument() {
+		// TODO Auto-generated method stub
+<span class="pc bpc" id="L112" title="3 of 4 branches missed.">		if(meeting.getAttendee() == null &amp;&amp; meeting.getAttendee().isEmpty() ||</span>
+<span class="pc bpc" id="L113" title="3 of 4 branches missed.">		   meeting.getDate() == null &amp;&amp; meeting.getDate().isEmpty()	||</span>
+<span class="pc bpc" id="L114" title="3 of 4 branches missed.">		   meeting.getDescription() == null &amp;&amp; meeting.getDescription().isEmpty() ||</span>
+<span class="pc bpc" id="L115" title="3 of 4 branches missed.">		   meeting.getClass() == null &amp;&amp; meeting.getDate().isEmpty() ||</span>
+<span class="pc bpc" id="L116" title="3 of 4 branches missed.">		   meeting.getStartTime() == null &amp;&amp; meeting.getAttendee().isEmpty() ||</span>
+<span class="pc bpc" id="L117" title="3 of 4 branches missed.">		   meeting.getEndTime() == null &amp;&amp; meeting.getEndTime().isEmpty())</span>
+		{			
+<span class="nc" id="L119">			return false;</span>
+		} else {
+<span class="fc" id="L121">			return true;</span>
+		}
+		
+	}
+	
+	/**
+	 * check if meeting date has a conflict with room schedules, holiday, and attendee's schedules
+	 * @return
+	 */
+	public void ableToAttendWithoutConflict() throws AddMeetingException {
+		
+		// 1. first check room available
+<span class="fc" id="L133">		Room room = new Room();</span>
+<span class="fc" id="L134">		room.setRoomID(meeting.getRoomId());</span>
+		
+		try {
+<span class="fc" id="L137">			room.roomAvailable(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());</span>
+<span class="fc" id="L138">		} catch (TimeConflictException tce) {</span>
+<span class="fc" id="L139">			throw new AddMeetingException(tce.getMessage() + &quot;for adding meeting command&quot;);</span>
+		}
+		// 2. check holiday
+<span class="fc" id="L142">		AddHoliday holi = new AddHoliday();		</span>
+		try {
+<span class="fc" id="L144">			holi.checkAvailableWithHoliday(meeting.getDate());			</span>
+<span class="pc" id="L145">		} catch (TimeConflictException tce) {</span>
+<span class="nc" id="L146">			throw new AddMeetingException(tce.getMessage() + &quot;for adding meeting command&quot;);			</span>
+		}		
+		// 3. check all attendees' meeting and vacation date
+<span class="fc" id="L149">		LinkedList&lt;String&gt; attendList = meeting.getAttendee();</span>
+		
+<span class="fc bfc" id="L151" title="All 2 branches covered.">		for (int i=0;i&lt;attendList.size();i++) {</span>
+			
+<span class="fc" id="L153">			Employee emp = new Employee();</span>
+<span class="fc" id="L154">			emp.setEmployeeID((String) attendList.get(i));			</span>
+
+			/*check meeting*/			
+			try {
+<span class="fc" id="L158">				emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());</span>
+<span class="fc" id="L159">			} catch (TimeConflictException tce) {</span>
+<span class="fc" id="L160">				throw new AddMeetingException(tce.getMessage() + &quot;for adding meeting command&quot;);</span>
+			}			
+			
+			/*check vacation*/
+			try { 
+<span class="fc" id="L165">				emp.checkAvailableWithVacation(meeting.getDate());</span>
+<span class="fc" id="L166">			} catch (TimeConflictException tce) {</span>
+<span class="fc" id="L167">				throw new AddMeetingException(tce.getMessage() + &quot;for adding meeting command&quot;);</span>
+			}			
+		}		
+<span class="fc" id="L170">	}</span>
+	/**
+	 * Insert final checked meeting information into database
+	 * @param minfo
+	 * @return
+	 */
+	public boolean insertMeetingInfo(Meeting minfo) {
+		
+<span class="fc" id="L178">		boolean bSuccess = false;	</span>
+		
+<span class="fc" id="L180">		String insMeetQuery = &quot;INSERT INTO TB_MEETING(meetID, meetDATE, startTIME, endTIME, description, roomID) &quot;</span>
+							+ &quot; VALUES (?, ?, ?, ?, ?, ?)&quot;;
+		
+<span class="fc" id="L183">		String insAttendeeQuery = &quot;INSERT INTO TB_ATTENDEE(meetID, employeeID) &quot;</span>
+							+ &quot; VALUES (?, ?)&quot;;
+		
+<span class="fc" id="L186">		Sql db = new Sql();		</span>
+<span class="fc" id="L187">		db.setQuery(insMeetQuery);</span>
+<span class="fc" id="L188">		db.setParameter(1, minfo.getMeetingId());</span>
+<span class="fc" id="L189">		db.setParameter(2, minfo.getDate());</span>
+<span class="fc" id="L190">		db.setParameter(3, minfo.getStartTime());</span>
+<span class="fc" id="L191">		db.setParameter(4, minfo.getEndTime());</span>
+<span class="fc" id="L192">		db.setParameter(5, minfo.getDescription());</span>
+<span class="fc" id="L193">		db.setParameter(6, minfo.getRoomId());</span>
+<span class="fc" id="L194">		int n = db.write();</span>
+		/* if insMeetQuery is successful */
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">		if (n &gt; 0) {</span>
+<span class="fc" id="L197">			LinkedList&lt;String&gt; attendList = minfo.getAttendee();			</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">			for (int i=0;i&lt;attendList.size();i++) {</span>
+<span class="fc" id="L199">				db.setQuery(insAttendeeQuery);</span>
+<span class="fc" id="L200">				db.setParameter(1, minfo.getMeetingId());</span>
+<span class="fc" id="L201">				db.setParameter(2, (String) attendList.get(i));</span>
+<span class="fc" id="L202">				db.write();</span>
+			}
+<span class="fc" id="L204">			bSuccess = true;</span>
+		}
+<span class="fc" id="L206">		db.close();</span>
+		
+<span class="fc" id="L208">		return bSuccess;		</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

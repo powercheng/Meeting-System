@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>CancelVacation.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">controller</a> &gt; <span class="el_source">CancelVacation.java</span></div><h1>CancelVacation.java</h1><pre class="source lang-java linenums">package controller;
+
+import model.Sql;
+import model.Vacation;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import exceptions.CancelVacationException;
+
+/**
+ * Cancel employee's scheduled vacation
+ * @author group7
+ *
+ */
+public class CancelVacation extends Command {
+	
+	private Vacation vacation;	
+	private JSONArray command_array;
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
+	public CancelVacation(JSONArray command_array) {
+<span class="fc" id="L25">		super();</span>
+<span class="fc" id="L26">		this.command_array = command_array;</span>
+<span class="fc" id="L27">		this.vacation = new Vacation();</span>
+<span class="fc" id="L28">	}</span>
+	/**
+	 * check parameters validity and deleting passing vacation information 
+	 */
+	@Override
+	public void execute() throws CancelVacationException {
+		// TODO Auto-generated method stub	
+<span class="pc bpc" id="L35" title="1 of 4 branches missed.">		if(command_array == null || command_array.isEmpty()) {</span>
+<span class="fc" id="L36">			throw new CancelVacationException(&quot;No argument for cancel-vacation command&quot;);</span>
+		}
+<span class="fc bfc" id="L38" title="All 2 branches covered.">		for(int i = 0; i &lt; command_array.size(); i++) {</span>
+<span class="fc" id="L39">			JSONObject command_json = (JSONObject) command_array.get(i);</span>
+<span class="fc" id="L40">			String name = (String) command_json.get(&quot;name&quot;);</span>
+<span class="fc" id="L41">			String value = (String) command_json.get(&quot;value&quot;);</span>
+<span class="pc bpc" id="L42" title="1 of 4 branches missed.">			switch(name) {</span>
+				case &quot;employee-id&quot; :
+<span class="fc bfc" id="L44" title="All 2 branches covered.">					if(checkEmpolyeeIdValid(value)){</span>
+<span class="fc" id="L45">						vacation.setEmpolyeeId(value);</span>
+<span class="fc" id="L46">						break;</span>
+					} else {
+<span class="fc" id="L48">						throw new CancelVacationException(&quot;invalid empolyee id(&quot;+value+&quot;) for cancel-vacation command&quot;);</span>
+					}
+				default :
+<span class="fc" id="L51">					throw new CancelVacationException(&quot;invalid arguments : &quot; + name + &quot;for cancel-vacation&quot;);					</span>
+			}			
+		}
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">		if ( vacation.getEmpolyeeId() == null ) {</span>
+<span class="nc" id="L55">			throw new CancelVacationException(&quot;Missing vacation id for cancel vacation command&quot;);</span>
+		}	
+<span class="fc bfc" id="L57" title="All 2 branches covered.">		if (!cancelVacationInfo(this.vacation)) {</span>
+<span class="fc" id="L58">			throw new CancelVacationException(&quot;cancel vacation to database is failed for cancel vacation command&quot;);</span>
+		}	
+<span class="fc" id="L60">	}</span>
+	/**
+	 * Delete the passing vacation information from database
+	 * @param vinfo
+	 * @return
+	 */
+	public boolean cancelVacationInfo(Vacation vinfo) {
+		
+<span class="fc" id="L68">		boolean bSuccess = false;</span>
+		
+<span class="fc" id="L70">		String delVacQuery = &quot;DELETE FROM TB_VACATION WHERE employeeID = ? &quot;;</span>
+		
+<span class="fc" id="L72">		Sql db = new Sql();		</span>
+<span class="fc" id="L73">		db.setQuery(delVacQuery);</span>
+<span class="fc" id="L74">		db.setParameter(1, vinfo.getEmpolyeeId());</span>
+		
+<span class="fc" id="L76">		int n = db.write(); </span>
+		
+<span class="fc bfc" id="L78" title="All 2 branches covered.">		if (n &gt; 0) </span>
+<span class="fc" id="L79">			bSuccess = true;</span>
+		
+<span class="fc" id="L81">		db.close();</span>
+		
+<span class="fc" id="L83">		return bSuccess;		</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

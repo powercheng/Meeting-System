@@ -12,6 +12,8 @@ import model.Sql;
  * @author group7
  */
 public class ExternalDBImporter {
+	
+	public boolean[] importStatus = {false, false};
 /*	
 	public static void main(String[] args) {		
 		ExternalDBImporter ee = new ExternalDBImporter();
@@ -60,7 +62,8 @@ public class ExternalDBImporter {
 					db.setParameter(5, title);
 					db.setParameter(6, totalVacationDays);
 					db.write();					
-				}						
+				}	
+				importStatus[0] = true;
 				System.out.println("## EmployeeDB Sync Success");
 				
 			} catch (Exception e) {
@@ -107,7 +110,7 @@ public class ExternalDBImporter {
 					db.setParameter(4, occupancy);
 					db.write();		
 				}	
-				
+				importStatus[1] = true;
 				System.out.println("## RoomDB Sync Success");
 				
 			} catch (Exception e) {

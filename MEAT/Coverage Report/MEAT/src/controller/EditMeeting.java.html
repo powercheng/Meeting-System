@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>EditMeeting.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">controller</a> &gt; <span class="el_source">EditMeeting.java</span></div><h1>EditMeeting.java</h1><pre class="source lang-java linenums">package controller;
+
+import model.Employee;
+import model.Meeting;
+import model.Room;
+import model.Sql;
+
+import java.util.LinkedList;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import common.CommonUtil;
+import common.SysConfig;
+import exceptions.EditMeetingException;
+import exceptions.TimeConflictException;
+
+/**
+ * Edit and change the scheduled meeting information
+ * @author group7
+  */
+public class EditMeeting extends Command {
+	
+	private Meeting meeting;
+	private JSONArray command_array;
+	private String atteedeeOption;  //ADD or REMOVE 
+	private LinkedList&lt;String&gt; checkSkipedAttendeeList;  // unchanged attendees no need to check schedules 
+	
+	/* Changing category tracking */
+<span class="fc" id="L30">	boolean timeChanged = false;</span>
+<span class="fc" id="L31">	boolean roomChanged = false;</span>
+<span class="fc" id="L32">	boolean attendeeChanged = false;</span>
+	/**
+	 * Constructor for script running mode, particularly meeting detail  
+	 * @param command_array
+	 */
+	public EditMeeting(JSONArray command_array) {
+<span class="fc" id="L38">		super();</span>
+<span class="fc" id="L39">		this.command_array = command_array;</span>
+<span class="fc" id="L40">		this.meeting = new Meeting();</span>
+<span class="fc" id="L41">		this.checkSkipedAttendeeList = new LinkedList&lt;String&gt;();  // add JUNIT</span>
+<span class="fc" id="L42">	}</span>
+	/**
+	 * Constructor for script running mode, particularly attendee adding and removing 
+	 * @param command_array
+	 * @param attendeeOption
+	 */
+	public EditMeeting(JSONArray command_array, String attendeeOption) {
+<span class="fc" id="L49">		super();</span>
+<span class="fc" id="L50">		this.command_array = command_array;</span>
+<span class="fc" id="L51">		this.meeting = new Meeting();</span>
+<span class="fc" id="L52">		this.atteedeeOption = attendeeOption;</span>
+<span class="fc" id="L53">		this.checkSkipedAttendeeList = new LinkedList&lt;String&gt;();  // add JUNIT</span>
+<span class="fc" id="L54">	}</span>
+	/**
+	 * Check and verify passing commands data, and update old one into new information
+	 */
+	@Override
+	public void execute() throws EditMeetingException {
+		// TODO Auto-generated method stub	
+<span class="pc bpc" id="L61" title="2 of 4 branches missed.">		if(command_array == null || command_array.isEmpty()) {</span>
+<span class="nc" id="L62">			throw new EditMeetingException(&quot;No arguments for edit-meeting command&quot;);</span>
+		}
+<span class="fc bfc" id="L64" title="All 2 branches covered.">		for(int i = 0; i &lt; command_array.size(); i++) {</span>
+<span class="fc" id="L65">			JSONObject command_json = (JSONObject) command_array.get(i);</span>
+<span class="fc" id="L66">			String name = (String) command_json.get(&quot;name&quot;);</span>
+<span class="fc" id="L67">			String value = (String) command_json.get(&quot;value&quot;);</span>
+<span class="pc bpc" id="L68" title="7 of 22 branches missed.">			switch(name) {</span>
+				case &quot;meeting-id&quot; :
+<span class="fc bfc" id="L70" title="All 2 branches covered.">					if(checkMeetingIdValid(value)){</span>
+						/*current db information setting */
+<span class="fc" id="L72">						meeting.getMeetingInfo(value);</span>
+						//checkSkipedAttendeeList = meeting.getAttendee(); 
+<span class="fc bfc" id="L74" title="All 2 branches covered.">						for (String attendId : meeting.getAttendee()) {</span>
+<span class="fc" id="L75">							checkSkipedAttendeeList.add(attendId);</span>
+						} 
+<span class="fc" id="L77">						break;</span>
+					} else {						
+<span class="fc" id="L79">						throw new EditMeetingException(&quot;edit-meeting : meeting-id (&quot;+value+&quot;) not in db&quot;);</span>
+					}
+				case &quot;date&quot; :
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">					if(checkDateValid(value)){</span>
+<span class="fc" id="L83">						meeting.setDate(value);  // changing current date</span>
+<span class="fc" id="L84">						timeChanged = true;</span>
+<span class="fc" id="L85">						break;</span>
+					} else {						
+<span class="nc" id="L87">						throw new EditMeetingException(&quot;invalid date (&quot;+value+&quot;) for edit-meeting command&quot;);</span>
+					}
+				case &quot;start-time&quot; :					
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">					if(checkTimeValid(value)){</span>
+<span class="fc" id="L91">						meeting.setStartTime(value);  // changing start time</span>
+<span class="fc" id="L92">						timeChanged = true;</span>
+<span class="fc" id="L93">						break;</span>
+					} else {
+<span class="nc" id="L95">						throw new EditMeetingException(&quot;invalid time(&quot;+value+&quot;) for edit-meeting command&quot;);</span>
+					}
+				case &quot;end-time&quot; :
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">					if(checkTimeValid(value)){</span>
+<span class="fc" id="L99">						meeting.setEndTime(value);   // changing end time</span>
+<span class="fc" id="L100">						timeChanged = true;</span>
+<span class="fc" id="L101">						break;</span>
+					} else {
+<span class="nc" id="L103">						throw new EditMeetingException(&quot;invalid time (&quot;+value+&quot;) for edit-meeting command&quot;);</span>
+					}
+				case &quot;room-id&quot; :
+<span class="fc bfc" id="L106" title="All 2 branches covered.">					if(checkRoomIdValid(value)){</span>
+<span class="fc" id="L107">						meeting.setRoomId(value);		// changing room id		</span>
+<span class="fc" id="L108">						roomChanged = true;</span>
+<span class="fc" id="L109">						break;</span>
+					} else {
+<span class="fc" id="L111">						throw new EditMeetingException(&quot;invalid room id (&quot;+value+&quot;) for edit-meeting command&quot;);</span>
+					}
+				case &quot;description&quot; :					
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">					if(checkStrLenValid(value)){</span>
+<span class="fc" id="L115">						meeting.setDescription(value);		// changing description		</span>
+<span class="fc" id="L116">						break;</span>
+					} else {
+<span class="nc" id="L118">						throw new EditMeetingException(&quot;description is too long for edit-meeting command&quot;);</span>
+					}
+				case &quot;attendee&quot; :					
+<span class="fc bfc" id="L121" title="All 2 branches covered.">					if(checkEmpolyeeIdValid(value)) {</span>
+<span class="fc" id="L122">						String regex = &quot;,|\\s+&quot;;</span>
+<span class="fc" id="L123">				        String[] attendees = value.split(regex);</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">				        for (String attendee : attendees) {</span>
+				        	/* if blank or null attendee contains, continues */
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">							if (CommonUtil.nullTrim(attendee).equals(&quot;&quot;)) continue;</span>
+							
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">							if (this.atteedeeOption != null) {</span>
+								// Only attendee add option
+<span class="fc bfc" id="L130" title="All 2 branches covered.">								if (this.atteedeeOption.equals(SysConfig.addTag)) {</span>
+<span class="fc" id="L131">									LinkedList&lt;String&gt; lis = meeting.getAttendee();</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">									for (int k = 0; k &lt; lis.size(); k++) {</span>
+<span class="fc" id="L133">										String attendeeID = (String) lis.get(k);</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">										if (attendeeID.equalsIgnoreCase(attendee)) { // same</span>
+																					// person
+																					// already
+																					// exsits
+<span class="fc" id="L138">											throw new EditMeetingException(&quot;empolyee id (&quot;</span>
+<span class="fc" id="L139">															+ value</span>
+<span class="fc" id="L140">															+ &quot;) already exists in the meeting attendees for edit-meeting command&quot; );</span>
+										}
+									}
+<span class="fc" id="L143">									meeting.addAttendee(attendee);</span>
+									// Only attendee remove option
+<span class="fc" id="L145">								} else if (this.atteedeeOption</span>
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">										.equals(SysConfig.removeTag)) {</span>
+<span class="fc" id="L147">									LinkedList&lt;String&gt; lis = meeting.getAttendee();</span>
+<span class="fc" id="L148">									LinkedList&lt;String&gt; modified_lis = new LinkedList&lt;String&gt;();</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">									for (int k = 0; k &lt; lis.size(); k++) {</span>
+<span class="fc" id="L150">										String attendeeID = (String) lis.get(k);</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">										if (!attendeeID.equalsIgnoreCase(attendee)) { // if</span>
+																					// different
+<span class="fc" id="L153">											modified_lis.add(attendeeID);</span>
+										}
+									}
+									/* again modified list mapping to meeting */
+<span class="fc" id="L157">									meeting.setAttendee(modified_lis);</span>
+								}
+<span class="fc" id="L159">							}</span>
+							/* without attendee option, just add attendee */
+							else {
+<span class="nc" id="L162">								meeting.addAttendee(attendee);</span>
+							}
+				        }
+<span class="fc" id="L165">						attendeeChanged = true;</span>
+<span class="fc" id="L166">						break;</span>
+					}
+					else {
+<span class="fc" id="L169">						throw new EditMeetingException(&quot;invalid empolyee id (&quot;+value+&quot;) for edit-meeting&quot;);</span>
+					}
+				default :
+<span class="fc" id="L172">					throw new EditMeetingException(&quot;invalid arguments : &quot; + name + &quot;for edit-meeting&quot;);</span>
+			}			
+		}
+		
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">		if(meeting.getMeetingId() == null){		</span>
+<span class="nc" id="L177">			throw new EditMeetingException(&quot;Missing meeting id for edit meeting command&quot;);</span>
+		}
+			/* check room and employee schedule */
+<span class="fc" id="L180">		ableToAttendWithoutConflict();			</span>
+			/* Databse writing */		
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">		if (!updateMeetingInfo(this.meeting)) {</span>
+				//System.out.println(&quot;edit-meeting : meeting ID(&quot;+meeting.getMeetingId()+&quot;) is failed&quot;);
+<span class="nc" id="L184">			throw new EditMeetingException(&quot;editing meeting to database is failed for edit meeting command&quot;);</span>
+		}					
+<span class="fc" id="L186">	}</span>
+	/**
+	 * Check if new meeting date is available for another meeting date, company's holiday, and ateendee's schedules.
+	 * @return
+	 */
+	public void ableToAttendWithoutConflict() throws EditMeetingException{
+		
+		// 1. first check room available
+<span class="fc bfc" id="L194" title="All 4 branches covered.">		if (timeChanged || roomChanged) {			</span>
+<span class="fc" id="L195">			Room room = new Room();</span>
+<span class="fc" id="L196">			room.setRoomID(meeting.getRoomId());</span>
+			try {
+<span class="fc" id="L198">				room.roomAvailable(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());</span>
+<span class="fc" id="L199">			} catch (TimeConflictException tce) {</span>
+<span class="fc" id="L200">				throw new EditMeetingException(tce.getMessage() + &quot;for edit meeting command&quot;);</span>
+			}			
+		}				
+		// 2. check holiday
+<span class="fc" id="L204">		AddHoliday holi = new AddHoliday();		</span>
+		try {
+<span class="fc" id="L206">			holi.checkAvailableWithHoliday(meeting.getDate());			</span>
+<span class="pc" id="L207">		} catch (TimeConflictException tce) {</span>
+<span class="nc" id="L208">			throw new EditMeetingException(tce.getMessage() + &quot;for edit meeting command&quot;);			</span>
+		}				
+		// 3. check all attendees' meeting and vacation date
+<span class="fc bfc" id="L211" title="All 4 branches covered.">		if (timeChanged || attendeeChanged) {</span>
+			
+<span class="fc" id="L213">			LinkedList&lt;String&gt; attendList = meeting.getAttendee();</span>
+			
+<span class="fc bfc" id="L215" title="All 2 branches covered.">			for (int i=0;i&lt;attendList.size();i++) {				</span>
+<span class="fc" id="L216">				Employee emp = new Employee();</span>
+<span class="fc" id="L217">				emp.setEmployeeID((String) attendList.get(i));</span>
+				
+				/*check meeting*/
+				try {
+					// only new attendees check					
+<span class="fc bfc" id="L222" title="All 2 branches covered.">					if (!checkSkipedAttendeeList.contains((String) attendList.get(i))) {</span>
+<span class="fc" id="L223">						emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());</span>
+					}
+<span class="pc" id="L225">				} catch (TimeConflictException tce) {</span>
+<span class="nc" id="L226">					throw new EditMeetingException(tce.getMessage() + &quot;for edit meeting command&quot;);</span>
+				}								
+				/*check vacation*/
+				try {
+					// only new attendees check
+<span class="fc bfc" id="L231" title="All 2 branches covered.">					if (!checkSkipedAttendeeList.contains((String) attendList.get(i))) {</span>
+<span class="fc" id="L232">						emp.checkAvailableWithVacation(meeting.getDate());</span>
+					}
+<span class="fc" id="L234">				} catch (TimeConflictException tce) {</span>
+<span class="fc" id="L235">					throw new EditMeetingException(tce.getMessage() + &quot;for edit meeting command&quot;);</span>
+				}				
+			}
+		}		
+		
+<span class="fc" id="L240">	}</span>
+	/**
+	 * Update the gathering new meeting information into the database
+	 * @param minfo
+	 * @return
+	 */
+	public boolean updateMeetingInfo(Meeting minfo) {
+		
+<span class="fc" id="L248">		boolean bSuccess = false;	</span>
+		
+<span class="fc" id="L250">		String uptMeetQuery = &quot;UPDATE TB_MEETING SET meetDATE = ?, startTIME = ?, endTIME = ?, &quot;</span>
+							+ &quot;description = ?, roomID = ? WHERE meetID = ?&quot;;
+		
+<span class="fc" id="L253">		String delAttendeeQuery = &quot;DELETE FROM TB_ATTENDEE WHERE meetID = ? &quot;;</span>
+<span class="fc" id="L254">		String insAttendeeQuery = &quot;INSERT INTO TB_ATTENDEE(meetID, employeeID) VALUES (?,?) &quot;;</span>
+		
+<span class="fc" id="L256">		Sql db = new Sql();		</span>
+<span class="fc" id="L257">		db.setQuery(uptMeetQuery);		</span>
+<span class="fc" id="L258">		db.setParameter(1, minfo.getDate());</span>
+<span class="fc" id="L259">		db.setParameter(2, minfo.getStartTime());</span>
+<span class="fc" id="L260">		db.setParameter(3, minfo.getEndTime());</span>
+<span class="fc" id="L261">		db.setParameter(4, minfo.getDescription());</span>
+<span class="fc" id="L262">		db.setParameter(5, minfo.getRoomId());</span>
+<span class="fc" id="L263">		db.setParameter(6, minfo.getMeetingId());</span>
+<span class="fc" id="L264">		int n = db.write();</span>
+		/* if insMeetQuery is successful */
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">		if (n &gt; 0) {</span>
+			/* First previous data delete!*/
+<span class="fc" id="L268">			db.setQuery(delAttendeeQuery);</span>
+<span class="fc" id="L269">			db.setParameter(1, minfo.getMeetingId());</span>
+<span class="fc" id="L270">			n = db.write();</span>
+			/* New Data insert */
+<span class="fc" id="L272">			LinkedList&lt;String&gt; lis = minfo.getAttendee();</span>
+<span class="fc bfc" id="L273" title="All 2 branches covered.">			for (int i=0;i&lt;lis.size();i++) {</span>
+<span class="fc" id="L274">				db.setQuery(insAttendeeQuery);	</span>
+<span class="fc" id="L275">				db.setParameter(1, minfo.getMeetingId());</span>
+<span class="fc" id="L276">				db.setParameter(2, (String) lis.get(i));	</span>
+			//	System.out.println(minfo.getMeetingId() + &quot;:&quot; + (String) lis.get(i));
+<span class="fc" id="L278">				db.write();</span>
+			}
+<span class="fc" id="L280">			bSuccess = true;</span>
+		}
+<span class="fc" id="L282">		db.close();</span>
+		
+<span class="fc" id="L284">		return bSuccess;		</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

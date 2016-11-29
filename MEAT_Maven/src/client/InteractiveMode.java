@@ -2,6 +2,7 @@ package client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.json.simple.JSONArray;
@@ -26,7 +27,11 @@ import controller.PrintScheduleRoom;
  */
 public class InteractiveMode {
 	
-    public static String inputOutput(String msg) {
+	public static JSONArray mocked_cmd_array; // for test oracle
+	public static InputStream mocked_std_stream;
+	public static boolean isTest = false;
+	
+	public static String inputOutput(String msg) {
         System.out.println(msg);
 	    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	    String str = "";
@@ -232,12 +237,13 @@ public class InteractiveMode {
 						break;
 					case 0:
 						System.out.println("System is terminated........");
-						System.exit(0); 
+						if (!Main.isTest) System.exit(0);   // when junit testing, no exit
 						break;				
 				}
         		if(command != null) {
         			CommandFactory factory = new CommandFactory();
         			factory.commandRun(name,command);
+        			mocked_cmd_array = command_array;  // for external access to internal cmd array 
 					//System.out.println("### command : " + result);				
 				}	
         	} else {
@@ -247,7 +253,10 @@ public class InteractiveMode {
         } catch (NumberFormatException e) {
         	System.out.println("Please enter a menu number from 0 - 11");
         }         
-        printMainMenu();
+        if (Main.isTest || isTest)
+        	;
+        else 
+        	printMainMenu();  // if not test mode, then return print menu
     }    
 	/**
 	 * Show message and capture user input from user interface
@@ -261,16 +270,20 @@ public class InteractiveMode {
 		String[] res = new String[strs.length];
 
 		try {
-			BufferedReader strin = new BufferedReader(new InputStreamReader(
-					System.in));
+			BufferedReader strin;
+			if (isTest)
+				strin = new BufferedReader(new InputStreamReader(mocked_std_stream));
+			else 
+				strin = new BufferedReader(new InputStreamReader(System.in));
+			
 			for (int i = 0; i < strs.length; i++) {
 				System.out.println(strs[i]);
-				res[i] = strin.readLine();
+				res[i] = strin.readLine();				
 				if(res[i].equalsIgnoreCase("q")){
 					printMainMenu();
 				}
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return res;

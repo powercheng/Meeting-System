@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>CancelMeeting.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">controller</a> &gt; <span class="el_source">CancelMeeting.java</span></div><h1>CancelMeeting.java</h1><pre class="source lang-java linenums">package controller;
+
+import model.Meeting;
+import model.Sql;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import exceptions.CancelMeetingException;
+/**
+ * This class is used to cancel the scheduled meeting
+ * @author group7
+ *
+ */
+public class CancelMeeting extends Command {
+	
+	private Meeting meeting;
+	private JSONArray command_array;
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
+	public CancelMeeting(JSONArray command_array) {
+<span class="fc" id="L24">		super();</span>
+<span class="fc" id="L25">		this.command_array = command_array;</span>
+<span class="fc" id="L26">		this.meeting = new Meeting();</span>
+<span class="fc" id="L27">	}</span>
+	/**
+	 * analyze the passing commands and check validity, finally insert passing data into database
+	 */
+	@Override
+	public void execute() throws CancelMeetingException {
+		// TODO Auto-generated method stub	
+<span class="pc bpc" id="L34" title="1 of 4 branches missed.">		if(command_array == null || command_array.isEmpty()) {</span>
+<span class="fc" id="L35">			throw new CancelMeetingException(&quot;No argument for cancel-meeting command&quot;);</span>
+		}
+		
+<span class="fc bfc" id="L38" title="All 2 branches covered.">		for(int i = 0; i &lt; command_array.size(); i++) {</span>
+<span class="fc" id="L39">			JSONObject command_json = (JSONObject) command_array.get(i);</span>
+<span class="fc" id="L40">			String name = (String) command_json.get(&quot;name&quot;);</span>
+<span class="fc" id="L41">			String value = (String) command_json.get(&quot;value&quot;);</span>
+<span class="pc bpc" id="L42" title="1 of 4 branches missed.">			switch(name) {</span>
+				case &quot;meeting-id&quot; :
+<span class="fc" id="L44">					meeting.setMeetingId(value);</span>
+<span class="fc" id="L45">					break;							</span>
+				default :
+<span class="fc" id="L47">					throw new CancelMeetingException(&quot;invalid arguments : &quot; + name + &quot;for cancel-meeting&quot;);</span>
+			}			
+		}
+		
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">		if ( meeting.getMeetingId() == null ) {</span>
+<span class="nc" id="L52">			throw new CancelMeetingException(&quot;Missing meeting id for cancel meeting command&quot;);</span>
+		}	
+<span class="fc bfc" id="L54" title="All 2 branches covered.">		if (!cancelMeetingInfo(this.meeting)) {</span>
+<span class="fc" id="L55">			throw new CancelMeetingException(&quot;cancel meeting to database is failed for cancel meeting command&quot;);</span>
+		}		
+<span class="fc" id="L57">	}</span>
+	/**
+	 * delete target meeting information from database
+	 * @param minfo
+	 * @return
+	 */
+	public boolean cancelMeetingInfo(Meeting minfo) {
+		
+<span class="fc" id="L65">		boolean bSuccess = false;</span>
+		
+<span class="fc" id="L67">		String delMeetQuery = &quot;DELETE FROM TB_MEETING WHERE meetID = ? &quot;;</span>
+		
+<span class="fc" id="L69">		String delAttendeeQuery = &quot;DELETE FROM TB_ATTENDEE WHERE meetID = ? &quot;;</span>
+		
+<span class="fc" id="L71">		Sql db = new Sql();		</span>
+<span class="fc" id="L72">		db.setQuery(delMeetQuery);</span>
+<span class="fc" id="L73">		db.setParameter(1, minfo.getMeetingId());		</span>
+<span class="fc" id="L74">		int n = db.write(); </span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">		if (n &gt; 0) {</span>
+<span class="fc" id="L76">			db.setQuery(delAttendeeQuery);</span>
+<span class="fc" id="L77">			db.setParameter(1, minfo.getMeetingId());		</span>
+<span class="fc" id="L78">			db.write();</span>
+<span class="fc" id="L79">			bSuccess = true;</span>
+		}
+<span class="fc" id="L81">		db.close();</span>
+		
+<span class="fc" id="L83">		return bSuccess;		</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

@@ -38,6 +38,7 @@ public class EditMeeting extends Command {
 		super();
 		this.command_array = command_array;
 		this.meeting = new Meeting();
+		this.checkSkipedAttendeeList = new LinkedList<String>();  // add JUNIT
 	}
 	/**
 	 * Constructor for script running mode, particularly attendee adding and removing 
@@ -49,6 +50,7 @@ public class EditMeeting extends Command {
 		this.command_array = command_array;
 		this.meeting = new Meeting();
 		this.atteedeeOption = attendeeOption;
+		this.checkSkipedAttendeeList = new LinkedList<String>();  // add JUNIT
 	}
 	/**
 	 * Check and verify passing commands data, and update old one into new information
@@ -68,7 +70,10 @@ public class EditMeeting extends Command {
 					if(checkMeetingIdValid(value)){
 						/*current db information setting */
 						meeting.getMeetingInfo(value);
-						checkSkipedAttendeeList = meeting.getAttendee(); // current list no need to check schedule;
+						//checkSkipedAttendeeList = meeting.getAttendee(); 
+						for (String attendId : meeting.getAttendee()) {
+							checkSkipedAttendeeList.add(attendId);
+						} 
 						break;
 					} else {						
 						throw new EditMeetingException("edit-meeting : meeting-id ("+value+") not in db");
@@ -213,7 +218,7 @@ public class EditMeeting extends Command {
 				
 				/*check meeting*/
 				try {
-					// only new attendees check
+					// only new attendees check					
 					if (!checkSkipedAttendeeList.contains((String) attendList.get(i))) {
 						emp.checkAvailableWithMeeting(meeting.getDate(), meeting.getStartTime(), meeting.getEndTime());
 					}

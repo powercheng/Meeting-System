@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>AddHoliday.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">controller</a> &gt; <span class="el_source">AddHoliday.java</span></div><h1>AddHoliday.java</h1><pre class="source lang-java linenums">package controller;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import common.CommonUtil;
+import exceptions.AddHolidayException;
+import exceptions.TimeConflictException;
+import model.Sql;
+/**
+ * This class is used for add company's holiday into database
+ * @author group7
+ */
+public class AddHoliday extends Command  {
+	
+	private JSONArray command_array;
+	private String startDate;
+	private String endDate;
+	private String description;
+	/**
+	 * constructor for script running mode
+	 * @param command_array
+	 */
+	public AddHoliday(JSONArray command_array) {
+<span class="fc" id="L25">		super();</span>
+<span class="fc" id="L26">		this.command_array = command_array;</span>
+<span class="fc" id="L27">	}</span>
+	/**
+	 * constructor for interactive mode
+	 */
+	public AddHoliday() {
+<span class="fc" id="L32">		super();</span>
+<span class="fc" id="L33">	}</span>
+	/**
+	 * analyze commands and put analyzed data into database 
+	 */
+	@Override
+	public void execute() throws AddHolidayException{
+		// TODO Auto-generated method stub	
+<span class="pc bpc" id="L40" title="2 of 4 branches missed.">		if(command_array == null || command_array.isEmpty()) {</span>
+<span class="nc" id="L41">			throw new AddHolidayException(&quot;No argument for add-holiday command&quot;);</span>
+		}
+<span class="fc bfc" id="L43" title="All 2 branches covered.">		for(int i = 0; i &lt; command_array.size(); i++) {</span>
+			
+<span class="fc" id="L45">			JSONObject command_json = (JSONObject) command_array.get(i);</span>
+<span class="fc" id="L46">			String name = (String) command_json.get(&quot;name&quot;);</span>
+<span class="fc" id="L47">			String value = (String) command_json.get(&quot;value&quot;);</span>
+			
+<span class="pc bpc" id="L49" title="3 of 10 branches missed.">			switch(name) {</span>
+				case &quot;start-date&quot; :
+<span class="fc bfc" id="L51" title="All 2 branches covered.">					if(checkDateValid(value)){</span>
+<span class="fc" id="L52">						setStartDate(value);</span>
+<span class="fc" id="L53">						break;</span>
+					} else {
+<span class="fc" id="L55">						throw new AddHolidayException(&quot;invalid start-date(&quot;+value+&quot;) for add-holiday command&quot;);</span>
+					}
+				case &quot;end-date&quot; :
+<span class="fc bfc" id="L58" title="All 2 branches covered.">					if(checkDateValid(value)){</span>
+<span class="fc" id="L59">						setEndDate(value);</span>
+<span class="fc" id="L60">						break;</span>
+					} else {
+<span class="fc" id="L62">						throw new AddHolidayException(&quot;invalid end-date(&quot;+value+&quot;) for add-holiday command&quot;);</span>
+					}
+				case &quot;description&quot; :
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">					if(checkStrLenValid(value)){</span>
+<span class="fc" id="L66">						setDescription(value);</span>
+<span class="fc" id="L67">						break;</span>
+					} else {
+<span class="nc" id="L69">						throw new AddHolidayException(&quot;description is too long for add-holiday command&quot;);</span>
+					}
+				default :
+<span class="fc" id="L72">					throw new AddHolidayException(&quot;invalid arguments : &quot; + name + &quot;for add-holiday&quot;);</span>
+			}			
+		}
+		
+<span class="fc bfc" id="L76" title="All 2 branches covered.">		if(!checkHolidyArgument()) {	</span>
+<span class="fc" id="L77">			throw new AddHolidayException(&quot;Missing argumets for adding holiday command&quot;);</span>
+		}
+		
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">		if(!insertHolidayInfo()) {			</span>
+<span class="nc" id="L81">			throw new AddHolidayException(&quot;adding holiday to database is failed for adding meeting command&quot;);</span>
+		}		
+<span class="fc" id="L83">	}</span>
+	/**
+	 * Check variables' validity
+	 * @return
+	 */
+	private boolean checkHolidyArgument() {
+		
+<span class="pc bpc" id="L90" title="2 of 6 branches missed.">		if (getStartDate() == null || getEndDate() == null || getDescription() == null) {</span>
+<span class="fc" id="L91">			return false;</span>
+		}
+<span class="fc" id="L93">		return true;</span>
+	}
+ 
+	public String getEndDate() {
+<span class="fc" id="L97">		return endDate;</span>
+	}
+
+	public void setEndDate(String endDate) {
+<span class="fc" id="L101">		this.endDate = endDate;</span>
+<span class="fc" id="L102">	}</span>
+
+	public String getStartDate() {
+<span class="fc" id="L105">		return startDate;</span>
+	}
+
+	public void setStartDate(String startDate) {
+<span class="fc" id="L109">		this.startDate = startDate;</span>
+<span class="fc" id="L110">	}</span>
+
+	public String getDescription() {
+<span class="fc" id="L113">		return description;</span>
+	}
+
+	public void setDescription(String description) {
+<span class="fc" id="L117">		this.description = description;</span>
+<span class="fc" id="L118">	}</span>
+	/**
+	 * insert the final holiday information into database
+	 * @return
+	 */
+	public boolean insertHolidayInfo() {
+		
+<span class="fc" id="L125">		boolean bSuccess = false;	</span>
+		
+<span class="fc" id="L127">		String insHolidayQuery = &quot;INSERT INTO TB_HOLIDAY(startDATE, endDATE, description) &quot;</span>
+							+ &quot; VALUES (?, ?, ?)&quot;;
+				
+<span class="fc" id="L130">		Sql db = new Sql();		</span>
+<span class="fc" id="L131">		db.setQuery(insHolidayQuery);</span>
+<span class="fc" id="L132">		db.setParameter(1, getStartDate());</span>
+<span class="fc" id="L133">		db.setParameter(2, getEndDate());</span>
+<span class="fc" id="L134">		db.setParameter(3, getDescription());</span>
+<span class="fc" id="L135">		int n = db.write();</span>
+		/* if insHolidayQuery is successful */
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">		if (n &gt; 0) bSuccess = true;</span>
+		
+<span class="fc" id="L139">		db.close();</span>
+		
+<span class="fc" id="L141">		return bSuccess;		</span>
+	}
+	/**
+	 * Check if meeting data conflicts with stored company's holiday 
+	 * @param meetDate
+	 * @throws TimeConflictException
+	 */
+	public void checkAvailableWithHoliday(String meetDate) throws TimeConflictException {
+		
+<span class="fc" id="L150">		Command cmd = new Command();</span>
+	
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">		if (cmd.checkDateValid(meetDate)) </span>
+		{			
+<span class="fc" id="L154">			Sql db = new Sql();</span>
+			/* MEET DAY BETWEEN HOLIDAY CAUSE CONFLICT */
+<span class="fc" id="L156">			String infoQuery = &quot;SELECT startDATE, endDATE, description FROM TB_HOLIDAY &quot;</span>
+								+ &quot;  WHERE &quot;
+								+ &quot;  ? between  substr(startDATE,5,4)||substr(startDATE,0,3)||substr(startDATE,3,2) &quot;
+								+ &quot;  	   and  substr(endDATE,5,4)||substr(endDATE,0,3)||substr(endDATE,3,2) &quot;;
+<span class="fc" id="L160">			db.setQuery(infoQuery);</span>
+			/* DATE format modify MMddyyyy - &gt; yyyyMMdd */
+<span class="fc" id="L162">			meetDate = CommonUtil.dateFormat(meetDate, &quot;MMddyyyy&quot;, &quot;yyyyMMdd&quot;);			</span>
+<span class="fc" id="L163">			db.setParameter(1, meetDate);		</span>
+						
+<span class="fc" id="L165">			JSONArray checkArr = db.read();	</span>
+			
+<span class="fc" id="L167">			db.close();</span>
+		//	System.out.println(checkArr.size());
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">			if (checkArr.size() &gt; 0) {</span>
+<span class="nc" id="L170">				throw new TimeConflictException(&quot;Meeting day(&quot;+meetDate+&quot;) is in the company holiday season.&quot;); </span>
+			}
+			
+		} else {
+<span class="nc" id="L174">			throw new TimeConflictException(&quot;MeetDate is not valid&quot;);</span>
+		}			
+<span class="fc" id="L176">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

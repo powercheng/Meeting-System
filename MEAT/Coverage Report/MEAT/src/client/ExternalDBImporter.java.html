@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ExternalDBImporter.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTest (2016. 11. 25 오후 8:24:05)</a> &gt; <a href="../../index.html" class="el_group">MEAT</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">client</a> &gt; <span class="el_source">ExternalDBImporter.java</span></div><h1>ExternalDBImporter.java</h1><pre class="source lang-java linenums">package client;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import common.CommonUtil;
+import common.SysConfig;
+import model.Sql;
+/**
+ * This class is used for loading external db file(json) into MEAT local database 
+ * @author group7
+ */
+<span class="fc" id="L14">public class ExternalDBImporter {</span>
+	
+<span class="fc" id="L16">	public boolean[] importStatus = {false, false};</span>
+/*	
+	public static void main(String[] args) {		
+		ExternalDBImporter ee = new ExternalDBImporter();
+		// 1. Sync employeeTable with jsonFile
+		ee.updateEmployeeTable();		
+		// 2. Sync roomTable with jsonFile
+		ee.updateRoomTable();
+	}
+*/	
+	/**
+	 *  External DB file(json) import into MEAT DB
+	 *  json file (\\resource\\employees.json)
+	 *  MEAT table : TB_EMPLOYEE
+	 */
+	public void updateEmployeeTable()
+	{
+<span class="fc" id="L33">		String jsonData = CommonUtil.loadJsonFile(SysConfig.employeeJsonFile);		</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">		if (CommonUtil.nullTrim(jsonData).length()&gt; 0) {			</span>
+			
+<span class="fc" id="L36">			JSONParser parser = new JSONParser(); 	</span>
+<span class="fc" id="L37">			Sql db = new Sql();</span>
+			
+			try {							
+<span class="fc" id="L40">				JSONArray jsonArray = (JSONArray) parser.parse(jsonData);					</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">				for (int i=0;i&lt;jsonArray.size();i++) {						</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">					if (i == 0) {</span>
+<span class="fc" id="L43">						String delQuery = &quot;DELETE FROM TB_EMPLOYEE &quot;;</span>
+<span class="fc" id="L44">						db.setQuery(delQuery);</span>
+<span class="fc" id="L45">						db.write();</span>
+					}					
+<span class="fc" id="L47">					JSONObject jsonObject = (JSONObject) jsonArray.get(i); 	</span>
+<span class="fc" id="L48">					String employeeID = (String) jsonObject.get(&quot;id&quot;);</span>
+<span class="fc" id="L49">					String firstName = (String) jsonObject.get(&quot;firstName&quot;);</span>
+<span class="fc" id="L50">					String lastName = (String) jsonObject.get(&quot;lastName&quot;);</span>
+<span class="fc" id="L51">					String email = (String) jsonObject.get(&quot;email&quot;);</span>
+<span class="fc" id="L52">					String title = (String) jsonObject.get(&quot;title&quot;);</span>
+<span class="fc" id="L53">					long   totalVacationDays = (Long) jsonObject.get(&quot;totalVacationDays&quot;);					</span>
+					
+					// Insert 
+<span class="fc" id="L56">					String insQuery = &quot;INSERT INTO TB_EMPLOYEE VALUES (?,?,?,?,?,?) &quot;;</span>
+<span class="fc" id="L57">					db.setQuery(insQuery);</span>
+<span class="fc" id="L58">					db.setParameter(1, employeeID);</span>
+<span class="fc" id="L59">					db.setParameter(2, firstName);</span>
+<span class="fc" id="L60">					db.setParameter(3, lastName);</span>
+<span class="fc" id="L61">					db.setParameter(4, email);</span>
+<span class="fc" id="L62">					db.setParameter(5, title);</span>
+<span class="fc" id="L63">					db.setParameter(6, totalVacationDays);</span>
+<span class="fc" id="L64">					db.write();					</span>
+				}	
+<span class="fc" id="L66">				importStatus[0] = true;</span>
+<span class="fc" id="L67">				System.out.println(&quot;## EmployeeDB Sync Success&quot;);</span>
+				
+<span class="pc" id="L69">			} catch (Exception e) {</span>
+<span class="nc" id="L70">				e.printStackTrace();</span>
+<span class="nc" id="L71">			} finally {</span>
+<span class="pc" id="L72">				db.close();</span>
+<span class="nc" id="L73">			}</span>
+		}		
+<span class="fc" id="L75">	}</span>
+	
+	/**
+	 *  External DB file(json) import into MEAT DB
+	 *  json file (\\resource\\room.json)
+	 *  MEAT table : TB_ROOM
+	 */
+	public void updateRoomTable()
+	{
+<span class="fc" id="L84">		String jsonData = CommonUtil.loadJsonFile(SysConfig.roomJsonFile);		</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">		if (CommonUtil.nullTrim(jsonData).length()&gt; 0) {			</span>
+<span class="fc" id="L86">			JSONParser parser = new JSONParser(); 	</span>
+<span class="fc" id="L87">			Sql db = new Sql();</span>
+			try {				
+<span class="fc" id="L89">				JSONArray jsonArray = (JSONArray) parser.parse(jsonData);				</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">				for (int i=0;i&lt;jsonArray.size();i++) {							</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">					if (i == 0) {</span>
+<span class="fc" id="L92">						String delQuery = &quot;DELETE FROM TB_ROOM &quot;;</span>
+<span class="fc" id="L93">						db.setQuery(delQuery);</span>
+<span class="fc" id="L94">						db.write();</span>
+					}	
+					
+<span class="fc" id="L97">					JSONObject jsonObject = (JSONObject) jsonArray.get(i); 	</span>
+<span class="fc" id="L98">					String roomID = (String) jsonObject.get(&quot;id&quot;);</span>
+<span class="fc" id="L99">					String building = (String) jsonObject.get(&quot;building&quot;);</span>
+<span class="fc" id="L100">					long   floor = (Long) jsonObject.get(&quot;floor&quot;);					</span>
+<span class="fc" id="L101">					long   occupancy = (Long) jsonObject.get(&quot;occupancy&quot;);					</span>
+					// Database updating
+					
+					// Insert 
+<span class="fc" id="L105">					String insQuery = &quot;INSERT INTO TB_ROOM VALUES (?,?,?,?) &quot;;</span>
+<span class="fc" id="L106">					db.setQuery(insQuery);</span>
+<span class="fc" id="L107">					db.setParameter(1, roomID);</span>
+<span class="fc" id="L108">					db.setParameter(2, building);</span>
+<span class="fc" id="L109">					db.setParameter(3, floor);</span>
+<span class="fc" id="L110">					db.setParameter(4, occupancy);</span>
+<span class="fc" id="L111">					db.write();		</span>
+				}	
+<span class="fc" id="L113">				importStatus[1] = true;</span>
+<span class="fc" id="L114">				System.out.println(&quot;## RoomDB Sync Success&quot;);</span>
+				
+<span class="pc" id="L116">			} catch (Exception e) {</span>
+<span class="nc" id="L117">				e.printStackTrace();</span>
+<span class="nc" id="L118">			} finally {</span>
+<span class="pc" id="L119">				db.close();</span>
+<span class="nc" id="L120">			}</span>
+		}		
+<span class="fc" id="L122">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>AllTest (2016. 11. 25 오후 8:24:05)</div></body></html>

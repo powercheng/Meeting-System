@@ -1,5 +1,6 @@
 package model;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -22,28 +23,33 @@ public class Sql {
 	private Connection conn = null;
 	private PreparedStatement pstmt = null;
 	private String  Query = null;
+	
+	public boolean isFault = false;
+	
 	/**
 	 * default constructor
 	 */
 	public Sql() {
 		try {
 			this.dbfilePath = SysConfig.dbFile;
+			if (!(new File(dbfilePath)).exists() || (new File(dbfilePath)).length() == 0) {
+				isFault = true;
+				throw new SQLException("No db file exists");
+			}
 			conn = DriverManager.getConnection("jdbc:sqlite:"+dbfilePath);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			isFault = true;
 			e.printStackTrace();
 		}
 	}
+	
 	/**
 	 * close connection 
 	 */
 	public void close() {
-		try {
-			if (pstmt != null) try { pstmt.close(); } catch (Exception ex) {} ;
-			if (conn != null)  try { conn.close(); }  catch (Exception ex) {};
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		if (pstmt != null) try { pstmt.close(); } catch (Exception ex) {} ;
+		if (conn != null)  try { conn.close(); }  catch (Exception ex) {};		
 	}
 	/**
 	 * Set query into statement
@@ -56,6 +62,7 @@ public class Sql {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			isFault = true;
 		}
 	}
 	
@@ -70,9 +77,8 @@ public class Sql {
 	public void setParameter(int idx, String param) {
 		try {
 			this.pstmt.setString(idx, param);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SQLException e) {			
+			isFault = true;
 		}		
 	}
 	/**
@@ -84,8 +90,7 @@ public class Sql {
 		try {
 			this.pstmt.setLong(idx, param);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			isFault = true;
 		}		
 	}
 	/**
@@ -97,16 +102,17 @@ public class Sql {
 		
 		try {
 			if (this.getQuery() == null) 
-				throw new SQLException("No DML Query is setted.");
-			
+				throw new SQLException("No DML Query is setted.");			
 			n = this.pstmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			if (pstmt != null)
-				try { pstmt.close(); } catch (SQLException e) {}
-		}
+			isFault = true;
+		} 
+		
+		if (pstmt != null)
+			try { pstmt.close(); } catch (SQLException e) {}
+		
 		return n;		
 	}
 	/**
@@ -138,12 +144,14 @@ public class Sql {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			if (rs != null)
-				try { rs.close(); } catch (SQLException e) {}
-			if (pstmt != null)
-				try { pstmt.close(); } catch (SQLException e) {}
-		}		
+			isFault = true;
+		} 
+		
+		if (rs != null)
+			try { rs.close(); } catch (SQLException e) {}
+		
+		if (pstmt != null)
+			try { pstmt.close(); } catch (SQLException e) {}
 		
 		return rsArray;
 	}	
